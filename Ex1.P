@@ -1,0 +1,17 @@
+location(Latitude,Longitude):-
+	float(Latitude),float(Longitude).
+
+temp_event(Temperature,Latitude,Longitude):-
+	integer(Temperature),location(Latitude,Longitude).
+	
+temp_event([Temperature,Latitude,Longitude|[]]):-
+	temp_event(Temperature,Latitude,Longitude).	
+
+event([H|T]):-
+	H=temperature,
+	temp_event(T).
+
+list_event_schema([temperature,location]).
+
+event_schema([temperature,integer,location]).
+event_schema([location,float,float]).
