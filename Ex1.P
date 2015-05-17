@@ -1,13 +1,7 @@
 event_2([EventH|[]]):-
-	write('%%'),
-	write(EventH),
-	nl,
 	branch(EventH).
 
 event_2([EventH|EventT]):-
-	write('##'),
-	write(EventH),
-	nl,
 	branch(EventH),
 	event_2(EventT).
 
@@ -21,7 +15,10 @@ branch(EventH):-
 	event_2(SchemaTail).
 
 branch(EventH):-
-	not(event_schema([EventH|SchemaTail])).
+	not(event_schema([EventH|SchemaTail])),
+	write('##'),
+	write(EventH),
+	nl.
 	
 event_3(Eventdata):-
 	[Eh|Et] = Eventdata,
@@ -29,5 +26,5 @@ event_3(Eventdata):-
 
 list_event_schema([temperature,location]).
 
-event_schema([temperature,integer,location]).
+event_schema([temperature,integer,location,location]).
 event_schema([location,float,float]).
