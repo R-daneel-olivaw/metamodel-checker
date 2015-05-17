@@ -42,9 +42,36 @@ branch(EventH,I,O):-
 	append(I,[EventH],O),
 	nl.
 	
-event_3(Eventdata,O):-
+isschemamatch(Eventdata,O):-
+	length(Eventdata,L1),
+	length(O,L2),
+	L1=L2,
+	istypematch(O,Eventdata).
+
+istypematch([Oh|[]],[Eh|[]]):-
+	write('unable to check type '),write(Oh),nl.
+
+istypematch([integer|[]],[Eh|[]]):-
+	!,integer(Eh).
+
+istypematch([float|[]],[Eh|[]]):-
+	!,float(Eh).
+
+istypematch([integer|Ot],[Eh|Et]):-
+	!,integer(Eh),istypematch(Ot,Et),write('inside integer checker'),nl.
+
+istypematch([float|Ot],[Eh|Et]):-
+	!,float(Eh),istypematch(Ot,Et).
+
+istypematch([Oh|Ot],[Eh|Et]):-
+	write('unable to check type '),write(Oh),nl,
+	istypematch(Ot,Et).
+	
+event_3(Eventdata):-
 	[Eh|Et] = Eventdata,
-	event_2(Eh,[],O).
+	event_2(Eh,[],O),
+	nl,write('Schema - '),write(O),nl,
+	isschemamatch(Eventdata,O).
 
 list_event_schema([temperature,location]).
 
