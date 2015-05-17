@@ -1,15 +1,22 @@
-location(Latitude,Longitude):-
-	float(Latitude),float(Longitude).
+event_2([EventH|[]]):-
+	write(EventH),
+	nl,
+	event_schema([EventH|SchemaTail]),
+	append([EventH],SchemaTail,SchemaTail2),
+	event_2(SchemaTail2).
 
-temp_event(Temperature,Latitude,Longitude):-
-	integer(Temperature),location(Latitude,Longitude).
+event_2([EventH|EventT]):-
+	write(EventH),
+	nl,
+	event_2(EventT),
+	event_schema([EventH|SchemaTail]),
+	event_2(SchemaTail).
 	
-temp_event([Temperature,Latitude,Longitude|[]]):-
-	temp_event(Temperature,Latitude,Longitude).	
-
-event([H|T]):-
-	H=temperature,
-	temp_event(T).
+event_3(Eventdata):-
+	[Eh|Et] = Eventdata,
+	event_schema([Eh|SchemaTail]),
+	append([Eh],SchemaTail,SchemaTail2),
+	event_2(SchemaTail2).
 
 list_event_schema([temperature,location]).
 
