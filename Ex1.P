@@ -1,7 +1,7 @@
 % this predicate is for handling the last component of a schema layer,
 % it can be an end to the recursive calls.
 event_2([EventH|[]],I,O):-
-	write('[EventH|[]]'),nl,write(EventH),nl,
+	% write('[EventH|[]]'),nl,write(EventH),nl,
 	branch(EventH,I,O).
 
 % this predicate is used by members lying the middle of the schema layer.
@@ -10,19 +10,15 @@ event_2([EventH|[]],I,O):-
 % (2) the branch call does not lead to a deeper level, and then the next 
 % member type is used provided that the next type is not the last type of this schema layer.
 event_2([EventH|EventT],I,O):-
-	write('[EventH|EventT]'),nl,write(EventH),nl,
+	% write('[EventH|EventT]'),nl,write(EventH),nl,
 	branch(EventH,I,I2),
 	event_2(EventT,I2,O).
 
 % this is the entry predicate, it receives the root event type,
 % it enters the recursive loop after translating the root event
 % type into the first layer of types that compose the event.
-event_2(EventH):-
-	write('EventH'),nl,write(EventH),nl,
-	I=[],
-	branch(EventH,[],O),
-	write('OUTPUT - '),
-	write(O).
+event_2(EventH,I,O):-
+	branch(EventH,[],O).
 
 % this predicate is used to step into a lower layer of the event schema,
 % this is done by branching a recursive path of execution for the compound
@@ -46,12 +42,12 @@ branch(EventH,I,O):-
 	append(I,[EventH],O),
 	nl.
 	
-event_3(Eventdata):-
+event_3(Eventdata,O):-
 	[Eh|Et] = Eventdata,
-	event_2(Eh).
+	event_2(Eh,[],O).
 
 list_event_schema([temperature,location]).
 
 event_schema([temperature,integer,location]).
-event_schema([location,float,float,time]).
+event_schema([location,float,float]).
 event_schema([time,integer,integer,integer]).
