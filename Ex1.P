@@ -1,6 +1,7 @@
 % this predicate is for handling the last component of a schema layer,
 % it can be an end to the recursive calls.
 event_2([EventH|[]],I,O):-
+	% write('[EventH|[]]'),nl,write(EventH),nl,
 	branch(EventH,I,O).
 
 % this predicate is used by members lying the middle of the schema layer.
@@ -9,6 +10,7 @@ event_2([EventH|[]],I,O):-
 % (2) the branch call does not lead to a deeper level, and then the next 
 % member type is used provided that the next type is not the last type of this schema layer.
 event_2([EventH|EventT],I,O):-
+	% write('[EventH|EventT]'),nl,write(EventH),nl,
 	branch(EventH,I,I2),
 	event_2(EventT,I2,O).
 
@@ -24,6 +26,8 @@ event_2(EventH,I,O):-
 % makes a recursive call for resolving the next comprising types.	
 branch(EventH,I,O):-
 	event_schema([EventH|SchemaTail]),
+	write('@@'),
+	write(EventH),
 	append(I,[EventH],I2),
 	event_2(SchemaTail,I2,O).
 
@@ -33,18 +37,57 @@ branch(EventH,I,O):-
 % This is also an exit predicate when called from event_2([EventH|[]]) or event_2(EventH).
 branch(EventH,I,O):-
 	not(event_schema([EventH|SchemaTail])),	
+	write('##'),
+	write(EventH),
 	append(I,[EventH],O),
 	nl.
+
+% this predicate is used to match the the event data provided and the compounded
+% event schema derived from the individual schemas, the predicate first checks if
+% the length's of the 2 lists are the same, only if they are found to be same the
+% 2 lists are iterated together to verify the types of the elements. 
+isschemamatch(Eventdata,O):-
+	length(Eventdata,L1),
+	length(O,L2),
+	L1=L2,
+	istypematch(O,Eventdata).
+
+% this predicate is a possible termination predicate
+istypematch([Oh|[]],[Eh|[]]):-
+	write('unable to check type '),write(Oh),nl.
+
+% this predicate is a possible termination predicate
+istypematch([integer|[]],[Eh|[]]):-
+	!,integer(Eh).
+
+% this predicate is a possible termination predicate
+istypematch([float|[]],[Eh|[]]):-
+	!,float(Eh).
+
+% this predicate is used to verify the type of the integer components
+istypematch([integer|Ot],[Eh|Et]):-
+	!,integer(Eh),istypematch(Ot,Et),write('inside integer checker'),nl.
+
+% this predicate is used to verify the type of the float components
+istypematch([float|Ot],[Eh|Et]):-
+	!,float(Eh),istypematch(Ot,Et).
+
+% this predicate is used as a fallback or default case for the types
+% for which we do not have predicates for,
+% we have used cut points(!) for preventing backtracking to this predicate.
+istypematch([Oh|Ot],[Eh|Et]):-
+	write('unable to check type '),write(Oh),nl,
+	istypematch(Ot,Et).
 
 % we use this predicate for execution	
 event_3(Eventdata):-
 	[Eh|Et] = Eventdata,
 	event_2(Eh,[],O),
-	nl,write('Schema - '),write(O).
+	nl,write('Schema - '),write(O),nl,
+	isschemamatch(Eventdata,O).
 
-% DEFINATION OF THE SCHEMA ELEMENTS
-event_schema([temperature,integer,unit,location]).
-event_schema([location,float,float,time]).
-event_schema([time,integer,integer,integer,unit]).
-event_schema([weather,string,string,temperature]).
-event_schema([unit,string]).
+list_event_schema([temperature,location]).
+
+event_schema([temperature,integer,location,time]).
+event_schema([location,float,float]).
+event_schema([time,integer,integer,integer]).
