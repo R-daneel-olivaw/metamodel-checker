@@ -83,11 +83,11 @@ istypematch([Oh|Ot],[Eh|Et]):-
 event_3(Eventdata):-
 	[Eh|Et] = Eventdata,
 	event_2(Eh,[],O),
-	nl,write('Schema - '),write(O),nl,
-	isschemamatch(Eventdata,O).
+	nl,write('Schema - '),write(O).
 
-list_event_schema([temperature,location]).
-
-event_schema([temperature,integer,location,time]).
-event_schema([location,float,float]).
-event_schema([time,integer,integer,integer]).
+% DEFINATION OF THE SCHEMA ELEMENTS
+event_schema([temperature,temp,integer,location]).
+event_schema([location,latitude,float,longitude,float,time]).
+event_schema([time,hh,integer,mm,integer,ss,integer]).
+event_schema([weather,location_name,string,country,string,temperature]).
+event_schema([unit,string]).

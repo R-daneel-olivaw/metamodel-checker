@@ -1,0 +1,44 @@
+% import append/3 from basics.
+
+
+lower_event([Head|[]],I,O):-
+	lower_event(Head,I,O).
+
+lower_event([Head|Tail],I,O):-
+	lower_event(Head,I,Os1),
+	lower_event(Tail,Os1,O).
+
+lower_event(Type,I,O):-
+	event_schema([Type|SchemaTail]),
+	write(Type),write('-'),
+	append(I,[Type],Os1),
+	write([SchemaTail]),nl,
+	lower_event(SchemaTail,[],Os2),
+	append(Os1,[Os2],O).
+
+lower_event(Type,I,O):-
+	not(event_schema([Type|SchemaTail])),
+	write(Type),write('*-'),nl,
+	append(I,[Type],O).
+	
+	
+step_forward([Head|[]]):-
+	write(Head).
+	
+step_forward([Head|Tail]):-
+	write(Head),
+	lower_event(Head),
+	step_forward(Tail).
+	
+
+top_event(Type):-
+	lower_event(Type,[],O),
+	nl,write(O).
+
+% DEFINATION OF THE SCHEMA ELEMENTS
+event_schema([temperature,temp,integer,location,dummy,integer]).
+event_schema([location,latitude,float,longitude,float,time]).
+event_schema([time,hh,integer,mm,integer,ss,integer]).
+event_schema([weather,location_name,string,country,string,temperature]).
+event_schema([unit,string]).
+	
