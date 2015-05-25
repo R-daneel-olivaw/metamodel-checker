@@ -1,0 +1,17 @@
+
+lower_event(Type,I,O):-
+	event_schema([Type|SchemaTail]),
+	append(I,[Type],I2),
+	append(I2,[SchemaTail],O).
+
+top_event(Type):-
+	lower_event(Type,[],O),
+	write(O).
+
+% DEFINATION OF THE SCHEMA ELEMENTS
+event_schema([temperature,temp,integer,location]).
+event_schema([location,latitude,float,longitude,float,time]).
+event_schema([time,hh,integer,mm,integer,ss,integer]).
+event_schema([weather,location_name,string,country,string,temperature]).
+event_schema([unit,string]).
+	
