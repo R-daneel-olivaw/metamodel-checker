@@ -1,5 +1,6 @@
 % import append/3 from basics.
-
+% top_event(temperature).
+% [temperature,[temp,integer,location,[latitude,float,longitude,float,time,[hh,integer,mm,integer,ss,integer]],dummy,integer]]
 
 lower_event([Head|[]],I,O):-
 	lower_event(Head,I,O).
@@ -21,7 +22,6 @@ lower_event(Type,I,O):-
 	write(Type),write('*-'),nl,
 	append(I,[Type],O).
 	
-	
 step_forward([Head|[]]):-
 	write(Head).
 	
@@ -30,7 +30,6 @@ step_forward([Head|Tail]):-
 	lower_event(Head),
 	step_forward(Tail).
 	
-
 top_event(Type):-
 	lower_event(Type,[],O),
 	nl,write(O).
