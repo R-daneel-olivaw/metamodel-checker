@@ -1,4 +1,5 @@
 % import append/3 from basics.
+% import length/2 from basics.
 % top_event(temperature).
 % [temperature,[temp,integer,location,[latitude,float,longitude,float,time,[hh,integer,mm,integer,ss,integer]],dummy,integer]]
 
@@ -30,9 +31,29 @@ step_forward([Head|Tail]):-
 	lower_event(Head),
 	step_forward(Tail).
 	
-top_event(Type):-
-	lower_event(Type,[],O),
-	nl,write(O).
+top_event(Type,O):-
+	lower_event(Type,[],O).
+	
+unify_event(Event):-
+	[Eh|Et] = Event,
+	top_event(Eh,Schema),
+	unify_length(Event,Schema),
+	compare_elements(Event,Schema).
+
+compare_elements([Eh|[]],[Sh|[]]):-
+	compare_elements(Eh,Sh).
+	
+compare_elements([Eh|Et],[Sh|St]):-
+	compare_elements(Eh,Sh),
+	compare_elements(Et,St).
+	
+compare_elements(Eelement,Selement):-
+	write(Eelement),write('='),write(Selement),nl.
+	
+unify_length(Event,Schema):-
+	length(Schema,Lengthschema),		 	
+ 	length(O,Lengthevent),
+ 	Lengthschema=Lengthevent.
 
 % DEFINATION OF THE SCHEMA ELEMENTS
 event_schema([temperature,temp,integer,location,dummy,integer]).
