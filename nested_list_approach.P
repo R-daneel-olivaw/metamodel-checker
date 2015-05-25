@@ -37,7 +37,7 @@ top_event(Type,O):-
 unify_event(Event):-
 	[Eh|Et] = Event,
 	top_event(Eh,Schema),
-	unify_length(Event,Schema),
+	!,unify_length(Event,Schema),
 	compare_elements(Event,Schema).
 
 compare_elements([Eh|[]],[Sh|[]]):-
@@ -47,8 +47,20 @@ compare_elements([Eh|Et],[Sh|St]):-
 	compare_elements(Eh,Sh),
 	compare_elements(Et,St).
 	
-compare_elements(Eelement,Selement):-
-	write(Eelement),write('='),write(Selement),nl.
+compare_elements(Sameelement,Sameelement):-
+	write(Sameelement),write('='),write(Sameelement),nl.
+
+compare_elements(Eventelement,integer):-
+	write('comparing-integer => '),write(Eventelement),write('='),write(integer),nl,
+	!,integer(Eventelement).
+	
+compare_elements(Eventelement,float):-
+	write('comparing-float => '),write(Eventelement),write('='),write(float),nl,
+	!,float(Eventelement).
+
+compare_elements(Eventelement,string):-
+	write('comparing-string => '),write(Eventelement),write('='),write(string),nl,
+	!,string(Eventelement).
 	
 unify_length(Event,Schema):-
 	length(Schema,Lengthschema),		 	
