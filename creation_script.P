@@ -34,13 +34,13 @@ test_1():-
 	write('test start'),nl,
 	write(Env),nl,
 	
-	create_component(test_component_1,[testVar1,50,testVar2,90],Comp1),
+	create_component(test_component_1,[[testVar1,50],[testVar2,90]],Comp1),
 	write(Comp1),nl,
 	
 	add_component_to_environment(Env,Comp1,Env1),
 	write(Env1),nl,
 	
-	create_component(test_component_2,[testvar3,10],Comp2),
+	create_component(test_component_2,[[testvar3,10]],Comp2),
 	write(Comp2),nl,
 	
 	add_component_to_environment(Env1,Comp2,Env2),
