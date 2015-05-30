@@ -1,0 +1,55 @@
+create_environment(Name, Context_var_list):-
+	%not(environment_instance(Environment_name)),
+	assert(environment_instance(Name)),
+	add_context_variable_list_environment(Name,Context_var_list).	
+
+create_component(Component_name, Context_variable_list):-
+	%not(component_instance(Component_name)),
+	assert(component_instance(Component_name)),
+	add_component_context_variable_list(Component_name,Context_variable_list).
+
+add_component_context_variable_list(Component_name,[]).
+
+add_component_context_variable_list(Component_name,[H|T]):-
+	add_component_context_variable(Component_name,H),
+	add_component_context_variable_list(Component_name,T).
+	
+add_component_context_variable(Component_name,[Key,Value|[]]):-
+	assert(component_context_variable(Component_name,[Key,Value])).
+
+add_component_to_environment(Environment_name, Component_name):-
+	environment_instance(Environment_name),
+	component_instance(Component_name),
+	
+	assert(environment_component(Environment_name,Component_name)),
+	
+	findall(X,component_context_variable(Component_name,X),Component_context_variable_list),
+	write(Component_context_variable_list),nl,
+	add_context_variable_list_environment(Environment_name,Component_name,Component_context_variable_list).
+
+add_context_variable_list_environment(Environment_name,[H|T]):-
+	assert(environment_context_variable(Environment_name,H)),
+	add_context_variable_list_environment(Environment_name,T).
+	
+add_context_variable_list_environment(Environment_name,[]).
+
+add_context_variable_list_environment(Environment_name,Component_name,[H|T]):-
+	assert(environment_context_variable(Environment_name,Component_name,H)),
+	add_context_variable_list_environment(Environment_name,Component_name,T).
+	
+add_context_variable_list_environment(Environment_name,Component_name,[]).
+
+add_component_list_environment(Environment_name,[H|T]):-
+	add_component_to_environment(Environment_name,H),
+	add_component_list_environment(Environment_name,T).
+	
+add_component_list_environment(Environment_name,[]).	
+
+% context variable format - [[testVar1,50],[testVar2,90],[testvar3,10]]
+% environment(Environment_name).
+% environment_context_variable(Environment_name,Context_key_value_pair_list).
+% environment_component(Environment_name,Component).
+
+% component format - [test_component_1,[[testVar1,50],[testVar2,90]]]
+% component(Component_name).
+% component_context_variable(Component_name,Context_key_value_pair_list).
