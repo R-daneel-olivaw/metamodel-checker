@@ -1,5 +1,6 @@
 % import append/3 from basics.
 % import ith/3 from basics.
+% [test_env,[[testVar1,50],[testVar2,90],[testvar3,10]],[[test_component_1,[[testVar1,50],[testVar2,90]]],[test_component_2,[[testvar3,10]]]]]
 
 create_environment(Name, Context_var_list, Component_list, New_environment):-
 	New_environment = [Name,Context_var_list,Component_list|[]].
