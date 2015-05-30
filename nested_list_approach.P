@@ -2,6 +2,16 @@
 % top_event(temperature).
 % [temperature,[temp,integer,location,[latitude,float,longitude,float,time,[hh,integer,mm,integer,ss,integer]],dummy,integer]]
 
+lower_event([Key,Value|[]],I,O):-
+	not(event_schema([Key|SchemaTail])),
+	not(event_schema([Value|SchemaTail])),
+	not(is_list(Key)),
+	not(is_list(Value)),
+	
+	nl,write(Key),write('-'),write(Value),nl,
+	Kvp = [Key,Value],
+	append(I,[Kvp],O).
+
 lower_event([Head|[]],I,O):-
 	lower_event(Head,I,O).
 
@@ -11,7 +21,7 @@ lower_event([Head|Tail],I,O):-
 
 lower_event(Type,I,O):-
 	event_schema([Type|SchemaTail]),
-	write(Type),write('-'),
+	write(Type),write('->'),
 	append(I,[Type],Os1),
 	write([SchemaTail]),nl,
 	lower_event(SchemaTail,[],Os2),
@@ -35,9 +45,8 @@ top_event(Type):-
 	nl,write(O).
 
 % DEFINATION OF THE SCHEMA ELEMENTS
-event_schema([temperature,temp,integer,location,dummy,integer]).
-event_schema([location,latitude,float,longitude,float,time]).
-event_schema([time,hh,integer,mm,integer,ss,integer]).
-event_schema([weather,location_name,string,country,string,temperature]).
-event_schema([unit,string]).
+event_schema([temperature,[temp,integer],location,[dummy,integer]]).
+event_schema([location,[latitude,float],[longitude,float],time]).
+event_schema([time,[hh,integer],[mm,integer],[ss,integer]]).
+event_schema([weather,[location_name,string],[country,string],temperature]).
 	
