@@ -1,6 +1,7 @@
 create_environment(Name, Context_var_list):-
 	%not(environment_instance(Environment_name)),
 	assert(environment_instance(Name)),
+	assert(component_instance(Name)),
 	add_context_variable_list_environment(Name,Context_var_list).	
 
 create_component(Component_name, Context_variable_list):-
@@ -74,6 +75,13 @@ environment_event_subscription(Environment_name,Event_id):-
 	
 	environment_component(Environment_name,Component_name),
 	event_subscription_entry(Component_name,Event_id).
+
+component_event_subscription(Component_name,Event_id):-
+	event_subscription_entry(Component_name,Event_id).
+
+component_event_subscription(Component_name,Event_id):-
+	environment_component(Component_name,Sub_component_name),
+	component_event_subscription(Sub_component_name,Event_id).
 	
 get_component_list_environment(Environment_name,Component_name_list):-
 	findall(X,environment_component(Environment_name,X),Component_name_list).
