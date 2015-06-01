@@ -1,7 +1,8 @@
 % import append/3 from basics.
 % import length/2 from basics.
 % top_event(temperature).
-% [temperature,[temp,integer,location,[latitude,float,longitude,float,time,[hh,integer,mm,integer,ss,integer]],dummy,integer]]
+% [temperature,[[temp,integer],location,[[latitude,float],[longitude,float],time,[[hh,integer],[mm,integer],[ss,integer]]],[dummy,integer]]]
+% unify_event([temperature,[[temp,12],location,[[latitude,9.1],[longitude,9.1],time,[[hh,12],[mm,12],[ss,12]]],[dummy,12]]]).
 
 lower_event([Key,Value|[]],I,O):-
 	not(event_schema([Key|SchemaTail])),
@@ -42,35 +43,41 @@ step_forward([Head|Tail]):-
 	step_forward(Tail).
 	
 top_event(Type,O):-
+	write('Resolving Schema'),nl,
 	lower_event(Type,[],O).
 	
 unify_event(Event):-
+	write('Start'),nl,
 	[Eh|Et] = Event,
 	top_event(Eh,Schema),
+	write('Schema Decided'),nl,
 	!,unify_length(Event,Schema),
+	write('length compared'),nl,
 	compare_elements(Event,Schema).
 
 compare_elements([Eh|[]],[Sh|[]]):-
+	write('End'),nl,
 	compare_elements(Eh,Sh).
 	
 compare_elements([Eh|Et],[Sh|St]):-
+	write('middle'),nl,
 	compare_elements(Eh,Sh),
 	compare_elements(Et,St).
 	
-compare_elements(Sameelement,Sameelement):-
-	write(Sameelement),write('='),write(Sameelement),nl.
-
 compare_elements(Eventelement,integer):-
 	write('comparing-integer => '),write(Eventelement),write('='),write(integer),nl,
-	!,integer(Eventelement).
+	integer(Eventelement).
 	
 compare_elements(Eventelement,float):-
 	write('comparing-float => '),write(Eventelement),write('='),write(float),nl,
-	!,float(Eventelement).
+	float(Eventelement).
 
 compare_elements(Eventelement,string):-
 	write('comparing-string => '),write(Eventelement),write('='),write(string),nl,
-	!,string(Eventelement).
+	string(Eventelement).
+	
+compare_elements(Sameelement,Sameelement):-
+	write(Sameelement),write('='),write(Sameelement),nl.
 	
 unify_length(Event,Schema):-
 	length(Schema,Lengthschema),		 	
