@@ -7,6 +7,21 @@ create_component(Component_name, Context_variable_list):-
 	%not(component_instance(Component_name)),
 	assert(component_instance(Component_name)),
 	add_component_context_variable_list(Component_name,Context_variable_list).
+	
+create_event_schema(Event_id,Event_schema_list):-
+	assert(event_schema(Event_id,Event_schema_list)).
+	
+create_advertisement(Component_name,Event_id):-
+	component_instance(Component_name),
+	event_schema(Event_id,_),
+
+	assert(event_advertisement_entry(Component_name,Event_id)).
+	
+create_subscription(Component_name,Event_id):-
+	component_instance(Component_name),
+	event_schema(Event_id,_),
+	
+	assert(event_subscription_entry(Component_name,Event_id)).
 
 add_component_context_variable_list(Component_name,[]).
 
@@ -19,31 +34,42 @@ add_component_context_variable(Component_name,[Key,Value|[]]):-
 
 add_component_to_environment(Environment_name, Component_name):-
 	environment_instance(Environment_name),
-	component_instance(Component_name),
-	
-	assert(environment_component(Environment_name,Component_name)),
-	
+	component_instance(Component_name),	
+	assert(environment_component(Environment_name,Component_name)),	
 	findall(X,component_context_variable(Component_name,X),Component_context_variable_list),
 	write(Component_context_variable_list),nl,
 	add_context_variable_list_environment(Environment_name,Component_name,Component_context_variable_list).
-
-add_context_variable_list_environment(Environment_name,[H|T]):-
-	assert(environment_context_variable(Environment_name,H)),
-	add_context_variable_list_environment(Environment_name,T).
-	
-add_context_variable_list_environment(Environment_name,[]).
 
 add_context_variable_list_environment(Environment_name,Component_name,[H|T]):-
 	assert(environment_context_variable(Environment_name,Component_name,H)),
 	add_context_variable_list_environment(Environment_name,Component_name,T).
 	
 add_context_variable_list_environment(Environment_name,Component_name,[]).
+	
+add_context_variable_list_environment(Environment_name,[H|T]):-
+	assert(environment_context_variable(Environment_name,H)),
+	add_context_variable_list_environment(Environment_name,T).
+	
+add_context_variable_list_environment(Environment_name,[]).
 
 add_component_list_environment(Environment_name,[H|T]):-
 	add_component_to_environment(Environment_name,H),
 	add_component_list_environment(Environment_name,T).
 	
 add_component_list_environment(Environment_name,[]).	
+
+get_event_id_list_advertisement_environment(Environment_name,Event_id_list):-
+	findall(X,environment_event_advertisement(Environment_name,X),Event_id_list).
+
+environment_event_advertisement(Environment_name,Event_id):-
+	environment_instance(Environment_name),
+	event_schema(Event_id,_),
+	
+	environment_component(Environment_name,Component_name),
+	event_advertisement_entry(Component_name,Event_id).
+	
+get_component_list_environment(Environment_name,Component_name_list):-
+	findall(X,environment_component(Environment_name,X),Component_name_list).
 
 % context variable format - [[testVar1,50],[testVar2,90],[testvar3,10]]
 % environment(Environment_name).
