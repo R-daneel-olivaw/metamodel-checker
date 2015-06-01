@@ -80,9 +80,19 @@ compare_elements(Sameelement,Sameelement):-
 	write(Sameelement),write('='),write(Sameelement),nl.
 	
 unify_length(Event,Schema):-
-	length(Schema,Lengthschema),		 	
- 	length(O,Lengthevent),
+	flatten2(Schema,FlatSchema),
+	flatten2(Event,FlatEvent),
+	length(FlatSchema,Lengthschema),		 	
+ 	length(FlatEvent,Lengthevent),
  	Lengthschema=Lengthevent.
+	
+flatten2([], []) :- !.
+flatten2([L|Ls], FlatL) :-
+    !,
+    flatten2(L, NewL),
+    flatten2(Ls, NewLs),
+    append(NewL, NewLs, FlatL).
+flatten2(L, [L]).
 
 % DEFINATION OF THE SCHEMA ELEMENTS
 event_schema([temperature,[temp,integer],location,[dummy,integer]]).
