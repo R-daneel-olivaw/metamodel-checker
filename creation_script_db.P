@@ -93,6 +93,38 @@ component_event_advertisement(Component_name,Event_id):-
 get_component_list_environment(Environment_name,Component_name_list):-
 	findall(X,environment_component(Environment_name,X),Component_name_list).
 
+simulate_event_component(Component_name,Event_data_list):-
+	component_instance(Component_name),
+	
+	[Event_type|Et] = Event_data_list,
+	!,unify_event(Event_data_list),
+	
+	propagate_single_step(Component_name, Event_data_list, Event_type).
+
+propagate_single_step([EnvH|EnvT], Event_data_list, Event_type):-
+	propagate_single_step(EnvH, Event_data_list, Event_type).
+
+propagate_single_step([EnvL|[]], Event_data_list, Event_type):-
+	propagate_single_step(EnvL, Event_data_list, Event_type).
+	
+propagate_single_step(Component_name, Event_data_list, Event_type):-
+	environment_instance(Component_name),
+	write('Event reached - '),write(Component_name),nl,
+	propagate_down_single_step(Component_name, Event_data_list, Event_type),
+	propagate_up_single_step(Component_name, Event_data_list, Event_type).
+	
+propagate_single_step(Component_name, Event_data_list, Event_type):-
+	write('Event reached - '),write(Component_name),nl,
+	propagate_up_single_step(Component_name, Event_data_list, Event_type).	
+
+propagate_up_single_step(Component_name, Event_data_list, Event_type):-
+	findall(X,environment_component(X,Component_name),Environment_name_list),
+	propagate_single_step(Environment_name_list, Event_data_list, Event_type).
+
+propagate_down_single_step(Component_name, Event_data_list, Event_type):-
+	findall(X,environment_component(Environment_name,X),Sub_component_name_list),
+	propagate_single_step(Sub_component_name_list, Event_data_list, Event_type).
+
 % context variable format - [[testVar1,50],[testVar2,90],[testvar3,10]]
 % environment(Environment_name).
 % environment_context_variable(Environment_name,Context_key_value_pair_list).
