@@ -1,14 +1,18 @@
-create_environment(env1).
-create_environment(env1_1).
-create_environment(env1_2).
+import append/3 from basics.
+import length/2 from basics.
+import member/2 from basics.
+
+create_environment(env1,[[a,1]]).
+create_environment(env1_1,[]).
+create_environment(env1_2,[]).
 
 add_component_to_environment(env1,env1_1).
 add_component_to_environment(env1,env1_2).
 
-create_component(comp_1).
-create_component(comp_2).
-create_component(comp_3).
-create_component(comp_4).
+create_component(comp_1,[[c,2]]).
+create_component(comp_2,[]).
+create_component(comp_3,[]).
+create_component(comp_4,[]).
 
 create_event_schema(temperature,[temperature,[[temp,integer],location,[[latitude,float],[longitude,float],time,[[hh,integer],[mm,integer],[ss,integer]]],[dummy,integer]]]).
 

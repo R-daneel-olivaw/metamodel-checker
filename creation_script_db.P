@@ -98,32 +98,27 @@ simulate_event_component(Component_name,Event_data_list):-
 	
 	[Event_type|Et] = Event_data_list,
 	!,unify_event(Event_data_list),
-	
-	propagate_single_step(Component_name, Event_data_list, Event_type).
 
-propagate_single_step([EnvH|EnvT], Event_data_list, Event_type):-
-	propagate_single_step(EnvH, Event_data_list, Event_type).
-
-propagate_single_step([EnvL|[]], Event_data_list, Event_type):-
-	propagate_single_step(EnvL, Event_data_list, Event_type).
-	
-propagate_single_step(Component_name, Event_data_list, Event_type):-
-	environment_instance(Component_name),
-	write('Event reached - '),write(Component_name),nl,
-	propagate_down_single_step(Component_name, Event_data_list, Event_type),
-	propagate_up_single_step(Component_name, Event_data_list, Event_type).
-	
-propagate_single_step(Component_name, Event_data_list, Event_type):-
-	write('Event reached - '),write(Component_name),nl,
-	propagate_up_single_step(Component_name, Event_data_list, Event_type).	
-
-propagate_up_single_step(Component_name, Event_data_list, Event_type):-
 	findall(X,environment_component(X,Component_name),Environment_name_list),
-	propagate_single_step(Environment_name_list, Event_data_list, Event_type).
+	get_reachable_environments(Environment_name_list,[Component_name],Reachable_environment_list),
+	nl,write('Visited List -->'),write(Reachable_environment_list),nl.
 
-propagate_down_single_step(Component_name, Event_data_list, Event_type):-
-	findall(X,environment_component(Environment_name,X),Sub_component_name_list),
-	propagate_single_step(Sub_component_name_list, Event_data_list, Event_type).
+get_reachable_environments([],I,I).
+	
+get_reachable_environments([Rh|Rt],I,O):-
+	get_reachable_environments(Rh,I,O2),
+	get_reachable_environments(Rt,O2,O).
+	
+get_reachable_environments(Component_name,I,O):-
+	not(member(Component_name,I)),
+	write(Component_name),write(','),
+	append(I,[Component_name],I2),
+	findall(X,environment_component(X,Component_name),Environment_name_list),
+	get_reachable_environments(Environment_name_list,I2,O).
+	
+get_reachable_environments(Component_name,I,O):-
+	member(Component_name,I),
+	write(Component_name),nl.
 
 % context variable format - [[testVar1,50],[testVar2,90],[testvar3,10]]
 % environment(Environment_name).
