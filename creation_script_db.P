@@ -112,20 +112,19 @@ get_reachable_environments([Rh|Rt],I,O):-
 get_reachable_environments(Component_name,I,O):-
 	not(member(Component_name,I)),
 	write('Visiting - '),write(Component_name),nl,
-	write('_-> Already Visited - '),write(I),nl,
+	%write('_-> Already Visited - '),write(I),nl,
 	append(I,[Component_name],I2),
 	findall(X,environment_component(X,Component_name),Environment_name_list),
-	write('|-> Parent Environments - '),write(Environment_name_list),nl,
+	%write('|-> Parent Environments - '),write(Environment_name_list),nl,
 	get_reachable_environments(Environment_name_list,I2,I3),
-	write('@@'),write(I3),nl,
+	%write('@@'),write(I3),nl,
 	findall(X,environment_component(Component_name,X),Sub_environment_name_list),
-	write('|-> Sub of '),write(Component_name),write(' - '),write(Sub_environment_name_list),nl,
+	%write('|-> Sub of '),write(Component_name),write(' - '),write(Sub_environment_name_list),nl,
 	get_reachable_environments(Sub_environment_name_list,I3,O).
 	
 get_reachable_environments(Component_name,I,I):-
 	member(Component_name,I),
-	write('Already visited '),write(Component_name),nl,
-	write('|-> * Already Visited - '),write(I),nl.
+	write('Already visited '),write(Component_name),nl.
 
 % context variable format - [[testVar1,50],[testVar2,90],[testvar3,10]]
 % environment(Environment_name).
