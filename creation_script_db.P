@@ -110,6 +110,7 @@ get_reachable_environments([Rh|Rt],I,O):-
 	get_reachable_environments(Rt,O2,O).
 	
 get_reachable_environments(Component_name,I,O):-
+	environment_instance(Component_name),
 	not(member(Component_name,I)),
 	write('Visiting - '),write(Component_name),nl,
 	%write('_-> Already Visited - '),write(I),nl,
@@ -125,6 +126,8 @@ get_reachable_environments(Component_name,I,O):-
 get_reachable_environments(Component_name,I,I):-
 	member(Component_name,I),
 	write('Already visited '),write(Component_name),nl.
+	
+get_reachable_environments(Component_name,I,I).
 
 % context variable format - [[testVar1,50],[testVar2,90],[testvar3,10]]
 % environment(Environment_name).
