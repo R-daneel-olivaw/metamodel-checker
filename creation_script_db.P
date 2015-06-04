@@ -127,13 +127,20 @@ get_reachable_environments(Event_type,Component_name,I,O):-
 	not(environment_instance(Component_name)),
 	component_instance(Component_name),
 	not(member(Component_name,I)),
+	append(I,[Component_name],O),
+	event_subscription_entry(Component_name,Event_type),
 	write('Visiting Component - '),write(Component_name),nl,
-	%write('_-> Already Visited - '),write(I),nl,
-	append(I,[Component_name],O).
+	write('Matching Component Found - '),write(Component_name),nl.
 	
-get_reachable_environments(Event_type,Component_name,I,I):-
-	member(Component_name,I),
-	write('Already visited '),write(Component_name),nl.
+get_reachable_environments(Event_type,Component_name,I,O):-
+	not(environment_instance(Component_name)),
+	component_instance(Component_name),
+	not(member(Component_name,I)),
+	append(I,[Component_name],O),
+	write('Visiting Component - '),write(Component_name),nl,
+	not(event_subscription_entry(Component_name,Event_type)).
+	
+get_reachable_environments(Event_type,Component_name,I,I).
 
 % context variable format - [[testVar1,50],[testVar2,90],[testvar3,10]]
 % environment(Environment_name).
