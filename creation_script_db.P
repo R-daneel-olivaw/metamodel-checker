@@ -100,34 +100,40 @@ simulate_event_component(Component_name,Event_data_list):-
 	!,unify_event(Event_data_list),
 
 	findall(X,environment_component(X,Component_name),Environment_name_list),
-	get_reachable_environments(Environment_name_list,[Component_name],Reachable_environment_list),
+	get_reachable_environments(Event_type,Environment_name_list,[Component_name],Reachable_environment_list),
 	nl,write('Visited List -->'),write(Reachable_environment_list),nl.
 
-get_reachable_environments([],I,I).
+get_reachable_environments(Event_type,[],I,I).
 	
-get_reachable_environments([Rh|Rt],I,O):-
-	get_reachable_environments(Rh,I,O2),
-	get_reachable_environments(Rt,O2,O).
+get_reachable_environments(Event_type,[Rh|Rt],I,O):-
+	get_reachable_environments(Event_type,Rh,I,O2),
+	get_reachable_environments(Event_type,Rt,O2,O).
 	
-get_reachable_environments(Component_name,I,O):-
+get_reachable_environments(Event_type,Component_name,I,O):-
 	environment_instance(Component_name),
 	not(member(Component_name,I)),
-	write('Visiting - '),write(Component_name),nl,
+	write('Visiting Environment - '),write(Component_name),nl,
 	%write('_-> Already Visited - '),write(I),nl,
 	append(I,[Component_name],I2),
 	findall(X,environment_component(X,Component_name),Environment_name_list),
 	%write('|-> Parent Environments - '),write(Environment_name_list),nl,
-	get_reachable_environments(Environment_name_list,I2,I3),
+	get_reachable_environments(Event_type,Environment_name_list,I2,I3),
 	%write('@@'),write(I3),nl,
 	findall(X,environment_component(Component_name,X),Sub_component_name_list),
 	%write('|-> Sub of '),write(Component_name),write(' - '),write(Sub_component_name_list),nl,
-	get_reachable_environments(Sub_component_name_list,I3,O).
+	get_reachable_environments(Event_type,Sub_component_name_list,I3,O).
 	
-get_reachable_environments(Component_name,I,I):-
+get_reachable_environments(Event_type,Component_name,I,O):-
+	not(environment_instance(Component_name)),
+	component_instance(Component_name),
+	not(member(Component_name,I)),
+	write('Visiting Component - '),write(Component_name),nl,
+	%write('_-> Already Visited - '),write(I),nl,
+	append(I,[Component_name],O).
+	
+get_reachable_environments(Event_type,Component_name,I,I):-
 	member(Component_name,I),
 	write('Already visited '),write(Component_name),nl.
-	
-get_reachable_environments(Component_name,I,I).
 
 % context variable format - [[testVar1,50],[testVar2,90],[testvar3,10]]
 % environment(Environment_name).
