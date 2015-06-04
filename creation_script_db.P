@@ -1,8 +1,8 @@
-create_environment(Name, Context_var_list):-
+create_environment(Environment_name, Context_var_list):-
 	%not(environment_instance(Environment_name)),
-	assert(environment_instance(Name)),
-	assert(component_instance(Name)),
-	add_context_variable_list_environment(Name,Context_var_list).	
+	assert(environment_instance(Environment_name)),
+	assert(component_instance(Environment_name)),
+	add_context_variable_list_environment(Environment_name,Context_var_list).	
 
 create_component(Component_name, Context_variable_list):-
 	%not(component_instance(Component_name)),
