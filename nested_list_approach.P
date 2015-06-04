@@ -10,7 +10,7 @@ lower_event([Key,Value|[]],I,O):-
 	not(is_list(Key)),
 	not(is_list(Value)),
 	
-	nl,write(Key),write('-'),write(Value),nl,
+	%nl,write(Key),write('-'),write(Value),nl,
 	Kvp = [Key,Value],
 	append(I,[Kvp],O).
 
@@ -23,22 +23,21 @@ lower_event([Head|Tail],I,O):-
 
 lower_event(Type,I,O):-
 	event_schema([Type|SchemaTail]),
-	write(Type),write('->'),
+	%write(Type),write('->'),
 	append(I,[Type],Os1),
-	write([SchemaTail]),nl,
+	%write([SchemaTail]),nl,
 	lower_event(SchemaTail,[],Os2),
 	append(Os1,[Os2],O).
 
 lower_event(Type,I,O):-
 	not(event_schema([Type|SchemaTail])),
-	write(Type),write('*-'),nl,
+	%write(Type),write('*-'),nl,
 	append(I,[Type],O).
 	
-step_forward([Head|[]]):-
-	write(Head).
+step_forward([Head|[]]).
 	
 step_forward([Head|Tail]):-
-	write(Head),
+	%write(Head),
 	lower_event(Head),
 	step_forward(Tail).
 	
@@ -53,31 +52,31 @@ unify_event(Event):-
 	write('Schema Decided'),nl,
 	!,unify_length(Event,Schema),
 	write('length compared'),nl,
-	!,compare_elements(Event,Schema).
+	!,compare_elements(Event,Schema),
+	write('Schema compared'),nl.
 
 compare_elements([Eh|[]],[Sh|[]]):-
-	write('End'),nl,
+	%write('End'),nl,
 	!,compare_elements(Eh,Sh).
 	
 compare_elements([Eh|Et],[Sh|St]):-
-	write('middle'),nl,
+	%write('middle'),nl,
 	!,compare_elements(Eh,Sh),
 	compare_elements(Et,St).
 	
 compare_elements(Eventelement,integer):-
-	write('comparing-integer => '),write(Eventelement),write('='),write(integer),nl,
+	%write('comparing-integer => '),write(Eventelement),write('='),write(integer),nl,
 	!,integer(Eventelement).
 	
 compare_elements(Eventelement,float):-
-	write('comparing-float => '),write(Eventelement),write('='),write(float),nl,
+	%write('comparing-float => '),write(Eventelement),write('='),write(float),nl,
 	!,float(Eventelement).
 
 compare_elements(Eventelement,string):-
-	write('comparing-string => '),write(Eventelement),write('='),write(string),nl,
+	%write('comparing-string => '),write(Eventelement),write('='),write(string),nl,
 	!,string(Eventelement).
 	
-compare_elements(Sameelement,Sameelement):-
-	write(Sameelement),write('='),write(Sameelement),nl.
+compare_elements(Sameelement,Sameelement).
 	
 unify_length(Event,Schema):-
 	flatten2(Schema,FlatSchema),

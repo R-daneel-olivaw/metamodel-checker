@@ -118,9 +118,9 @@ get_reachable_environments(Component_name,I,O):-
 	%write('|-> Parent Environments - '),write(Environment_name_list),nl,
 	get_reachable_environments(Environment_name_list,I2,I3),
 	%write('@@'),write(I3),nl,
-	findall(X,environment_component(Component_name,X),Sub_environment_name_list),
-	%write('|-> Sub of '),write(Component_name),write(' - '),write(Sub_environment_name_list),nl,
-	get_reachable_environments(Sub_environment_name_list,I3,O).
+	findall(X,environment_component(Component_name,X),Sub_component_name_list),
+	%write('|-> Sub of '),write(Component_name),write(' - '),write(Sub_component_name_list),nl,
+	get_reachable_environments(Sub_component_name_list,I3,O).
 	
 get_reachable_environments(Component_name,I,I):-
 	member(Component_name,I),
