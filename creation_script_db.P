@@ -18,7 +18,7 @@ create_advertisement(Component_name,Event_id):-
 
 	assert(event_advertisement_entry(Component_name,Event_id)).
 	
-create_subscription(Component_name,Event_id):-
+create_subscription(Component_name,Event_id,Context_filter_expression):-
 	component_instance(Component_name),
 	event_schema(Event_id,_),
 	
