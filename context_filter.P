@@ -1,0 +1,33 @@
+% subscribe_event(c1,e1,"equal(3,3),equal(5,5)").
+
+subscribe_event(Component_name,Event_id,Context_filter_expression):-
+	assert(event_subscription_entry(Component_name,Event_id,Context_filter_expression)).
+
+% compute([3,=,3]).
+compute(Context_filter_expression):-
+	compute_expression(Context_filter_expression).
+
+% THERE CAN BE ONLY ONE ELEMENT IN THE ONTEXT FILTER
+compute_expression(Context_filter_expression):-
+	compute_logic_molecule(Context_filter_expression).
+	
+compute_logic_molecule([Term_1,Operator,Term_2|[]]):-
+	compute_logic_molecule(Term_1,R1),
+	compute_logic_molecule(Term_2,R2),
+	
+	compute_logic(R1,Operator,R2).
+
+compute_logic_molecule(Term,Term).
+
+compute_logic(R1,=,R2):-
+	write('Result_1 -> '),write(R1),nl,
+	write('Result_2 -> '),write(R2),nl,
+	R1 == R2.
+
+%compute_logic_molecule(&,Result_1,Result_2,OpResult):-
+
+%compute_logic_molecule(^,Result_1,Result_2,OpResult):-
+
+%compute_logic_molecule(!,Result_1,Result_2,OpResult):-
+	
+	
