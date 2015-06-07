@@ -31,6 +31,18 @@ compute_logic(R1,<,R2):-
 	write(R1),write('<'),write(R2),nl,
 	R1 < R2.
 
+compute_logic(R1,=<,R2):-
+	write(R1),write('=<'),write(R2),nl,
+	R1 =< R2.
+
+compute_logic(R1,>=,R2):-
+	write(R1),write('>='),write(R2),nl,
+	R1 >= R2.
+
+compute_logic(R1,=\=,R2):-
+	write(R1),write('=\='),write(R2),nl,
+	R1 =\= R2.
+
 %compute_logic_molecule(&,Result_1,Result_2,OpResult):-
 
 %compute_logic_molecule(^,Result_1,Result_2,OpResult):-
