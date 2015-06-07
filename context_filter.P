@@ -20,9 +20,16 @@ compute_logic_molecule([Term_1,Operator,Term_2|[]]):-
 compute_logic_molecule(Term,Term).
 
 compute_logic(R1,=,R2):-
-	write('Result_1 -> '),write(R1),nl,
-	write('Result_2 -> '),write(R2),nl,
+	write(R1),write('='),write(R2),nl,
 	R1 == R2.
+	
+compute_logic(R1,>,R2):-
+	write(R1),write('>'),write(R2),nl,
+	R1 > R2.
+	
+compute_logic(R1,<,R2):-
+	write(R1),write('<'),write(R2),nl,
+	R1 < R2.
 
 %compute_logic_molecule(&,Result_1,Result_2,OpResult):-
 
