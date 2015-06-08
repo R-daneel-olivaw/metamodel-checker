@@ -1,0 +1,15 @@
+
+expr(Z) --> num(Z).
+expr(Z) --> num(X), [+], expr(Y), {Z is X+Y}.
+expr(Z) --> num(X), [-], expr(Y), {Z is X-Y}.
+expr(Z) --> num(X), [*], expr(Y), {Z is X*Y}.
+expr(Z) --> num(X), [/], expr(Y), {Z is X/Y}.
+expr(Z) --> num(X), [=], expr(Y), {(X==Y->Z = true;Z = fail)}.
+expr(Z) --> num(X), [>], expr(Y), {(X>Y->Z = true;Z = fail)}.
+expr(Z) --> num(X), [<], expr(Y), {(X<Y->Z = true;Z = fail)}.
+expr(Z) --> num(X), [=<], expr(Y), {(X=<Y->Z = true;Z = fail)}.
+expr(Z) --> num(X), [>=], expr(Y), {(X>=Y->Z = true;Z = fail)}.
+
+num(D) --> [D], {number(D)}.
+
+expr_value(L, V) :- expr(V, L, []).
