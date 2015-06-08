@@ -5,6 +5,7 @@ subscribe_event(Component_name,Event_id,Context_filter_expression):-
 
 % compute([3,=,3],Result).
 % compute([[3,=,3],&,[3,=,3]]).
+% compute([[[5,=,3],or,[5,=,3]],or,[[5,=,5],or,[5,=,3]]]).
 compute(Context_filter_expression):-
 	compute_logic_molecule(Context_filter_expression).
 	 
