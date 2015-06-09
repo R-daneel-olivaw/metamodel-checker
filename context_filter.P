@@ -5,9 +5,9 @@
 
 can_pass_event(Event,Context_filter_expression):-
 	faltten_to_key_value_pairs(Event,[],Flat_kv_pairs),
-	write(Flat_kv_pairs),nl.
+	write(Flat_kv_pairs),nl,
 	%replace_keys_by_values(Context_filter_expression,Flat_kv_pairs,Logic_filled_expression),
-	%compute(Logic_filled_expression).
+	compute(Context_filter_expression,Flat_kv_pairs).	
 
 faltten_to_key_value_pairs([H|[]],I,Flat_kv_pairs):-
 	write('(2)-> '),write(H),write(' '),
@@ -41,17 +41,26 @@ faltten_to_key_value_pairs([Key,Value|[]],I,Flat_kv_pairs):-
 % compute([3,=,3],Result).
 % compute([[3,=,3],&,[3,=,3]]).
 % compute([[[5,=,3],or,[5,=,3]],or,[[5,=,5],or,[5,=,3]]]).
-compute(Context_filter_expression):-
-	compute_logic_molecule(Context_filter_expression).
+compute(Context_filter_expression,Flat_kv_pairs):-
+	write('starting computation'),nl,
+	compute_logic_molecule(Context_filter_expression,Flat_kv_pairs).
 	 
-compute_logic_molecule([Term_1,Operator,Term_2|[]]):-
+compute_logic_molecule([Term_1,Operator,Term_2|[]],Flat_kv_pairs):-
 	write('term1 = '),write(Term_1),nl,
 	write('term2 = '),write(Term_2),nl,
 	
-	(number(Term_1)->R1=Term_1;(compute_logic_molecule(Term_1)->R1 = true;R1 = fail)),
-	(number(Term_2)->R2=Term_2;(compute_logic_molecule(Term_2)->R2 = true;R2 = fail)), 
+	(not(is_list(Term_1))->get_value_for_key(Term_1,Flat_kv_pairs,R1);(compute_logic_molecule(Term_1,Flat_kv_pairs)->R1 = true;R1 = fail)),
+	(number(Term_2)->R2=Term_2;(compute_logic_molecule(Term_2,Flat_kv_pairs)->R2 = true;R2 = fail)), 
 	
 	compute_logic(R1,Operator,R2).
+	
+get_value_for_key(R1,[[Key,Value]|T],V1):-
+	write('looking for '),write(R1),write(' comparing with '),write(Key),nl,
+	(R1==Key->V1 = Value,write('HIT'),nl;get_value_for_key(R1,T,V1)).
+	
+get_value_for_key(R1,[[Key,Value]|[]],V1):-
+	write('looking for '),write(R1),write(' comparing with '),write(Key),nl,
+	(R1==Key->V1 = Value;fail).
 
 compute_logic(R1,=,R2):-
 	write(R1),write('='),write(R2),nl,
