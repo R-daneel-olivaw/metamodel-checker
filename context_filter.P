@@ -1,7 +1,42 @@
-% subscribe_event(c1,e1,"equal(3,3),equal(5,5)").
+% import append/3 from basics.
 
-subscribe_event(Component_name,Event_id,Context_filter_expression):-
-	assert(event_subscription_entry(Component_name,Event_id,Context_filter_expression)).
+% [temperature,[[temp,12],location,[[latitude,9.1],[longitude,9.1],time,[[hh,12],[mm,12],[ss,12]]],[dummy,12]]]
+% can_pass_event([temperature,[[temp,12],location,[[latitude,9.1],[longitude,9.1],time,[[hh,12],[mm,12],[ss,12]]],[dummy,12]]],[[[temp,>,30],or,[temp,<,10]],or,[[hh,>,9],or,[hh,<,19]]]).
+
+can_pass_event(Event,Context_filter_expression):-
+	faltten_to_key_value_pairs(Event,[],Flat_kv_pairs),
+	write(Flat_kv_pairs),nl.
+	%replace_keys_by_values(Context_filter_expression,Flat_kv_pairs,Logic_filled_expression),
+	%compute(Logic_filled_expression).
+
+faltten_to_key_value_pairs([H|[]],I,Flat_kv_pairs):-
+	write('(2)-> '),write(H),write(' '),
+	faltten_to_key_value_pairs(H,I,Flat_kv_pairs).	
+	
+faltten_to_key_value_pairs([H|T],I,Flat_kv_pairs):-
+	write('(1)-> '),write(H),write(' '),
+	faltten_to_key_value_pairs(H,I,O1),
+	faltten_to_key_value_pairs(T,O1,Flat_kv_pairs).
+	
+faltten_to_key_value_pairs([Key,Value|[T]],I,Flat_kv_pairs):-
+	not(is_list(Key)),
+	is_list(Value),
+	write('(4)-> '),write(Key),nl,
+	faltten_to_key_value_pairs(Value,I,O1),
+	faltten_to_key_value_pairs(T,O1,Flat_kv_pairs).
+	
+faltten_to_key_value_pairs([Key,Value|[]],I,Flat_kv_pairs):-
+	not(is_list(Key)),
+	not(is_list(Value)),
+	write('(5)-> '),write(Key),nl,
+	Kvp = [Key,Value],
+	append(I,[Kvp],Flat_kv_pairs).
+	
+faltten_to_key_value_pairs([Key,Value|[]],I,Flat_kv_pairs):-
+	not(is_list(Key)),
+	is_list(Value),
+	write('(6)-> '),write(Key),nl,
+	faltten_to_key_value_pairs(Value,I,Flat_kv_pairs).
 
 % compute([3,=,3],Result).
 % compute([[3,=,3],&,[3,=,3]]).
