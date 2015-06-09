@@ -31,6 +31,6 @@ add_component_to_environment(env1,comp_6).
 add_component_to_environment(env1_2_1,comp_7).
 
 create_advertisement(comp_1,temperature).
-create_subscription(comp_4,temperature,[]).
+create_subscription(comp_4,temperature,[[[temp,>,30],or,[temp,<,10]],and,[[hh,>,9],or,[hh,<,19]]]).
 
 simulate_event_component(comp_1,[temperature,[[temp,12],location,[[latitude,9.1],[longitude,9.1],time,[[hh,12],[mm,12],[ss,12]]],[dummy,12]]]).

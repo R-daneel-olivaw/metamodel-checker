@@ -2,6 +2,7 @@
 
 % [temperature,[[temp,12],location,[[latitude,9.1],[longitude,9.1],time,[[hh,12],[mm,12],[ss,12]]],[dummy,12]]]
 % can_pass_event([temperature,[[temp,12],location,[[latitude,9.1],[longitude,9.1],time,[[hh,12],[mm,12],[ss,12]]],[dummy,12]]],[[[temp,>,30],or,[temp,<,10]],or,[[hh,>,9],or,[hh,<,19]]]).
+% can_pass_event([temperature,[[temp,42],location,[[latitude,9.1],[longitude,9.1],time,[[hh,12],[mm,12],[ss,12]]],[dummy,12]]],[[[temp,>,30],or,[temp,<,10]],and,[[hh,>,9],or,[hh,<,19]]]).
 
 can_pass_event(Event,Context_filter_expression):-
 	faltten_to_key_value_pairs(Event,[],Flat_kv_pairs),
