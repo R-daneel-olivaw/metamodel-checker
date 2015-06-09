@@ -1,0 +1,19 @@
+parse(Exp, Bindings, NBindings)-->
+  parseLeaf(LExp, Bindings, MBindings),
+  parse_cont(Exp, LExp, MBindings, NBindings).
+
+parse_cont(Exp, LExp, Bindings, NBindings)-->
+  parse_op(Op, LExp, RExp),
+  {!},
+  parseLeaf(RExp, Bindings, MBindings),
+  parse_cont(Exp, Op, MBindings, NBindings).
+parse_cont(Exp, Exp, Bindings, Bindings)-->[].
+
+parse_op(and(LExp, RExp), LExp, RExp)--> ['&&'].
+parse_op(or(LExp, RExp), LExp, RExp)--> ['||'].
+
+parseLeaf(Y, Bindings, NBindings)-->
+  [X],
+  {
+    (member(bind(X, Var), Bindings)-> Y-NBindings=Var-Bindings ; Y-NBindings=Var-[bind(X, Var)|Bindings])
+  }.
