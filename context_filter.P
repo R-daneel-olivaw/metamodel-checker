@@ -46,7 +46,7 @@ compute(Context_filter_expression,Flat_kv_pairs):-
 	compute_logic_molecule(Context_filter_expression,Flat_kv_pairs).
 	 
 compute_logic_molecule([Term_1,Operator,Term_2|[]],Flat_kv_pairs):-
-	write('term1 = '),write(Term_1),nl,
+	!,write('term1 = '),write(Term_1),nl,
 	write('term2 = '),write(Term_2),nl,
 	
 	(not(is_list(Term_1))->get_value_for_key(Term_1,Flat_kv_pairs,R1);(compute_logic_molecule(Term_1,Flat_kv_pairs)->R1 = true;R1 = fail)),
@@ -104,8 +104,8 @@ compute_logic(R1,=\=,R2):-
     ;  fail
      ).
 	
-compute_logic(R1,&,R2):-
-	write(R1),write('&'),write(R2),nl,
+compute_logic(R1,and,R2):-
+	write(R1),write(' and '),write(R2),nl,
 	(  R1,R2
     -> true
     ;  fail 
