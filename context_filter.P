@@ -6,49 +6,50 @@
 
 can_pass_event(Event,Context_filter_expression):-
 	faltten_to_key_value_pairs(Event,[],Flat_kv_pairs),
-	write(Flat_kv_pairs),nl,
+	% write(Flat_kv_pairs),nl,
 	%replace_keys_by_values(Context_filter_expression,Flat_kv_pairs,Logic_filled_expression),
 	compute(Context_filter_expression,Flat_kv_pairs).	
 
 faltten_to_key_value_pairs([H|[]],I,Flat_kv_pairs):-
-	write('(2)-> '),write(H),write(' '),
+	% write('(2)-> '),write(H),write(' '),
 	faltten_to_key_value_pairs(H,I,Flat_kv_pairs).	
 	
 faltten_to_key_value_pairs([H|T],I,Flat_kv_pairs):-
-	write('(1)-> '),write(H),write(' '),
+	% write('(1)-> '),write(H),write(' '),
 	faltten_to_key_value_pairs(H,I,O1),
 	faltten_to_key_value_pairs(T,O1,Flat_kv_pairs).
 	
 faltten_to_key_value_pairs([Key,Value|[T]],I,Flat_kv_pairs):-
 	not(is_list(Key)),
 	is_list(Value),
-	write('(4)-> '),write(Key),nl,
+	% write('(4)-> '),write(Key),nl,
 	faltten_to_key_value_pairs(Value,I,O1),
 	faltten_to_key_value_pairs(T,O1,Flat_kv_pairs).
 	
 faltten_to_key_value_pairs([Key,Value|[]],I,Flat_kv_pairs):-
 	not(is_list(Key)),
 	not(is_list(Value)),
-	write('(5)-> '),write(Key),nl,
+	% write('(5)-> '),write(Key),nl,
 	Kvp = [Key,Value],
 	append(I,[Kvp],Flat_kv_pairs).
 	
 faltten_to_key_value_pairs([Key,Value|[]],I,Flat_kv_pairs):-
 	not(is_list(Key)),
 	is_list(Value),
-	write('(6)-> '),write(Key),nl,
+	% write('(6)-> '),write(Key),nl,
 	faltten_to_key_value_pairs(Value,I,Flat_kv_pairs).
 
 % compute([3,=,3],Result).
 % compute([[3,=,3],&,[3,=,3]]).
 % compute([[[5,=,3],or,[5,=,3]],or,[[5,=,5],or,[5,=,3]]]).
 compute(Context_filter_expression,Flat_kv_pairs):-
-	write('starting computation'),nl,
+	write('starting filter computation'),nl,
 	compute_logic_molecule(Context_filter_expression,Flat_kv_pairs).
 	 
 compute_logic_molecule([Term_1,Operator,Term_2|[]],Flat_kv_pairs):-
-	!,write('term1 = '),write(Term_1),nl,
-	write('term2 = '),write(Term_2),nl,
+	!,
+	% write('term1 = '),write(Term_1),nl,
+	% write('term2 = '),write(Term_2),nl,
 	
 	(not(is_list(Term_1))->get_value_for_key(Term_1,Flat_kv_pairs,R1);(compute_logic_molecule(Term_1,Flat_kv_pairs)->R1 = true;R1 = fail)),
 	(number(Term_2)->R2=Term_2;(compute_logic_molecule(Term_2,Flat_kv_pairs)->R2 = true;R2 = fail)), 
@@ -56,64 +57,64 @@ compute_logic_molecule([Term_1,Operator,Term_2|[]],Flat_kv_pairs):-
 	compute_logic(R1,Operator,R2).
 	
 get_value_for_key(R1,[[Key,Value]|T],V1):-
-	write('looking for '),write(R1),write(' comparing with '),write(Key),nl,
-	(R1==Key->V1 = Value,write('HIT'),nl;get_value_for_key(R1,T,V1)).
+	% write('looking for '),write(R1),write(' comparing with '),write(Key),nl,
+	(R1==Key->V1 = Value;get_value_for_key(R1,T,V1)).
 	
 get_value_for_key(R1,[[Key,Value]|[]],V1):-
-	write('looking for '),write(R1),write(' comparing with '),write(Key),nl,
+	% write('looking for '),write(R1),write(' comparing with '),write(Key),nl,
 	(R1==Key->V1 = Value;fail).
 
 compute_logic(R1,=,R2):-
-	write(R1),write('='),write(R2),nl,
+	% write(R1),write('='),write(R2),nl,
 	(  R1 == R2
     -> true
     ;  fail
      ).
 	
 compute_logic(R1,>,R2):-
-	write(R1),write('>'),write(R2),nl,
+	% write(R1),write('>'),write(R2),nl,
 	(  R1 > R2
     -> true
     ;  fail
      ).
 	
 compute_logic(R1,<,R2):-
-	write(R1),write('<'),write(R2),nl,
+	% write(R1),write('<'),write(R2),nl,
 	(  R1 < R2
     -> true
     ;  fail
      ).
 
 compute_logic(R1,=<,R2):-
-	write(R1),write('=<'),write(R2),nl,
+	% write(R1),write('=<'),write(R2),nl,
 	(  R1 =< R2
     -> true
     ;  fail
      ).
 
 compute_logic(R1,>=,R2):-
-	write(R1),write('>='),write(R2),nl,
+	% write(R1),write('>='),write(R2),nl,
 	(  R1 >= R2
     -> true
     ;  fail
      ).
 
 compute_logic(R1,=\=,R2):-
-	write(R1),write('=\='),write(R2),nl,
+	% write(R1),write('=\='),write(R2),nl,
 	(  R1 =\= R2
     -> true
     ;  fail
      ).
 	
 compute_logic(R1,and,R2):-
-	write(R1),write(' and '),write(R2),nl,
+	% write(R1),write(' and '),write(R2),nl,
 	(  R1,R2
     -> true
     ;  fail 
      ).
 	
 compute_logic(R1,or,R2):-
-	write(R1),write(' or '),write(R2),nl,
+	% write(R1),write(' or '),write(R2),nl,
 	(  R1;R2
     -> true
     ;  fail 
