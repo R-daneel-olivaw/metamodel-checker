@@ -20,11 +20,11 @@ create_advertisement(Component_name,Environment_name,Event_id):-
 
 	assert(event_advertisement_entry(Component_name,Environment_name,Event_id)).
 	
-create_subscription(Component_name,Event_id,Context_filter_expression):-
+create_subscription(Component_name,Environment_name,Event_id,Context_filter_expression):-
 	component_instance(Component_name),
 	event_schema(Event_id,_),
 	
-	assert(event_subscription_entry(Component_name,Event_id,Context_filter_expression)).
+	assert(event_subscription_entry(Component_name,Environment_name,Event_id,Context_filter_expression)).
 
 add_component_context_variable_list(Component_name,[]).
 
@@ -76,10 +76,10 @@ environment_event_subscription(Environment_name,Event_id):-
 	event_schema(Event_id,_),
 	
 	environment_component(Environment_name,Component_name),
-	event_subscription_entry(Component_name,Event_id,Context_filter_expression).
+	event_subscription_entry(Component_name,Environment_name,Event_id,Context_filter_expression).
 
 component_event_subscription(Component_name,Event_id):-
-	event_subscription_entry(Component_name,Event_id,Context_filter_expression).
+	event_subscription_entry(Component_name,Environment_name,Event_id,Context_filter_expression).
 
 component_event_subscription(Component_name,Event_id):-
 	environment_component(Component_name,Sub_component_name),
@@ -115,14 +115,14 @@ get_reachable_environments(Event_type,Event_data_list,Component_name,I,O):-
 	environment_instance(Component_name),
 	not(member(Component_name,I)),
 	write('Visiting Environment - '),write(Component_name),nl,
-	%write('_-> Already Visited - '),write(I),nl,
+	% write('_-> Already Visited - '),write(I),nl,
 	append(I,[Component_name],I2),
 	findall(X,environment_component(X,Component_name),Environment_name_list),
-	%write('|-> Parent Environments - '),write(Environment_name_list),nl,
+	% write('|-> Parent Environments - '),write(Environment_name_list),nl,
 	get_reachable_environments(Event_type,Event_data_list,Environment_name_list,I2,I3),
-	%write('@@'),write(I3),nl,
-	findall(X,environment_component(Component_name,X),Sub_component_name_list),
-	%write('|-> Sub of '),write(Component_name),write(' - '),write(Sub_component_name_list),nl,
+	% write('@@'),write(I3),nl,
+	findall(X,environment_component_event_subscription(Component_name,X,Event_type),Sub_component_name_list),
+	% write('|-> Sub of '),write(Component_name),write(' - '),write(Sub_component_name_list),nl,
 	get_reachable_environments(Event_type,Event_data_list,Sub_component_name_list,I3,O).
 	
 get_reachable_environments(Event_type,Event_data_list,Component_name,I,O):-
@@ -130,7 +130,7 @@ get_reachable_environments(Event_type,Event_data_list,Component_name,I,O):-
 	component_instance(Component_name),
 	not(member(Component_name,I)),
 	append(I,[Component_name],O),
-	event_subscription_entry(Component_name,Event_type,Context_filter_expression),
+	event_subscription_entry(Component_name,Environment_name,Event_type,Context_filter_expression),
 	write('##Matching## Component Found - '),write(Component_name),nl,
 	can_pass_event(Event_data_list,Context_filter_expression),
 	write('**Passed** Component Context Filter - '),write(Component_name),nl,
@@ -142,9 +142,17 @@ get_reachable_environments(Event_type,Event_data_list,Component_name,I,O):-
 	not(member(Component_name,I)),
 	append(I,[Component_name],O),
 	write('Visiting Component - '),write(Component_name),nl,
-	not(event_subscription_entry(Component_name,Event_type,Context_filter_expression)).
+	not(event_subscription_entry(Component_name,Environment_name,Event_type,Context_filter_expression)).
 	
 get_reachable_environments(Event_type,Event_data_list,Component_name,I,I).
+
+environment_component_event_subscription(Environment_name,Component_name,Event_id):-
+	environment_component(Environment_name,Component_name),
+	event_subscription_entry(Component_name,Environment_name,Event_id,_).
+
+environment_component_event_subscription(Environment_name,Component_name,Event_id):-
+	environment_component(Environment_name,Component_name),
+	environment_instance(Component_name).
 
 % context variable format - [[testVar1,50],[testVar2,90],[testvar3,10]]
 % environment(Environment_name).
