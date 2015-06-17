@@ -48,6 +48,7 @@ compute(Context_filter_expression,Flat_kv_pairs):-
 	 
 compute_logic_molecule([Term_1,Operator,Term_2|[]],Flat_kv_pairs):-
 	!,
+	member(Operator,[>,<,=<,>=,and,or,=\=,=]),
 	% write('term1 = '),write(Term_1),nl,
 	% write('term2 = '),write(Term_2),nl,
 	
