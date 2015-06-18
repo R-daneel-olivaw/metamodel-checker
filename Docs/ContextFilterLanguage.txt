@@ -1,0 +1,21 @@
+[[[temp,>,30],or,[temp,<,10]],and,[[hh,>,9],and,[hh,<,19]]]
+
+[
+	[
+		[temp,>,30]
+		,or,
+		[temp,<,10]
+	]
+	,and,
+	[
+		[hh,>,9]
+		,and,
+		[hh,<,19]
+	]
+]
+
+-ve result for the following event,
+[temperature,[[temp,12],location,[[latitude,9.1],[longitude,9.1],time,[[hh,12],[mm,12],[ss,12]]],[dummy,12]]]
+
++ve result for the following event,
+[temperature,[[temp,42],location,[[latitude,9.1],[longitude,9.1],time,[[hh,12],[mm,12],[ss,12]]],[dummy,12]]]
