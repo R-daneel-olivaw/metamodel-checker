@@ -153,6 +153,30 @@ environment_component_event_subscription(Environment_name,Component_name,Event_i
 environment_component_event_subscription(Environment_name,Component_name,Event_id):-
 	environment_component(Environment_name,Component_name),
 	environment_instance(Component_name).
+	
+get_context_variables(Environment_name,Component_name,Environment_context_variable):-
+	environment_instance(Environment_name),
+	ancestor(Environment_name,Component_name),
+	component_context_variable(Component_name,Environment_context_variable).
+
+get_context_variables(Environment_name,Component_name,Environment_context_variable):-
+	component_context_variable(Environment_name,Environment_context_variable).
+
+get_context_variables(Environment_name,Component_name,Environment_context_variable):-
+	environment_instance(Environment_name),
+	ancestor(Environment_name,Sub_environment_name),
+	environment_context_variable(Sub_environment_name,Environment_context_variable).
+
+get_context_variables(Environment_name,Component_name,Environment_context_variable):-
+	Component_name = Environment_name,
+	environment_context_variable(Environment_name,Environment_context_variable).
+
+ancestor(Environment_name,Component_name):-
+	environment_component(Environment_name,Component_name).
+	
+ancestor(Environment_name,Component_name):-
+	environment_component(Sub_environment_name,Component_name),
+	ancestor(Environment_name,Sub_environment_name).
 
 % context variable format - [[testVar1,50],[testVar2,90],[testvar3,10]]
 % environment(Environment_name).
