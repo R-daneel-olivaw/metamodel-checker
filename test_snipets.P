@@ -35,7 +35,7 @@ add_component_to_environment(env1,comp_6).
 add_component_to_environment(env1_2_1,comp_7).
 
 % 2. PUBLISHER COMPONENT CREATES AN ADVERTISEMENT FOR THE TEMPRATURE EVENT
-create_advertisement(comp_1,env1_1,temperature,[[a,<,8]]).
+create_advertisement(comp_1,env1_1,temperature,[c,<,8]).
 
 % 4. SUBSCRIBER COMPONENT CREATES SUBSCRIPTION FOR TEMPRATURE EVENT
 create_subscription(comp_4,env1_2,temperature,[[[temp,>,30],or,[temp,<,10]],and,[[hh,>,9],and,[hh,<,19]]]).

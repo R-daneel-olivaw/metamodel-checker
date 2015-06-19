@@ -97,9 +97,18 @@ get_component_list_environment(Environment_name,Component_name_list):-
 
 simulate_event_component(Component_name,Environment_name,Event_id,Event_data_list):-
 	component_instance(Component_name),
+	
 	% TYPE FILTER START
 	event_advertisement_entry(Component_name,Environment_name,Event_id,Context_filter_expression),
 	% TYPE FILTER END
+	
+	% CONTEX VARIABLE START
+	findall(X,get_context_variables(Environment_name,_,X),Environment_context_variable_list),
+	write('Context filter expression - '),write(Context_filter_expression),nl,
+	write('Context filter data'),write(Environment_context_variable_list),nl,
+	compute(Context_filter_expression,Environment_context_variable_list),
+	write('Context filter passed'),nl,
+	% CONTEX VARIABLE END
 	
 	[Event_type|Et] = Event_data_list,
 	!,unify_event(Event_data_list),
