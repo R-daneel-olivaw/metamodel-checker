@@ -116,7 +116,8 @@ simulate_event_component(Component_name,Environment_name,Event_id,Event_data_lis
 	% CONTEX FILTER END
 	
 	[Event_type|Et] = Event_data_list,
-	!,unify_event(Event_data_list),
+	event_schema(Event_type,Event_schema),
+	!,unify_event(Event_data_list,Event_schema),
 
 	!,trigger_component_event_response(Component_name,Event_type,Event_data_list),
 	
@@ -130,11 +131,12 @@ simulate_event_environment(Environment_name,Event_id,Event_data_list):-
 	% TYPE FILTER END
 	
 	[Event_type|Et] = Event_data_list,
-	!,unify_event(Event_data_list),
+	event_schema(Event_id,Event_schema),
+	!,unify_event(Event_data_list,Event_schema),
 
-	!,trigger_component_event_response(Environment_name,Event_type,Event_data_list),
+	!,trigger_component_event_response(Environment_name,Event_id,Event_data_list),
 	
-	get_reachable_environments(Event_type,Event_data_list,[Environment_name],Environment_name,[],Reachable_environment_list),
+	get_reachable_environments(Event_id,Event_data_list,[Environment_name],Environment_name,[],Reachable_environment_list),
 	nl,write('Visited List -->'),write(Reachable_environment_list),nl.
 
 get_reachable_environments(Event_type,Event_data_list,[],Calling_component_name,I,I).

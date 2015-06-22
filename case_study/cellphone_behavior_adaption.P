@@ -16,3 +16,5 @@ create_advertisement(calendar_application,users_phone,meetingStartedEvent,[1=1])
 create_advertisement(users_phone,locationEvent,[1=1]).
 create_advertisement(users_phone,incomingCallEvent,[1=1]).
 
+simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,1.0],[longitude,1.0]]]).
+simulate_event_environment(users_phone,incomingCallEvent,[incomingCallEvent,[[callerName,Akshat],[callingNumber,9818377935]]]).
