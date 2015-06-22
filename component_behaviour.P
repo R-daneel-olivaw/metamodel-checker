@@ -13,10 +13,10 @@ event_response_context_variable_change(Component_name,Event_id,Context_variable_
 	write('Setting new value for context variable '),write(Context_variable_name),nl,
 	assert(component_context_variable(Component_name,[Context_variable_name,Context_variable_new_value])).
 	
-trigger_component_response(Component_name,Event_id,Event_data):-
+trigger_component_event_response(Component_name,Event_id,Event_data):-
 	response_context_variable_change(Component_name,Event_id,Context_variable_name,Context_variable_new_value),
 	write('Found event response for '),write(Component_name),write(' for event type '),write(Event_id),nl,
 	event_response_context_variable_change(Component_name,Event_id,Context_variable_name,Context_variable_new_value,Event_data).
 	
-trigger_component_response(Component_name,Event_id,Event_data):-
+trigger_component_event_response(Component_name,Event_id,Event_data):-
 	write('Did not find event response for '),write(Component_name),write(' for event type '),write(Event_id),nl.
