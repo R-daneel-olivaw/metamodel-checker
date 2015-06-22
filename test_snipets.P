@@ -12,7 +12,7 @@ create_environment(env1_2_1,[[v,2]]).
 add_component_to_environment(env1,env1_1).
 add_component_to_environment(env1,env1_2).
 
-create_component(comp_1,[[c,2]]).
+create_component(comp_1,[[w,2]]).
 create_component(comp_2,[]).
 create_component(comp_3,[]).
 create_component(comp_4,[[c,4]]).
@@ -35,11 +35,14 @@ add_component_to_environment(env1,comp_6).
 add_component_to_environment(env1_2_1,comp_7).
 
 % 2. PUBLISHER COMPONENT CREATES AN ADVERTISEMENT FOR THE TEMPRATURE EVENT
-create_advertisement(comp_1,env1_1,temperature,[c,<,8]).
+create_advertisement(comp_1,env1_1,temperature,[w,<,8]).
 
 % 4. SUBSCRIBER COMPONENT CREATES SUBSCRIPTION FOR TEMPRATURE EVENT
 create_subscription(comp_4,env1_2,temperature,[[[temp,>,30],or,[temp,<,10]],and,[[hh,>,9],and,[hh,<,19]]],[c,>,3]).
-create_subscription(comp_2,env1_1,temperature,[[[temp,>,30],or,[temp,<,10]],and,[[hh,>,9],and,[hh,<,20]]],[[c,>,1],and,[c,=\=,4]]).
+create_subscription(comp_2,env1_1,temperature,[[[temp,>,30],or,[temp,<,10]],and,[[hh,>,9],and,[hh,<,20]]],[[c,>,1],and,[w,=\=,4]]).
+
+event_context_variable_change(comp_4,temperature,c,99).
+event_context_variable_change(comp_2,temperature,w,7).
 
 % 5. PUBLISHER PUBLISHES THE EVENT
 simulate_event_component(comp_1,env1_1,temperature,[temperature,[[temp,12],location,[[latitude,9.1],[longitude,9.1],time,[[hh,12],[mm,12],[ss,12]]],[dummy,12]]]).

@@ -160,6 +160,8 @@ get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_com
 	write('**Passed** Component Content Filter - '),write(Component_name),nl,
 	% CONTENT FILTER END
 	
+	trigger_component_response(Component_name,Event_type,Event_data_list).
+	
 	write('Visiting Component - '),write(Component_name),nl.
 	
 get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,O):-
