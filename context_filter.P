@@ -45,6 +45,8 @@ faltten_to_key_value_pairs([Key,Value|[]],I,Flat_kv_pairs):-
 compute(Context_filter_expression,Flat_kv_pairs):-
 	write('starting filter computation'),nl,
 	compute_logic_molecule(Context_filter_expression,Flat_kv_pairs).
+
+compute([],_).
 	 
 compute_logic_molecule([Term_1,Operator,Term_2|[]],Flat_kv_pairs):-
 	!,
