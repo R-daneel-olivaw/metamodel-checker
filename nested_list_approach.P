@@ -77,7 +77,7 @@ compare_elements(Eventelement,float):-
 
 compare_elements(Eventelement,string):-
 	%write('comparing-string => '),write(Eventelement),write('='),write(string),nl,
-	!,string(Eventelement).
+	!,atom(Eventelement).
 	
 compare_elements(Sameelement,Sameelement).
 	
