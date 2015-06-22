@@ -20,4 +20,4 @@ create_subscription(users_phone,users_phone,incomingCallEvent,[],[]).
 
 simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,1.0],[longitude,1.0]]]).
 simulate_event_environment(users_phone,incomingCallEvent,[incomingCallEvent,[[callerName,akshat],[callingNumber,a99]]]).
-simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,22062015],[startTime,1345],[duration,1.0]]]).
+simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1.0]]]).
