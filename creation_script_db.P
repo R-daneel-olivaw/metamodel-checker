@@ -101,18 +101,31 @@ simulate_event_component(Component_name,Environment_name,Event_id,Event_data_lis
 	event_advertisement_entry(Component_name,Environment_name,Event_id,Context_filter_expression),
 	% TYPE FILTER END
 	
-	% CONTEX VARIABLE START
+	% CONTEX FILTER START
 	findall(X,get_context_variables(Environment_name,_,X),Environment_context_variable_list),
 	write('Context filter expression - '),write(Context_filter_expression),nl,
 	write('Context filter data'),write(Environment_context_variable_list),nl,
 	compute(Context_filter_expression,Environment_context_variable_list),
 	write('Context filter passed'),nl,
-	% CONTEX VARIABLE END
+	% CONTEX FILTER END
 	
 	[Event_type|Et] = Event_data_list,
 	!,unify_event(Event_data_list),
 
+	!,trigger_component_event_response(Component_name,Event_type,Event_data_list),
+	
 	get_reachable_environments(Event_type,Event_data_list,[Environment_name],Component_name,[Component_name],Reachable_environment_list),
+	nl,write('Visited List -->'),write(Reachable_environment_list),nl.
+	
+simulate_event_environment(Environment_name,Event_id,Event_data_list):-
+	environment_instance(Environment_name),
+	
+	[Event_type|Et] = Event_data_list,
+	!,unify_event(Event_data_list),
+
+	!,trigger_component_event_response(Environment_name,Event_type,Event_data_list),
+	
+	get_reachable_environments(Event_type,Event_data_list,[Environment_name],Environment_name,[],Reachable_environment_list),
 	nl,write('Visited List -->'),write(Reachable_environment_list),nl.
 
 get_reachable_environments(Event_type,Event_data_list,[],Calling_component_name,I,I).

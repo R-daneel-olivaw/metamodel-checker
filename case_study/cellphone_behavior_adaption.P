@@ -1,0 +1,20 @@
+import append/3 from basics.
+import length/2 from basics.
+import member/2 from basics.
+
+create_environment(phone_network,[]).
+
+create_environment(users_phone,[]).
+
+create_component(calendar_application,[[InBusinessMeetingContextElement,false],[[DistanceToWorkContextElement,0],[MeetingInProgressContextElement,false]]]).
+
+add_component_to_environment(users_phone,calendar_application).
+
+add_component_to_environment(phone_network,users_phone).
+
+create_event_schema(MeetingStartedEvent,[MeetingStartedEvent,[[MeetingName,string],[Date,string],[StartTime,string],[Duration,float]]]).
+create_event_schema(LocationEvent,[LocationEvent,[[Latitude,float],[Longitude,float]]]).
+create_event_schema(IncomingCallEvent,[IncomingCallEvent,[[CallerName,string],[CallingNumber,string]]]).
+
+create_advertisement(calendar_application,users_phone,MeetingStartedEvent,[1=1]).
+
