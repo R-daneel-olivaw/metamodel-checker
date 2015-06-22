@@ -20,6 +20,12 @@ create_advertisement(Component_name,Environment_name,Event_id,Context_filter_exp
 
 	assert(event_advertisement_entry(Component_name,Environment_name,Event_id,Context_filter_expression)).
 	
+create_advertisement(Environment_name,Event_id,Context_filter_expression):-
+	environment_instance(Environment_name),
+	event_schema(Event_id,_),
+
+	assert(event_advertisement_entry(Environment_name,Environment_name,Event_id,Context_filter_expression)).
+	
 create_subscription(Component_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression):-
 	component_instance(Component_name),
 	event_schema(Event_id,_),
@@ -119,6 +125,9 @@ simulate_event_component(Component_name,Environment_name,Event_id,Event_data_lis
 	
 simulate_event_environment(Environment_name,Event_id,Event_data_list):-
 	environment_instance(Environment_name),
+	% TYPE FILTER START
+	event_advertisement_entry(Environment_name,Environment_name,Event_id,Context_filter_expression),
+	% TYPE FILTER END
 	
 	[Event_type|Et] = Event_data_list,
 	!,unify_event(Event_data_list),
