@@ -14,4 +14,5 @@ create_event_schema(incomingCallEvent,[incomingCallEvent,[[callerName,string],[c
 
 create_advertisement(calendar_application,users_phone,meetingStartedEvent,[1=1]).
 create_advertisement(users_phone,locationEvent,[1=1]).
+create_advertisement(users_phone,incomingCallEvent,[1=1]).
 

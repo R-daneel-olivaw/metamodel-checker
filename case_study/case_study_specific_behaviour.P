@@ -1,2 +1,10 @@
 trigger_component_event_response(users_phone,locationEvent,Event_data):-
 	write('users_phone reacting to location event'),nl.
+	
+trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
+	write('users_phone reacting to incoming call event'),nl.
+	
+trigger_component_event_response(calendar_application,meetingStartedEvent,Event_data):-
+	write('calendar_application reacting to meeting started event'),nl.
+	
+trigger_component_event_response(Component_name,Event_id,Event_data).
