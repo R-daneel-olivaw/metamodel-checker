@@ -29,7 +29,7 @@ trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 	member(Caller_name,[akshat,anugrah]),
 	
 	write('users_phone reacting to incoming call event'),nl,
-	write('PREFERRED CALL - LET IT THROUGH'),nl.
+	write('BusinessMeetingPreferredCallerProfile - LET IT THROUGH'),nl.
 	
 trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 	% Meeting has started
@@ -38,12 +38,12 @@ trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 	component_context_variable(_,[distanceToWorkContextElement,0.0]),
 
 	write('users_phone reacting to incoming call event'),nl,
-	write('NON-PREFERRED CALL - BLOCK CALL'),nl.
+	write('BusinessMeetingProfile - BLOCK CALL'),nl.
 	
 trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 
 	write('users_phone reacting to incoming call event'),nl,
-	write('HANDLE AS NORMAL CALL'),nl.
+	write('NotInMeetingProfile - NORMAL CALL'),nl.
 % INCOMING CALL EVENT END
 	
 trigger_component_event_response(Component_name,Event_id,Event_data).
