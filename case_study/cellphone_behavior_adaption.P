@@ -4,7 +4,7 @@ import member/2 from basics.
 
 create_environment(users_phone,[[name,phone]]).
 
-create_component(calendar_application,[[inBusinessMeetingContextElement,false],[[distanceToWorkContextElement,0],[meetingInProgressContextElement,false]]]).
+create_component(calendar_application,[[inBusinessMeetingContextElement,false],[distanceToWorkContextElement,0],[meetingInProgressContextElement,false]]).
 
 add_component_to_environment(users_phone,calendar_application).
 
