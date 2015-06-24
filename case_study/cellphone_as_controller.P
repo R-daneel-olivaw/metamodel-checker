@@ -22,3 +22,14 @@ create_event_schema(cellphoneSubsequentLocationEvent,[cellphoneSubsequentLocatio
 create_event_schema(triggerHomeActionEvent,[triggerHomeActionEvent,[[Action,string],[Value,string]]]).
 create_event_schema(notifyUserOfHomeActionEvent,[notifyUserOfHomeActionEvent,[[Action,string],[Value,string],[Result,string]]]).
 create_event_schema(resultOfHomeActionEvent,[resultOfHomeActionEvent,[[Action,string],[Value,string],[Result,string]]]).
+
+create_advertisement(alarm_application,user_cellphone,alarmGoesOffEvent,[]).
+create_advertisement(user_cellphone,cellphoneLocationEvent,[]).
+create_advertisement(user_cellphone,cellphoneTimeChangedEvent,[]).
+create_advertisement(true_remote_control_application,remoteStarterActionEvent,[]).
+create_advertisement(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[]).
+create_advertisement(car_computer_control_unit,resultOfRemoteStarterActionEvent,[]).
+create_advertisement(user_cellphone,cellphoneSubsequentLocationEvent,[]).
+create_advertisement(true_remote_control_application,triggerHomeActionEvent,[]).
+create_advertisement(true_remote_control_application,notifyUserOfHomeActionEvent,[]).
+create_advertisement(smart_home_controller_unit,resultOfHomeActionEvent,[]).
