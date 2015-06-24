@@ -33,3 +33,13 @@ create_advertisement(user_cellphone,cellphoneSubsequentLocationEvent,[]).
 create_advertisement(true_remote_control_application,triggerHomeActionEvent,[]).
 create_advertisement(true_remote_control_application,notifyUserOfHomeActionEvent,[]).
 create_advertisement(smart_home_controller_unit,resultOfHomeActionEvent,[]).
+
+create_subscription(user_cellphone,user_cellphone,notifyUserOfCarEngineStartedEvent,[],[]).
+create_subscription(true_remote_control_application,true_remote_control_application,alarmGoesOffEvent,[],[]).
+create_subscription(true_remote_control_application,true_remote_control_application,cellphoneLocationEvent,[],[]).
+create_subscription(true_remote_control_application,true_remote_control_application,cellphoneTimeChangedEvent,[],[]).
+create_subscription(true_remote_control_application,true_remote_control_application,resultOfRemoteStarterActionEvent,[],[]).
+create_subscription(user_cellphone,user_cellphone,notifyUserOfCarEngineStartedEvent,[],[]).
+create_subscription(true_remote_control_application,true_remote_control_application,resultOfRemoteStarterActionEvent,[],[]).
+create_subscription(true_remote_control_application,true_remote_control_application,cellphoneSubsequentLocationEvent,[],[]).
+create_subscription(smart_home_controller_unit,smart_home_controller_unit,triggerHomeActionEvent,[],[]).
