@@ -1,0 +1,13 @@
+import append/3 from basics.
+import length/2 from basics.
+import member/2 from basics.
+
+create_environment(true_remote_control_application,[]).
+create_environment(user_cellphone,[]).
+create_environment(smart_home_controller_unit,[]).
+create_environment(car_computer_control_unit,[]).
+
+create_component(alarm_application,[]).
+create_component(home_security_system,[]).
+create_component(home_climate_control,[]).
+create_component(car_engine_starter,[]).
