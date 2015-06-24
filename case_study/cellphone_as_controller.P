@@ -2,7 +2,7 @@ import append/3 from basics.
 import length/2 from basics.
 import member/2 from basics.
 
-create_environment(true_remote_control_application,[]).
+create_environment(true_remote_control_application,[[activationTimeHasElapsedContextElement,false],[cellphoneAtHomeContextElelement,false],[mustStartCarEngineContextElement,false],[mustTriggerHomeActionsContextElement,false]]).
 create_environment(user_cellphone,[]).
 create_environment(smart_home_controller_unit,[]).
 create_environment(car_computer_control_unit,[]).
@@ -11,3 +11,14 @@ create_component(alarm_application,[]).
 create_component(home_security_system,[]).
 create_component(home_climate_control,[]).
 create_component(car_engine_starter,[]).
+
+create_event_schema(alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,string]]]).
+create_event_schema(cellphoneLocationEvent,[cellphoneLocationEvent,[[latitude,float],[longitude,float]]]).
+create_event_schema(cellphoneTimeChangedEvent,[cellphoneTimeChangedEvent,[[dateTime,string]]]).
+create_event_schema(remoteStarterActionEvent,[remoteStarterActionEvent,[[Action,string]]]).
+create_event_schema(notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[Result,string]]]).
+create_event_schema(resultOfRemoteStarterActionEvent,[resultOfRemoteStarterActionEvent,[[Action,string],[Result,string]]]).
+create_event_schema(cellphoneSubsequentLocationEvent,[cellphoneSubsequentLocationEvent,[[Latitude0,float],[Latitude1,float],[Latitude2,float],[Longitude0,float],[Longitude1,float],[Longitude2,float]]]).
+create_event_schema(triggerHomeActionEvent,[triggerHomeActionEvent,[[Action,string],[Value,string]]]).
+create_event_schema(notifyUserOfHomeActionEvent,[notifyUserOfHomeActionEvent,[[Action,string],[Value,string],[Result,string]]]).
+create_event_schema(resultOfHomeActionEvent,[resultOfHomeActionEvent,[[Action,string],[Value,string],[Result,string]]]).
