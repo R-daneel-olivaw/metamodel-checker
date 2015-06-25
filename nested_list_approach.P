@@ -45,11 +45,14 @@ top_event(Type,O):-
 	write('Resolving Schema'),nl,
 	lower_event(Type,[],O).
 	
-unify_event(Event):-
+unify_event(Event,Schema):-
 	write('Start'),nl,
 	[Eh|Et] = Event,
-	top_event(Eh,Schema),
-	write('Schema Decided'),nl,
+	
+	% For computing the schema internally, this is no longer needed but can be a helpful utility.
+	% top_event(Eh,Schema),
+	% write('Schema Decided'),nl,
+	
 	!,unify_length(Event,Schema),
 	write('length compared'),nl,
 	!,compare_elements(Event,Schema),
@@ -74,7 +77,7 @@ compare_elements(Eventelement,float):-
 
 compare_elements(Eventelement,string):-
 	%write('comparing-string => '),write(Eventelement),write('='),write(string),nl,
-	!,string(Eventelement).
+	!,atom(Eventelement).
 	
 compare_elements(Sameelement,Sameelement).
 	
