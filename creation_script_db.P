@@ -139,26 +139,26 @@ simulate_event_environment(Environment_name,Event_id,Event_data_list):-
 	get_reachable_environments(Event_id,Event_data_list,[Environment_name],Environment_name,[],Reachable_environment_list),
 	nl,write('Visited List -->'),write(Reachable_environment_list),nl.
 	
-	process_event_environment(Environment_name,Event_id,Event_data_list):-
-		event_subscription_entry(Environment_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression),	
-		write('processing event '),write(Event_id),write(' for environment '),write(Environment_name),nl,
-		
-		% CONTEX VARIABLE START
-		findall(X,get_context_variables(Environment_name,_,X),Environment_context_variable_list),
-		write('Context filter expression - '),write(Context_filter_expression),nl,
-		write('Context filter data'),write(Environment_context_variable_list),nl,
-		!,compute(Context_filter_expression,Environment_context_variable_list),
-		write('Context filter passed'),nl,
-		% CONTEX VARIABLE END
-		
-		% CONTENT FILTER START
-		!,can_pass_event(Event_data_list,Content_filter_expression),
-		write('**Passed** Component Content Filter - '),write(Environment_name),nl,
-		% CONTENT FILTER END
-		
-		trigger_component_event_response(Environment_name,Event_id,Event_data_list).
-		
-	process_event_environment(Environment_name,Event_id,Event_data_list).
+process_event_environment(Environment_name,Event_id,Event_data_list):-
+	event_subscription_entry(Environment_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression),	
+	write('processing event '),write(Event_id),write(' for environment '),write(Environment_name),nl,
+	
+	% CONTEX VARIABLE START
+	findall(X,get_context_variables(Environment_name,_,X),Environment_context_variable_list),
+	write('Context filter expression - '),write(Context_filter_expression),nl,
+	write('Context filter data'),write(Environment_context_variable_list),nl,
+	!,compute(Context_filter_expression,Environment_context_variable_list),
+	write('Context filter passed'),nl,
+	% CONTEX VARIABLE END
+	
+	% CONTENT FILTER START
+	!,can_pass_event(Event_data_list,Content_filter_expression),
+	write('**Passed** Component Content Filter - '),write(Environment_name),nl,
+	% CONTENT FILTER END
+	
+	trigger_component_event_response(Environment_name,Event_id,Event_data_list).
+	
+process_event_environment(Environment_name,Event_id,Event_data_list).
 
 get_reachable_environments(Event_type,Event_data_list,[],Calling_component_name,I,I).
 	
@@ -172,6 +172,9 @@ get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_com
 	write('Visiting Environment - '),write(Component_name),nl,
 	% write('_-> Already Visited - '),write(I),nl,
 	append(I,[Component_name],I2),
+	
+	!,process_event_environment(Component_name,Event_type,Event_data_list),
+	
 	findall(X,environment_component(X,Component_name),Environment_name_list),
 	% write('|-> Parent Environments - '),write(Environment_name_list),nl,
 	get_reachable_environments(Event_type,Event_data_list,Environment_name_list,Component_name,I2,I3),
