@@ -13,12 +13,12 @@ trigger_component_event_response(users_phone,locationEvent,Event_data):-
 	
 trigger_component_event_response(calendar_application,meetingStartedEvent,Event_data):-
 	write('calendar_application reacting to meeting started event'),nl,
-	change_context_variable_value(meetingInProgressContextElement,true).
+	change_context_variable_value(meetingInProgressContextElement,1).
 
 % INCOMING CALL EVENT START
 trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 	% Meeting has started
-	component_context_variable(_,[meetingInProgressContextElement,true]),
+	component_context_variable(_,[meetingInProgressContextElement,1]),
 	% The user is at work
 	component_context_variable(_,[distanceToWorkContextElement,0.0]),
 	
@@ -28,15 +28,19 @@ trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 	% Caller is in the preferred list
 	member(Caller_name,[akshat,anugrah]),
 	
+	change_context_variable_value(inBusinessMeetingContextElement,1),
+	
 	write('users_phone reacting to incoming call event'),nl,
 	write('BusinessMeetingPreferredCallerProfile - LET IT THROUGH'),nl.
 	
 trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 	% Meeting has started
-	component_context_variable(_,[meetingInProgressContextElement,true]),
+	component_context_variable(_,[meetingInProgressContextElement,1]),
 	% The user is at work
 	component_context_variable(_,[distanceToWorkContextElement,0.0]),
 
+	change_context_variable_value(inBusinessMeetingContextElement,1),
+	
 	write('users_phone reacting to incoming call event'),nl,
 	write('BusinessMeetingProfile - BLOCK CALL'),nl.
 	
@@ -57,4 +61,3 @@ change_context_variable_value(Context_variable_name,Context_variable_new_value):
 
 distance(X1,Y1,X2,Y2,D):- 
     D is sqrt((X2-X1)**2 + (Y2-Y1)**2).
-
