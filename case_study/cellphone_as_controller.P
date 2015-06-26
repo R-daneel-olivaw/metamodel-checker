@@ -7,21 +7,29 @@ create_environment(user_cellphone,[]).
 create_environment(smart_home_controller_unit,[]).
 create_environment(car_computer_control_unit,[]).
 
-create_component(alarm_application,[]).
+create_component(alarm_application,[[name,akshat]]).
 create_component(home_security_system,[]).
 create_component(home_climate_control,[]).
 create_component(car_engine_starter,[]).
 
+add_component_to_environment(user_cellphone,alarm_application).
+add_component_to_environment(smart_home_controller_unit,home_security_system).
+add_component_to_environment(smart_home_controller_unit,home_climate_control).
+add_component_to_environment(car_computer_control_unit,car_engine_starter).
+add_component_to_environment(true_remote_control_application,user_cellphone).
+add_component_to_environment(true_remote_control_application,smart_home_controller_unit).
+add_component_to_environment(true_remote_control_application,car_computer_control_unit).
+
 create_event_schema(alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,string]]]).
 create_event_schema(cellphoneLocationEvent,[cellphoneLocationEvent,[[latitude,float],[longitude,float]]]).
 create_event_schema(cellphoneTimeChangedEvent,[cellphoneTimeChangedEvent,[[dateTime,string]]]).
-create_event_schema(remoteStarterActionEvent,[remoteStarterActionEvent,[[Action,string]]]).
-create_event_schema(notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[Result,string]]]).
-create_event_schema(resultOfRemoteStarterActionEvent,[resultOfRemoteStarterActionEvent,[[Action,string],[Result,string]]]).
-create_event_schema(cellphoneSubsequentLocationEvent,[cellphoneSubsequentLocationEvent,[[Latitude0,float],[Latitude1,float],[Latitude2,float],[Longitude0,float],[Longitude1,float],[Longitude2,float]]]).
-create_event_schema(triggerHomeActionEvent,[triggerHomeActionEvent,[[Action,string],[Value,string]]]).
-create_event_schema(notifyUserOfHomeActionEvent,[notifyUserOfHomeActionEvent,[[Action,string],[Value,string],[Result,string]]]).
-create_event_schema(resultOfHomeActionEvent,[resultOfHomeActionEvent,[[Action,string],[Value,string],[Result,string]]]).
+create_event_schema(remoteStarterActionEvent,[remoteStarterActionEvent,[[action,string]]]).
+create_event_schema(notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,string]]]).
+create_event_schema(resultOfRemoteStarterActionEvent,[resultOfRemoteStarterActionEvent,[[action,string],[result,string]]]).
+create_event_schema(cellphoneSubsequentLocationEvent,[cellphoneSubsequentLocationEvent,[[latitude0,float],[latitude1,float],[latitude2,float],[longitude0,float],[longitude1,float],[longitude2,float]]]).
+create_event_schema(triggerHomeActionEvent,[triggerHomeActionEvent,[[action,string],[value,string]]]).
+create_event_schema(notifyUserOfHomeActionEvent,[notifyUserOfHomeActionEvent,[[action,string],[value,string],[result,string]]]).
+create_event_schema(resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,string],[value,string],[result,string]]]).
 
 create_advertisement(alarm_application,user_cellphone,alarmGoesOffEvent,[]).
 create_advertisement(user_cellphone,cellphoneLocationEvent,[]).
@@ -43,3 +51,6 @@ create_subscription(user_cellphone,user_cellphone,notifyUserOfCarEngineStartedEv
 create_subscription(true_remote_control_application,true_remote_control_application,resultOfRemoteStarterActionEvent,[],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,cellphoneSubsequentLocationEvent,[],[]).
 create_subscription(smart_home_controller_unit,smart_home_controller_unit,triggerHomeActionEvent,[],[]).
+
+% EVENT SIMULATION
+simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,hammerTime]]]).
