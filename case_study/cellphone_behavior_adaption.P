@@ -4,7 +4,7 @@ import member/2 from basics.
 
 create_environment(users_phone,[[name,phone]]).
 
-create_component(calendar_application,[[inBusinessMeetingContextElement,false],[distanceToWorkContextElement,0],[meetingInProgressContextElement,false]]).
+create_component(calendar_application,[[inBusinessMeetingContextElement,0],[distanceToWorkContextElement,0],[meetingInProgressContextElement,0]]).
 
 add_component_to_environment(users_phone,calendar_application).
 
@@ -17,6 +17,7 @@ create_advertisement(users_phone,locationEvent,[]).
 create_advertisement(users_phone,incomingCallEvent,[]).
 
 create_subscription(users_phone,users_phone,incomingCallEvent,[],[]).
+create_subscription(users_phone,users_phone,locationEvent,[],[]).
 
 simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,1.0],[longitude,1.0]]]).
 simulate_event_environment(users_phone,incomingCallEvent,[incomingCallEvent,[[callerName,akshat],[callingNumber,a99]]]).
