@@ -1,11 +1,11 @@
 trigger_component_event_response(true_remote_control_application,alarmGoesOffEvent,Event_data):-
-	write('Component '),write(Component_name),write(' reacting to the '),write(Event_id),write(' event.'),nl.
+	write('Component true_remote_control_application reacting to the alarmGoesOffEvent.'),nl.
 	
 trigger_component_event_response(true_remote_control_application,cellphoneTimeChangedEvent,Event_data):-
-	write('Component '),write(Component_name),write(' reacting to the '),write(Event_id),write(' event.'),nl.
+	write('Component true_remote_control_application reacting to the cellphoneTimeChangedEvent.'),nl.
 	
 trigger_component_event_response(true_remote_control_application,cellphoneLocationEvent,Event_data):-
-	write('Component '),write(Component_name),write(' reacting to the '),write(Event_id),write(' event.'),nl.
+	write('Component true_remote_control_application reacting to the cellphoneLocationEvent.'),nl.
 	
 	
 trigger_component_event_response(Component_name,Event_id,Event_data).

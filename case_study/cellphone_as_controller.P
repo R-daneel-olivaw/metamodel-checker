@@ -54,3 +54,6 @@ create_subscription(smart_home_controller_unit,smart_home_controller_unit,trigge
 
 % EVENT SIMULATION
 simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,hammerTime]]]).
+simulate_event_environment(user_cellphone,cellphoneTimeChangedEvent,[cellphoneTimeChangedEvent,[[dateTime,hammerTime]]]).
+simulate_event_environment(user_cellphone,cellphoneLocationEvent,[cellphoneLocationEvent,[[latitude,5.5],[longitude,95.5]]]).
+simulate_event_environment(true_remote_control_application,remoteStarterActionEvent,[remoteStarterActionEvent,[[action,string]]]).
