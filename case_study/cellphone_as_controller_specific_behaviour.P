@@ -24,6 +24,17 @@ trigger_component_event_response(true_remote_control_application,cellphoneLocati
 trigger_component_event_response(user_cellphone,notifyUserOfCarEngineStartedEvent,Event_data):-
 	write('Component user_cellphone reacting to the notifyUserOfCarEngineStartedEvent.'),nl.
 	
+trigger_component_event_response(car_computer_control_unit,remoteStarterActionEvent,Event_data):-
+	write('Component car_computer_control_unit reacting to the remoteStarterActionEvent.'),nl,
+	
+	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),	
+	get_value_for_key(action,Flat_kv_pairs,Action_type),
+	Action_type = start,
+	
+	write('ATTEMPTING TO START CAR ENGINE.'),nl,
+	write('Triggering ResultOfRemoteStarterAction Event.'),nl,
+	simulate_event_environment(car_computer_control_unit,resultOfRemoteStarterActionEvent,[resultOfRemoteStarterActionEvent,[[action,start],[result,1]]]).
+	
 trigger_component_event_response(true_remote_control_application,resultOfRemoteStarterActionEvent,Event_data):-
 	write('Component true_remote_control_application reacting to the resultOfRemoteStarterActionEvent.'),nl.
 	
