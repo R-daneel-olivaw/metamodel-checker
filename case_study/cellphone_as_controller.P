@@ -24,7 +24,7 @@ create_event_schema(alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,string]]]).
 create_event_schema(cellphoneLocationEvent,[cellphoneLocationEvent,[[latitude,float],[longitude,float]]]).
 create_event_schema(cellphoneTimeChangedEvent,[cellphoneTimeChangedEvent,[[dateTime,string]]]).
 create_event_schema(remoteStarterActionEvent,[remoteStarterActionEvent,[[action,string]]]).
-create_event_schema(notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,string]]]).
+create_event_schema(notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,integer]]]).
 create_event_schema(resultOfRemoteStarterActionEvent,[resultOfRemoteStarterActionEvent,[[action,string],[result,integer]]]).
 create_event_schema(cellphoneSubsequentLocationEvent,[cellphoneSubsequentLocationEvent,[[latitude0,float],[latitude1,float],[latitude2,float],[longitude0,float],[longitude1,float],[longitude2,float]]]).
 create_event_schema(triggerHomeActionEvent,[triggerHomeActionEvent,[[action,string],[value,string]]]).
