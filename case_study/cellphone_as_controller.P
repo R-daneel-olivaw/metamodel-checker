@@ -2,7 +2,7 @@ import append/3 from basics.
 import length/2 from basics.
 import member/2 from basics.
 
-create_environment(true_remote_control_application,[[activationTimeHasElapsedContextElement,false],[cellphoneAtHomeContextElelement,false],[mustStartCarEngineContextElement,false],[mustTriggerHomeActionsContextElement,false]]).
+create_environment(true_remote_control_application,[[alarmOccured,0],[activationTimeHasElapsedContextElement,0],[cellphoneAtHomeContextElelement,0],[mustStartCarEngineContextElement,0],[mustTriggerHomeActionsContextElement,0]]).
 create_environment(user_cellphone,[]).
 create_environment(smart_home_controller_unit,[]).
 create_environment(car_computer_control_unit,[]).
@@ -46,6 +46,7 @@ create_subscription(user_cellphone,user_cellphone,notifyUserOfCarEngineStartedEv
 create_subscription(true_remote_control_application,true_remote_control_application,alarmGoesOffEvent,[],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,cellphoneLocationEvent,[],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,cellphoneTimeChangedEvent,[],[]).
+create_subscription(car_computer_control_unit,car_computer_control_unit,remoteStarterActionEvent,[],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,resultOfRemoteStarterActionEvent,[],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,cellphoneSubsequentLocationEvent,[],[]).
 create_subscription(smart_home_controller_unit,smart_home_controller_unit,triggerHomeActionEvent,[],[]).

@@ -51,13 +51,3 @@ trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 % INCOMING CALL EVENT END
 	
 trigger_component_event_response(Component_name,Event_id,Event_data).
-
-change_context_variable_value(Context_variable_name,Context_variable_new_value):-
-	component_context_variable(Component_name,[Context_variable_name,Old_value]),
-	
-	retract(component_context_variable(Component_name,[Context_variable_name,_])),
-	write('Setting new value '),write(Context_variable_new_value),write(' for context variable '),write(Context_variable_name),nl,
-	assert(component_context_variable(Component_name,[Context_variable_name,Context_variable_new_value])).
-
-distance(X1,Y1,X2,Y2,D):- 
-    D is sqrt((X2-X1)**2 + (Y2-Y1)**2).
