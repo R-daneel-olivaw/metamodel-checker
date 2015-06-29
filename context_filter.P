@@ -104,7 +104,7 @@ compute_logic(R1,>=,R2):-
 
 compute_logic(R1,=\=,R2):-
 	% write(R1),write('=\='),write(R2),nl,
-	(  R1 =\= R2
+	(  \+(R1 == R2)
     -> true
     ;  fail
      ).

@@ -3,7 +3,7 @@ Asserted predicates,
 2) component_instance(Component_name)
 3) event_schema(Event_id,Event_schema_list)
 4) event_advertisement_entry(Component_name,Environment_name,Event_id)
-5) event_subscription_entry(Component_name,Environment_name,Event_id,Context_filter_expression)
+5) event_subscription_entry(Component_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression)
 6) component_context_variable(Component_name,[Key,Value])
 7) environment_component(Environment_name,Component_name)
 8) environment_context_variable(Environment_name,Component_name,H)

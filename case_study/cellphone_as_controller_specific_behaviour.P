@@ -1,0 +1,53 @@
+trigger_component_event_response(true_remote_control_application,alarmGoesOffEvent,Event_data):-
+	write('Component true_remote_control_application reacting to the alarmGoesOffEvent.'),nl,
+	change_context_variable_value(alarmOccured,1).
+	
+trigger_component_event_response(true_remote_control_application,cellphoneTimeChangedEvent,Event_data):-
+	write('Component true_remote_control_application reacting to the cellphoneTimeChangedEvent.'),nl,
+	context_variable(Component_name,[alarmOccured,1]),
+	change_context_variable_value(activationTimeHasElapsedContextElement,1).
+	
+trigger_component_event_response(true_remote_control_application,cellphoneLocationEvent,Event_data):-
+	write('Component true_remote_control_application reacting to the cellphoneLocationEvent.'),nl,
+	context_variable(Component_name,[alarmOccured,1]),
+	context_variable(Component_name,[activationTimeHasElapsedContextElement,1]),
+	
+	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),	
+	get_value_for_key(latitude,Flat_kv_pairs,Latitude_value),
+	get_value_for_key(longitude,Flat_kv_pairs,Longitude_value),
+	distance(Latitude_value,Longitude_value,0,0,Distance),
+	write('Distance from home calculated - '),write(Distance),nl,
+	Distance = 0.0,
+	
+	change_context_variable_value(mustStartCarEngineContextElement,1).
+	
+trigger_component_event_response(user_cellphone,notifyUserOfCarEngineStartedEvent,Event_data):-
+	write('Component user_cellphone reacting to the notifyUserOfCarEngineStartedEvent.'),nl.
+	
+trigger_component_event_response(car_computer_control_unit,remoteStarterActionEvent,Event_data):-
+	write('Component car_computer_control_unit reacting to the remoteStarterActionEvent.'),nl,
+	
+	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),	
+	get_value_for_key(action,Flat_kv_pairs,Action_type),
+	Action_type = start,
+	
+	write('ATTEMPTING TO START CAR ENGINE.'),nl,
+	write('Triggering ResultOfRemoteStarterAction Event.'),nl,
+	simulate_event_environment(car_computer_control_unit,resultOfRemoteStarterActionEvent,[resultOfRemoteStarterActionEvent,[[action,start],[result,1]]]).
+	
+trigger_component_event_response(true_remote_control_application,resultOfRemoteStarterActionEvent,Event_data):-
+	write('Component true_remote_control_application reacting to the resultOfRemoteStarterActionEvent.'),nl,
+	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),	
+	get_value_for_key(result,Flat_kv_pairs,Action_result),
+	
+	write('Triggering NotifyUserOfCarEngineStarted Event.'),nl,
+	simulate_event_environment(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,Action_result]]]).
+	
+trigger_component_event_response(true_remote_control_application,cellphoneSubsequentLocationEvent,Event_data):-
+	write('Component true_remote_control_application reacting to the cellphoneSubsequentLocationEvent.'),nl.
+	
+trigger_component_event_response(smart_home_controller_unit,triggerHomeActionEvent,Event_data):-
+	write('Component smart_home_controller_unit reacting to the triggerHomeActionEvent.'),nl.
+	
+	
+trigger_component_event_response(Component_name,Event_id,Event_data).

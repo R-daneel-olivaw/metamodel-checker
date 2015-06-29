@@ -39,23 +39,17 @@ add_component_context_variable_list(Component_name,[H|T]):-
 	add_component_context_variable_list(Component_name,T).
 	
 add_component_context_variable(Component_name,[Key,Value|[]]):-
-	assert(component_context_variable(Component_name,[Key,Value])).
+	assert(context_variable(Component_name,[Key,Value])).
 
 add_component_to_environment(Environment_name, Component_name):-
 	environment_instance(Environment_name),
 	component_instance(Component_name),	
 	assert(environment_component(Environment_name,Component_name)),	
-	findall(X,component_context_variable(Component_name,X),Component_context_variable_list),
+	findall(X,context_variable(Component_name,X),Component_context_variable_list),
 	write(Component_context_variable_list),nl.
-
-add_context_variable_list_environment(Environment_name,Component_name,[H|T]):-
-	assert(environment_context_variable(Environment_name,Component_name,H)),
-	add_context_variable_list_environment(Environment_name,Component_name,T).
-	
-add_context_variable_list_environment(Environment_name,Component_name,[]).
 	
 add_context_variable_list_environment(Environment_name,[H|T]):-
-	assert(environment_context_variable(Environment_name,H)),
+	assert(context_variable(Environment_name,H)),
 	add_context_variable_list_environment(Environment_name,T).
 	
 add_context_variable_list_environment(Environment_name,[]).
@@ -134,10 +128,31 @@ simulate_event_environment(Environment_name,Event_id,Event_data_list):-
 	event_schema(Event_id,Event_schema),
 	!,unify_event(Event_data_list,Event_schema),
 
-	!,trigger_component_event_response(Environment_name,Event_id,Event_data_list),
+	!,process_event_environment(Environment_name,Event_id,Event_data_list),
 	
 	get_reachable_environments(Event_id,Event_data_list,[Environment_name],Environment_name,[],Reachable_environment_list),
 	nl,write('Visited List -->'),write(Reachable_environment_list),nl.
+	
+process_event_environment(Environment_name,Event_id,Event_data_list):-
+	event_subscription_entry(Environment_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression),	
+	write('processing event '),write(Event_id),write(' for environment '),write(Environment_name),nl,
+	
+	% CONTEX VARIABLE START
+	findall(X,get_context_variables(Environment_name,_,X),Environment_context_variable_list),
+	write('Context filter expression - '),write(Context_filter_expression),nl,
+	write('Context filter data'),write(Environment_context_variable_list),nl,
+	!,compute(Context_filter_expression,Environment_context_variable_list),
+	write('Context filter passed'),nl,
+	% CONTEX VARIABLE END
+	
+	% CONTENT FILTER START
+	!,can_pass_event(Event_data_list,Content_filter_expression),
+	write('**Passed** Component Content Filter - '),write(Environment_name),nl,
+	% CONTENT FILTER END
+	
+	trigger_component_event_response(Environment_name,Event_id,Event_data_list).
+	
+process_event_environment(Environment_name,Event_id,Event_data_list).
 
 get_reachable_environments(Event_type,Event_data_list,[],Calling_component_name,I,I).
 	
@@ -151,6 +166,9 @@ get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_com
 	write('Visiting Environment - '),write(Component_name),nl,
 	% write('_-> Already Visited - '),write(I),nl,
 	append(I,[Component_name],I2),
+	
+	!,process_event_environment(Component_name,Event_type,Event_data_list),
+	
 	findall(X,environment_component(X,Component_name),Environment_name_list),
 	% write('|-> Parent Environments - '),write(Environment_name_list),nl,
 	get_reachable_environments(Event_type,Event_data_list,Environment_name_list,Component_name,I2,I3),
@@ -209,19 +227,19 @@ environment_component_event_subscription(Environment_name,Component_name,Event_i
 get_context_variables(Environment_name,Component_name,Environment_context_variable):-
 	environment_instance(Environment_name),
 	ancestor(Environment_name,Component_name),
-	component_context_variable(Component_name,Environment_context_variable).
+	context_variable(Component_name,Environment_context_variable).
 
 get_context_variables(Environment_name,Component_name,Environment_context_variable):-
-	component_context_variable(Environment_name,Environment_context_variable).
+	context_variable(Environment_name,Environment_context_variable).
 
 get_context_variables(Environment_name,Component_name,Environment_context_variable):-
 	environment_instance(Environment_name),
 	ancestor(Environment_name,Sub_environment_name),
-	environment_context_variable(Sub_environment_name,Environment_context_variable).
+	context_variable(Sub_environment_name,Environment_context_variable).
 
 get_context_variables(Environment_name,Component_name,Environment_context_variable):-
 	Component_name = Environment_name,
-	environment_context_variable(Environment_name,Environment_context_variable).
+	context_variable(Environment_name,Environment_context_variable).
 
 ancestor(Environment_name,Component_name):-
 	environment_component(Environment_name,Component_name).
@@ -229,6 +247,16 @@ ancestor(Environment_name,Component_name):-
 ancestor(Environment_name,Component_name):-
 	environment_component(Sub_environment_name,Component_name),
 	ancestor(Environment_name,Sub_environment_name).
+	
+change_context_variable_value(Context_variable_name,Context_variable_new_value):-
+	context_variable(Component_name,[Context_variable_name,Old_value]),
+	
+	retract(context_variable(Component_name,[Context_variable_name,_])),
+	write('Setting new value '),write(Context_variable_new_value),write(' for context variable '),write(Context_variable_name),nl,
+	assert(context_variable(Component_name,[Context_variable_name,Context_variable_new_value])).
+
+distance(X1,Y1,X2,Y2,D):- 
+    D is sqrt((X2-X1)**2 + (Y2-Y1)**2).
 
 % context variable format - [[testVar1,50],[testVar2,90],[testvar3,10]]
 % environment(Environment_name).
