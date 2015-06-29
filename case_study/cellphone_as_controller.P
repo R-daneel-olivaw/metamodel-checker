@@ -47,8 +47,6 @@ create_subscription(true_remote_control_application,true_remote_control_applicat
 create_subscription(true_remote_control_application,true_remote_control_application,cellphoneLocationEvent,[],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,cellphoneTimeChangedEvent,[],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,resultOfRemoteStarterActionEvent,[],[]).
-create_subscription(user_cellphone,user_cellphone,notifyUserOfCarEngineStartedEvent,[],[]).
-create_subscription(true_remote_control_application,true_remote_control_application,resultOfRemoteStarterActionEvent,[],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,cellphoneSubsequentLocationEvent,[],[]).
 create_subscription(smart_home_controller_unit,smart_home_controller_unit,triggerHomeActionEvent,[],[]).
 
@@ -57,3 +55,5 @@ simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[ala
 simulate_event_environment(user_cellphone,cellphoneTimeChangedEvent,[cellphoneTimeChangedEvent,[[dateTime,hammerTime]]]).
 simulate_event_environment(user_cellphone,cellphoneLocationEvent,[cellphoneLocationEvent,[[latitude,5.5],[longitude,95.5]]]).
 simulate_event_environment(true_remote_control_application,remoteStarterActionEvent,[remoteStarterActionEvent,[[action,string]]]).
+simulate_event_environment(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,string]]]).
+simulate_event_environment(car_computer_control_unit,resultOfRemoteStarterActionEvent,[resultOfRemoteStarterActionEvent,[[action,string],[result,string]]]).

@@ -7,5 +7,11 @@ trigger_component_event_response(true_remote_control_application,cellphoneTimeCh
 trigger_component_event_response(true_remote_control_application,cellphoneLocationEvent,Event_data):-
 	write('Component true_remote_control_application reacting to the cellphoneLocationEvent.'),nl.
 	
+trigger_component_event_response(user_cellphone,notifyUserOfCarEngineStartedEvent,Event_data):-
+	write('Component user_cellphone reacting to the notifyUserOfCarEngineStartedEvent.'),nl.
+	
+trigger_component_event_response(true_remote_control_application,resultOfRemoteStarterActionEvent,Event_data):-
+	write('Component true_remote_control_application reacting to the resultOfRemoteStarterActionEvent.'),nl.
+	
 	
 trigger_component_event_response(Component_name,Event_id,Event_data).
