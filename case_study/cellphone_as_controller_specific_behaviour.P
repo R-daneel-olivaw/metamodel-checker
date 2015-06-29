@@ -13,5 +13,11 @@ trigger_component_event_response(user_cellphone,notifyUserOfCarEngineStartedEven
 trigger_component_event_response(true_remote_control_application,resultOfRemoteStarterActionEvent,Event_data):-
 	write('Component true_remote_control_application reacting to the resultOfRemoteStarterActionEvent.'),nl.
 	
+trigger_component_event_response(true_remote_control_application,cellphoneSubsequentLocationEvent,Event_data):-
+	write('Component true_remote_control_application reacting to the cellphoneSubsequentLocationEvent.'),nl.
+	
+trigger_component_event_response(smart_home_controller_unit,triggerHomeActionEvent,Event_data):-
+	write('Component smart_home_controller_unit reacting to the triggerHomeActionEvent.'),nl.
+	
 	
 trigger_component_event_response(Component_name,Event_id,Event_data).
