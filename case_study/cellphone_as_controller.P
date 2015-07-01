@@ -34,7 +34,7 @@ create_event_schema(resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,st
 create_advertisement(alarm_application,user_cellphone,alarmGoesOffEvent,[]).
 create_advertisement(user_cellphone,cellphoneLocationEvent,[]).
 create_advertisement(user_cellphone,cellphoneTimeChangedEvent,[]).
-create_advertisement(true_remote_control_application,remoteStarterActionEvent,[]).
+create_advertisement(true_remote_control_application,remoteStarterActionEvent,[mustStartCarEngineContextElement,=,1]).
 create_advertisement(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[]).
 create_advertisement(car_computer_control_unit,resultOfRemoteStarterActionEvent,[]).
 create_advertisement(user_cellphone,cellphoneSubsequentLocationEvent,[]).
@@ -46,7 +46,7 @@ create_subscription(user_cellphone,user_cellphone,notifyUserOfCarEngineStartedEv
 create_subscription(true_remote_control_application,true_remote_control_application,alarmGoesOffEvent,[],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,cellphoneLocationEvent,[],[[alarmOccured,=,1],and,[activationTimeHasElapsedContextElement,=,1]]).
 create_subscription(true_remote_control_application,true_remote_control_application,cellphoneTimeChangedEvent,[],[alarmOccured,=,1]).
-create_subscription(car_computer_control_unit,car_computer_control_unit,remoteStarterActionEvent,[],[]).
+create_subscription(car_computer_control_unit,car_computer_control_unit,remoteStarterActionEvent,[action,=,start],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,resultOfRemoteStarterActionEvent,[],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,cellphoneSubsequentLocationEvent,[],[]).
 create_subscription(smart_home_controller_unit,smart_home_controller_unit,triggerHomeActionEvent,[],[]).
