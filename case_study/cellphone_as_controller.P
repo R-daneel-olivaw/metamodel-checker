@@ -44,7 +44,7 @@ create_advertisement(smart_home_controller_unit,resultOfHomeActionEvent,[]).
 
 create_subscription(user_cellphone,user_cellphone,notifyUserOfCarEngineStartedEvent,[],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,alarmGoesOffEvent,[],[]).
-create_subscription(true_remote_control_application,true_remote_control_application,cellphoneLocationEvent,[],[]).
+create_subscription(true_remote_control_application,true_remote_control_application,cellphoneLocationEvent,[],[[alarmOccured,=,1],and,[activationTimeHasElapsedContextElement,=,1]]).
 create_subscription(true_remote_control_application,true_remote_control_application,cellphoneTimeChangedEvent,[],[alarmOccured,=,1]).
 create_subscription(car_computer_control_unit,car_computer_control_unit,remoteStarterActionEvent,[],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,resultOfRemoteStarterActionEvent,[],[]).
