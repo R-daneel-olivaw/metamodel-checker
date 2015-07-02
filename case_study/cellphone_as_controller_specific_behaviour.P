@@ -66,11 +66,21 @@ trigger_component_event_response(true_remote_control_application,cellphoneSubseq
 	Distance0 < Distance1 < Distance2,
 	
 	write('Cellphone moving away from Home'),nl,
-	change_context_variable_value(mustTriggerHomeActionsContextElement,1).
-	.
+	change_context_variable_value(mustTriggerHomeActionsContextElement,1),
+	simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]]),
+	simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,engageSecurityAlarm],[value,1]]]).
+	
+trigger_component_event_response(smart_home_controller_unit,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,Value]]]):-
+	write('Component smart_home_controller_unit reacting to the triggerHomeActionEvent for setting temperature.'),nl,
+	write('SETTING TEMPRATURE TO '),write(Value),nl,
+	simulate_event_environment(smart_home_controller_unit,resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,setTemprature],[value,Value],[result,1]]]).
+	
+trigger_component_event_response(smart_home_controller_unit,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,engageSecurityAlarm],[value,Value]]]):-
+	write('Component smart_home_controller_unit reacting to the triggerHomeActionEvent for engage security alarm.'),nl,
+	write('ENGAGING ALARM SYSTEM'),nl,
+	simulate_event_environment(smart_home_controller_unit,resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,engageSecurityAlarm],[value,Value],[result,1]]]).
 	
 trigger_component_event_response(smart_home_controller_unit,triggerHomeActionEvent,Event_data):-
-	write('Component smart_home_controller_unit reacting to the triggerHomeActionEvent.'),nl.
-	
+	write('Component smart_home_controller_unit reacting to the triggerHomeActionEvent of UNKNOWN type'),nl.
 	
 trigger_component_event_response(Component_name,Event_id,Event_data).

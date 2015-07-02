@@ -50,6 +50,8 @@ create_subscription(car_computer_control_unit,car_computer_control_unit,remoteSt
 create_subscription(true_remote_control_application,true_remote_control_application,resultOfRemoteStarterActionEvent,[],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,cellphoneSubsequentLocationEvent,[],[]).
 create_subscription(smart_home_controller_unit,smart_home_controller_unit,triggerHomeActionEvent,[],[]).
+create_subscription(true_remote_control_application,true_remote_control_application,resultOfHomeActionEvent,[],[]).
+create_subscription(user_cellphone,user_cellphone,notifyUserOfHomeActionEvent,[],[]).
 
 % EVENT SIMULATION
 simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,hammerTime]]]).
