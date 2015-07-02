@@ -63,7 +63,8 @@ trigger_component_event_response(true_remote_control_application,cellphoneSubseq
 	write('Distance1 - '),write(Distance1),nl,
 	write('Distance2 - '),write(Distance2),nl,
 	
-	Distance0 < Distance1 < Distance2,
+	Distance0 < Distance1,
+	Distance1 < Distance2,
 	
 	write('Cellphone moving away from Home'),nl,
 	change_context_variable_value(mustTriggerHomeActionsContextElement,1),
@@ -82,5 +83,19 @@ trigger_component_event_response(smart_home_controller_unit,triggerHomeActionEve
 	
 trigger_component_event_response(smart_home_controller_unit,triggerHomeActionEvent,Event_data):-
 	write('Component smart_home_controller_unit reacting to the triggerHomeActionEvent of UNKNOWN type'),nl.
+	
+trigger_component_event_response(true_remote_control_application,resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,engageSecurityAlarm],[value,Value],[result,Result]]]):-
+	write('Component true_remote_control_application reacting to the resultOfHomeActionEvent for engageSecurityAlarm.'),nl,
+	simulate_event_environment(true_remote_control_application,notifyUserOfHomeActionEvent,[notifyUserOfHomeActionEvent,[[action,engageSecurityAlarm],[value,Value],[result,Result]]]).
+	
+trigger_component_event_response(true_remote_control_application,resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,setTemprature],[value,Value],[result,Result]]]):-
+	write('Component true_remote_control_application reacting to the resultOfHomeActionEvent for setTemprature.'),nl,
+	simulate_event_environment(true_remote_control_application,notifyUserOfHomeActionEvent,[notifyUserOfHomeActionEvent,[[action,setTempraturesetTemprature],[value,Value],[result,Result]]]).
+	
+trigger_component_event_response(user_cellphone,notifyUserOfHomeActionEvent,Event_data):-
+	write('Component user_cellphone reacting to the notifyUserOfCarEngineStartedEvent '),
+	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),	
+	get_value_for_key(action,Flat_kv_pairs,Action_value),
+	write('For '),write(Action_value),nl.
 	
 trigger_component_event_response(Component_name,Event_id,Event_data).
