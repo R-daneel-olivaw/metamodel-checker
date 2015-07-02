@@ -44,7 +44,30 @@ trigger_component_event_response(true_remote_control_application,resultOfRemoteS
 	simulate_event_environment(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,Action_result]]]).
 	
 trigger_component_event_response(true_remote_control_application,cellphoneSubsequentLocationEvent,Event_data):-
-	write('Component true_remote_control_application reacting to the cellphoneSubsequentLocationEvent.'),nl.
+	write('Component true_remote_control_application reacting to the cellphoneSubsequentLocationEvent.'),nl,
+	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),
+	
+	get_value_for_key(latitude0,Flat_kv_pairs,Latitude_value0),
+	get_value_for_key(latitude1,Flat_kv_pairs,Latitude_value1),
+	get_value_for_key(latitude2,Flat_kv_pairs,Latitude_value2),
+	
+	get_value_for_key(longitude0,Flat_kv_pairs,Latitude_value0),
+	get_value_for_key(longitude1,Flat_kv_pairs,Latitude_value1),
+	get_value_for_key(longitude2,Flat_kv_pairs,Latitude_value2),
+	
+	distance(Latitude_value0,Longitude_value0,0,0,Distance0),
+	distance(Latitude_value1,Longitude_value0,0,0,Distance1),
+	distance(Latitude_value2,Longitude_value0,0,0,Distance2),
+	
+	write('Distance0 - '),write(Distance0),nl,
+	write('Distance1 - '),write(Distance1),nl,
+	write('Distance2 - '),write(Distance2),nl,
+	
+	Distance0 < Distance1 < Distance2,
+	
+	write('Cellphone moving away from Home'),nl,
+	change_context_variable_value(mustTriggerHomeActionsContextElement,1).
+	.
 	
 trigger_component_event_response(smart_home_controller_unit,triggerHomeActionEvent,Event_data):-
 	write('Component smart_home_controller_unit reacting to the triggerHomeActionEvent.'),nl.
