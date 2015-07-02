@@ -27,9 +27,9 @@ create_event_schema(remoteStarterActionEvent,[remoteStarterActionEvent,[[action,
 create_event_schema(notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,integer]]]).
 create_event_schema(resultOfRemoteStarterActionEvent,[resultOfRemoteStarterActionEvent,[[action,string],[result,integer]]]).
 create_event_schema(cellphoneSubsequentLocationEvent,[cellphoneSubsequentLocationEvent,[[latitude0,float],[latitude1,float],[latitude2,float],[longitude0,float],[longitude1,float],[longitude2,float]]]).
-create_event_schema(triggerHomeActionEvent,[triggerHomeActionEvent,[[action,string],[value,string]]]).
-create_event_schema(notifyUserOfHomeActionEvent,[notifyUserOfHomeActionEvent,[[action,string],[value,string],[result,string]]]).
-create_event_schema(resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,string],[value,string],[result,string]]]).
+create_event_schema(triggerHomeActionEvent,[triggerHomeActionEvent,[[action,string],[value,integer]]]).
+create_event_schema(notifyUserOfHomeActionEvent,[notifyUserOfHomeActionEvent,[[action,string],[value,integer],[result,integer]]]).
+create_event_schema(resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,string],[value,integer],[result,integer]]]).
 
 create_advertisement(alarm_application,user_cellphone,alarmGoesOffEvent,[]).
 create_advertisement(user_cellphone,cellphoneLocationEvent,[]).
@@ -60,7 +60,7 @@ simulate_event_environment(user_cellphone,cellphoneLocationEvent,[cellphoneLocat
 simulate_event_environment(true_remote_control_application,remoteStarterActionEvent,[remoteStarterActionEvent,[[action,start]]]).
 simulate_event_environment(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,string]]]).
 simulate_event_environment(car_computer_control_unit,resultOfRemoteStarterActionEvent,[resultOfRemoteStarterActionEvent,[[action,string],[result,0]]]).
-simulate_event_environment(user_cellphone,cellphoneSubsequentLocationEvent,[cellphoneSubsequentLocationEvent,[[latitude0,5.5],[latitude1,5.5],[latitude2,5.5],[longitude0,5.5],[longitude1,5.5],[longitude2,5.5]]]).
+simulate_event_environment(user_cellphone,cellphoneSubsequentLocationEvent,[cellphoneSubsequentLocationEvent,[[latitude0,5.5],[latitude1,6.5],[latitude2,7.5],[longitude0,5.5],[longitude1,5.5],[longitude2,5.5]]]).
 simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,string],[value,string]]]).
 simulate_event_environment(smart_home_controller_unit,resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,string],[value,string],[result,string]]]).
 simulate_event_environment(true_remote_control_application,notifyUserOfHomeActionEvent,[notifyUserOfHomeActionEvent,[[action,string],[value,string],[result,string]]]).

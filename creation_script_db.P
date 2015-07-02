@@ -116,7 +116,7 @@ simulate_event_component(Component_name,Environment_name,Event_id,Event_data_lis
 	!,trigger_component_event_response(Component_name,Event_type,Event_data_list),
 	
 	get_reachable_environments(Event_type,Event_data_list,[Environment_name],Component_name,[Component_name],Reachable_environment_list),
-	nl,write('Visited List -->'),write(Reachable_environment_list),nl.
+	nl,write('Event '),write(Event_id),write(' Visited List -->'),write(Reachable_environment_list),nl.
 	
 simulate_event_environment(Environment_name,Event_id,Event_data_list):-
 	environment_instance(Environment_name),
@@ -131,7 +131,7 @@ simulate_event_environment(Environment_name,Event_id,Event_data_list):-
 	!,process_event_environment(Environment_name,Event_id,Event_data_list),
 	
 	get_reachable_environments(Event_id,Event_data_list,[Environment_name],Environment_name,[],Reachable_environment_list),
-	nl,write('Visited List -->'),write(Reachable_environment_list),nl.
+	nl,write('Event '),write(Event_id),write(' Visited List -->'),write(Reachable_environment_list),nl.
 	
 process_event_environment(Environment_name,Event_id,Event_data_list):-
 	event_subscription_entry(Environment_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression),	

@@ -51,13 +51,13 @@ trigger_component_event_response(true_remote_control_application,cellphoneSubseq
 	get_value_for_key(latitude1,Flat_kv_pairs,Latitude_value1),
 	get_value_for_key(latitude2,Flat_kv_pairs,Latitude_value2),
 	
-	get_value_for_key(longitude0,Flat_kv_pairs,Latitude_value0),
-	get_value_for_key(longitude1,Flat_kv_pairs,Latitude_value1),
-	get_value_for_key(longitude2,Flat_kv_pairs,Latitude_value2),
+	get_value_for_key(longitude0,Flat_kv_pairs,Longitude_value0),
+	get_value_for_key(longitude1,Flat_kv_pairs,Longitude_value1),
+	get_value_for_key(longitude2,Flat_kv_pairs,Longitude_value2),
 	
 	distance(Latitude_value0,Longitude_value0,0,0,Distance0),
-	distance(Latitude_value1,Longitude_value0,0,0,Distance1),
-	distance(Latitude_value2,Longitude_value0,0,0,Distance2),
+	distance(Latitude_value1,Longitude_value1,0,0,Distance1),
+	distance(Latitude_value2,Longitude_value2,0,0,Distance2),
 	
 	write('Distance0 - '),write(Distance0),nl,
 	write('Distance1 - '),write(Distance1),nl,
