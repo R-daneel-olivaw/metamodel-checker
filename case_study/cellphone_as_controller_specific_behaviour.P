@@ -63,13 +63,16 @@ trigger_component_event_response(true_remote_control_application,cellphoneSubseq
 	write('Distance1 - '),write(Distance1),nl,
 	write('Distance2 - '),write(Distance2),nl,
 	
-	Distance0 < Distance1,
-	Distance1 < Distance2,
-	
+	(
+	Distance0 < Distance1,Distance1 < Distance2
+    -> 
 	write('Cellphone moving away from Home'),nl,
 	change_context_variable_value(mustTriggerHomeActionsContextElement,1),
 	simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]]),
-	simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,engageSecurityAlarm],[value,1]]]).
+	simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,engageSecurityAlarm],[value,1]]])
+    ;
+	% pass without doing anything
+	write('Cellphone NOT moving away from Home'),nl).
 	
 trigger_component_event_response(smart_home_controller_unit,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,Value]]]):-
 	write('Component smart_home_controller_unit reacting to the triggerHomeActionEvent for setting temperature.'),nl,
