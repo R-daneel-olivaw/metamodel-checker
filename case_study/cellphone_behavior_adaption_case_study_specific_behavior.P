@@ -18,9 +18,9 @@ trigger_component_event_response(calendar_application,meetingStartedEvent,Event_
 % INCOMING CALL EVENT START
 trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 	% Meeting has started
-	component_context_variable(_,[meetingInProgressContextElement,1]),
+	context_variable(_,[meetingInProgressContextElement,1]),
 	% The user is at work
-	component_context_variable(_,[distanceToWorkContextElement,0.0]),
+	context_variable(_,[distanceToWorkContextElement,0.0]),
 	
 	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),
 	get_value_for_key(callerName,Flat_kv_pairs,Caller_name),
@@ -35,9 +35,9 @@ trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 	
 trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 	% Meeting has started
-	component_context_variable(_,[meetingInProgressContextElement,1]),
+	context_variable(_,[meetingInProgressContextElement,1]),
 	% The user is at work
-	component_context_variable(_,[distanceToWorkContextElement,0.0]),
+	context_variable(_,[distanceToWorkContextElement,0.0]),
 
 	change_context_variable_value(inBusinessMeetingContextElement,1),
 	
