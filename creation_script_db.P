@@ -130,7 +130,7 @@ simulate_event_environment(Environment_name,Event_id,Event_data_list):-
 
 	!,process_event_environment(Environment_name,Event_id,Event_data_list),
 	
-	get_reachable_environments(Event_id,Event_data_list,[Environment_name],Environment_name,[],Reachable_environment_list),
+	get_reachable_environments(Event_id,Event_data_list,[Environment_name],Environment_name,[Environment_name],Reachable_environment_list),
 	nl,write('Event '),write(Event_id),write(' Visited List -->'),write(Reachable_environment_list),nl.
 	
 process_event_environment(Environment_name,Event_id,Event_data_list):-
