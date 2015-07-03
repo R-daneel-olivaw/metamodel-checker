@@ -1,11 +1,14 @@
 trigger_component_event_response(true_remote_control_application,alarmGoesOffEvent,Event_data):-
 	write('Component true_remote_control_application reacting to the alarmGoesOffEvent.'),nl,
-	change_context_variable_value(alarmOccured,1).
+	change_context_variable_value(alarmOccured,1),
+	write('AFTER 1 MINUTE PASSES...'),nl,
+	simulate_event_environment(user_cellphone,cellphoneTimeChangedEvent,[cellphoneTimeChangedEvent,[[dateTime,hammerTime]]]).
 	
 trigger_component_event_response(true_remote_control_application,cellphoneTimeChangedEvent,Event_data):-
 	write('Component true_remote_control_application reacting to the cellphoneTimeChangedEvent.'),nl,
 	context_variable(Component_name,[alarmOccured,1]),
-	change_context_variable_value(activationTimeHasElapsedContextElement,1).
+	change_context_variable_value(activationTimeHasElapsedContextElement,1),
+	simulate_event_environment(user_cellphone,cellphoneLocationEvent,[cellphoneLocationEvent,[[latitude,0.0],[longitude,0.0]]]).
 	
 trigger_component_event_response(true_remote_control_application,cellphoneLocationEvent,Event_data):-
 	write('Component true_remote_control_application reacting to the cellphoneLocationEvent.'),nl,
@@ -19,7 +22,8 @@ trigger_component_event_response(true_remote_control_application,cellphoneLocati
 	write('Distance from home calculated - '),write(Distance),nl,
 	Distance = 0.0,
 	
-	change_context_variable_value(mustStartCarEngineContextElement,1).
+	change_context_variable_value(mustStartCarEngineContextElement,1),
+	simulate_event_environment(true_remote_control_application,remoteStarterActionEvent,[remoteStarterActionEvent,[[action,start]]]).
 	
 trigger_component_event_response(user_cellphone,notifyUserOfCarEngineStartedEvent,Event_data):-
 	write('@@@ Component user_cellphone reacting to the notifyUserOfCarEngineStartedEvent. @@@'),nl.
