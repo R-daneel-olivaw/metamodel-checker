@@ -38,7 +38,7 @@ create_advertisement(true_remote_control_application,remoteStarterActionEvent,[m
 create_advertisement(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[]).
 create_advertisement(car_computer_control_unit,resultOfRemoteStarterActionEvent,[]).
 create_advertisement(user_cellphone,cellphoneSubsequentLocationEvent,[]).
-create_advertisement(true_remote_control_application,triggerHomeActionEvent,[]).
+create_advertisement(true_remote_control_application,triggerHomeActionEvent,[mustTriggerHomeActionsContextElement,=,1]).
 create_advertisement(true_remote_control_application,notifyUserOfHomeActionEvent,[]).
 create_advertisement(smart_home_controller_unit,resultOfHomeActionEvent,[]).
 
@@ -49,18 +49,28 @@ create_subscription(true_remote_control_application,true_remote_control_applicat
 create_subscription(car_computer_control_unit,car_computer_control_unit,remoteStarterActionEvent,[action,=,start],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,resultOfRemoteStarterActionEvent,[],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,cellphoneSubsequentLocationEvent,[],[]).
-create_subscription(smart_home_controller_unit,smart_home_controller_unit,triggerHomeActionEvent,[],[]).
+create_subscription(smart_home_controller_unit,smart_home_controller_unit,triggerHomeActionEvent,[],[mustTriggerHomeActionsContextElement,=,1]).
 create_subscription(true_remote_control_application,true_remote_control_application,resultOfHomeActionEvent,[],[]).
 create_subscription(user_cellphone,user_cellphone,notifyUserOfHomeActionEvent,[],[]).
 
 % EVENT SIMULATION
+
+=======================PART-1========================
+% ALL INCLUSIVE CALL
 simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,hammerTime]]]).
+
+% EXCLUSIVE CALLS
 simulate_event_environment(user_cellphone,cellphoneTimeChangedEvent,[cellphoneTimeChangedEvent,[[dateTime,hammerTime]]]).
 simulate_event_environment(user_cellphone,cellphoneLocationEvent,[cellphoneLocationEvent,[[latitude,5.5],[longitude,95.5]]]).
 simulate_event_environment(true_remote_control_application,remoteStarterActionEvent,[remoteStarterActionEvent,[[action,start]]]).
 simulate_event_environment(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,string]]]).
 simulate_event_environment(car_computer_control_unit,resultOfRemoteStarterActionEvent,[resultOfRemoteStarterActionEvent,[[action,string],[result,0]]]).
+
+=======================PART-2========================
+% ALL INCLUSIVE CALL
 simulate_event_environment(user_cellphone,cellphoneSubsequentLocationEvent,[cellphoneSubsequentLocationEvent,[[latitude0,5.5],[latitude1,6.5],[latitude2,7.5],[longitude0,5.5],[longitude1,5.5],[longitude2,5.5]]]).
+
+% EXCLUSIVE CALLS
 simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,string],[value,string]]]).
 simulate_event_environment(smart_home_controller_unit,resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,string],[value,string],[result,string]]]).
 simulate_event_environment(true_remote_control_application,notifyUserOfHomeActionEvent,[notifyUserOfHomeActionEvent,[[action,string],[value,string],[result,string]]]).
