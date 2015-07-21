@@ -94,40 +94,50 @@ component_event_advertisement(Component_name,Environment_name,Event_id):-
 get_component_list_environment(Environment_name,Component_name_list):-
 	findall(X,environment_component(Environment_name,X),Component_name_list).
 
+% THIS PREDICATE IS USED TO SIMULATE AN EVENT ORIGINATION FROM A COMPONENT
 simulate_event_component(Component_name,Environment_name,Event_id,Event_data_list):-
 	component_instance(Component_name),
 	
-	% TYPE FILTER START
+	% TYPE FILTER START, THIS IS A CHECK IF THE COMPONENT HAS AN ADVERTISEMENT FOR THIS TYPE OF EVENT
 	event_advertisement_entry(Component_name,Environment_name,Event_id,Context_filter_expression),
 	% TYPE FILTER END
 	
-	% CONTEX FILTER START
+	% CONTEX FILTER START, SINCE THE OUTGOING EVENT S ONLY NEED TO PASS THE CONTEXT FILTER AND NOT THE CONTENT FILTER
 	findall(X,get_context_variables(Environment_name,_,X),Environment_context_variable_list),
 	write('Context filter expression - '),write(Context_filter_expression),nl,
 	write('Context filter data'),write(Environment_context_variable_list),nl,
+	% THE BELOW IS USED TO TEST IF THE EVENT PASSES THE CONTEXT FILTER OF THE ADVERTISEMENT
 	compute(Context_filter_expression,Environment_context_variable_list),
 	write('Context filter passed'),nl,
 	% CONTEX FILTER END
 	
+	% VALIDATE THE EVENT TO ONE OF THE KNOWN EVENT SCHEMAS
 	[Event_type|Et] = Event_data_list,
 	event_schema(Event_type,Event_schema),
+	% VALIDATE IT FURTHER BY A DATA TYPE CHECK OS OF THE VALUES OF THE KV PAIRS
 	!,unify_event(Event_data_list,Event_schema),
 
+	% THE BELOW IS USED TO THE ACTIONS THAT ARE TAKEN BY THE COMPONENT ON THE ARRIVAL OF THIS TYPE OF EVENT
 	!,trigger_component_event_response(Component_name,Event_type,Event_data_list),
 	
+	% WE NOW MOVE TO THE ENVIRONMRNT THAT CONTAINS THE COMPONENT
 	get_reachable_environments(Event_type,Event_data_list,[Environment_name],Component_name,[Component_name],Reachable_environment_list),
 	nl,write('Event '),write(Event_id),write(' Visited List -->'),write(Reachable_environment_list),nl.
-	
+
+% THIS PREDICATE IS USED TO SIMULATE AN EVENT ORIGINATION FROM AN ENVIRONMENT	
 simulate_event_environment(Environment_name,Event_id,Event_data_list):-
 	environment_instance(Environment_name),
 	% TYPE FILTER START
 	event_advertisement_entry(Environment_name,Environment_name,Event_id,Context_filter_expression),
 	% TYPE FILTER END
 	
+	% VALIDATE THE EVENT TO ONE OF THE KNOWN EVENT SCHEMAS
 	[Event_type|Et] = Event_data_list,
 	event_schema(Event_id,Event_schema),
+	% VALIDATE IT FURTHER BY A DATA TYPE CHECK OS OF THE VALUES OF THE KV PAIRS
 	!,unify_event(Event_data_list,Event_schema),
 
+	% WE NOW MOVE TO THE ENVIRONMRNT THAT CONTAINS THE ENVIRONMENT
 	get_reachable_environments(Event_id,Event_data_list,[Environment_name],Environment_name,[],Reachable_environment_list),
 	nl,write('Event '),write(Event_id),write(' Visited List -->'),write(Reachable_environment_list),nl.
 	
@@ -158,48 +168,63 @@ process_event_environment(Environment_name,Event_id,Event_data_list,Calling_comp
 	
 process_event_environment(Environment_name,Event_id,Event_data_list,Calling_component_name).
 
+% ONE OF THE DEFINITIONS OF THE A RECURSIVE PREDICATE FOR ITERATING THROUGH ALL THE COMPONENTS IN AN ENVIRONMENT
 get_reachable_environments(Event_type,Event_data_list,[],Calling_component_name,I,I).
-	
+
+% ONE OF THE DEFINITIONS OF THE A RECURSIVE PREDICATE FOR ITERATING THROUGH ALL THE COMPONENTS IN AN ENVIRONMENT	
 get_reachable_environments(Event_type,Event_data_list,[Rh|Rt],Calling_component_name,I,O):-
 	get_reachable_environments(Event_type,Event_data_list,Rh,Calling_component_name,I,O2),
 	get_reachable_environments(Event_type,Event_data_list,Rt,Calling_component_name,O2,O).
-	
+
+% THIS PREDICATE IS USED TO COMPUTE THE EFFECT OF AN EVENT ON REACHING AN ENVIRONMENT
 get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,O):-
 	environment_instance(Component_name),
+	% CHECKING THAT THE ENVIRONMENT HAS NOT BEEN VISITIED BEFORE
 	not(member(Component_name,I)),
 	write('Visiting Environment - '),write(Component_name),nl,
 	% write('_-> Already Visited - '),write(I),nl,
+	% ADD THE NAME OF THIS ENVIRONMENT IN THE LIST TO PREVENT VISITING IT AGAIN
 	append(I,[Component_name],I2),
 	
 	process_event_environment(Component_name,Event_type,Event_data_list,Calling_component_name),
 	
+	% FIND ALL THE ENVIRONMENTS THAT CONTAIN THIS ENVIRONMENT
+	% THIS CALL IS SPREADING THE ENENT UPWARDS TOWARDS THE PARENT ENVIRONMENTS
 	findall(X,environment_component(X,Component_name),Environment_name_list),
 	% write('|-> Parent Environments - '),write(Environment_name_list),nl,
+	
+	% THE THE METHOD RECURSIVELY TO VISIT PARENT ENVIRONMENT
 	get_reachable_environments(Event_type,Event_data_list,Environment_name_list,Component_name,I2,I3),
 	% write('@@'),write(I3),nl,
+	
+	% WE ARE NOW LOOKING FOA ALL THE COMPONENTS AND ENVIRONMENTS CONTAINED IN THIS ENVIRONMENT
 	findall(X,environment_component_event_subscription(Component_name,X,Event_type),Sub_component_name_list),
 	% write('|-> Sub of '),write(Component_name),write(' - '),write(Sub_component_name_list),nl,
+	% NOW WE ARE GOING TO SPRED THE EVENT DOWNWARDS TOWARDS THIS ENVIRONMENTS CHILDRREN COMPONENTS AND ENVIRONEMENTS
 	get_reachable_environments(Event_type,Event_data_list,Sub_component_name_list,Component_name,I3,O).
-	
+
+% THIS PREDICATE IS USED TO COMPUTE THE EFFECT OF AN EVENT ON REACHING A COMPONENT
 get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,O):-
 	not(environment_instance(Component_name)),
 	component_instance(Component_name),
+	% CHECKING THAT THE ENVIRONMENT HAS NOT BEEN VISITIED BEFORE
 	not(member(Component_name,I)),
 	append(I,[Component_name],O),
 	
-	% TYPE FILTER START
+	% TYPE FILTER START, CHECKING IF THE COMPONENT HAS SUBSCRIBED TO THIS TYPE OF EVENT
 	event_subscription_entry(Component_name,Environment_name,Event_type,Content_filter_expression,Context_filter_expression),
 	% TYPE FILTER END
 	
 	write('##Matching## Component Found - '),write(Component_name),nl,
 	
-	% CONTEX VARIABLE START
+	% CONTEX FILTER START
 	findall(X,get_context_variables(Calling_component_name,_,X),Environment_context_variable_list),
 	write('Context filter expression - '),write(Context_filter_expression),nl,
 	write('Context filter data'),write(Environment_context_variable_list),nl,
+	% CHECKING IF THE EVENT PASSES THE CONTEXT FILTER
 	compute(Context_filter_expression,Environment_context_variable_list),
 	write('Context filter passed'),nl,
-	% CONTEX VARIABLE END
+	% CONTEX FILTER END
 	
 	% CONTENT FILTER START
 	can_pass_event(Event_data_list,Content_filter_expression),
@@ -208,8 +233,10 @@ get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_com
 	
 	write('Visiting Component - '),write(Component_name),nl,
 	
+	% NOW WE EXECUTE THE PREDICATE THAT SIGNALS THAT THE EVENT HAS BEEN ACCEPTED BY THE COMPONENT, IT IS ALSO WHERE THE COMPONENT SERVICES THE EVENT
 	trigger_component_event_response(Component_name,Event_type,Event_data_list).
-	
+
+% ONE OF THE DEFINITIONS, IT IS USED TO PREVENT THE BREAK IN THE RECURSION CHAIN IF THE COMPONENT DOES NOT SUBSCRIBE TO A EVENT TYPE	
 get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,O):-
 	not(environment_instance(Component_name)),
 	component_instance(Component_name),
@@ -217,8 +244,10 @@ get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_com
 	append(I,[Component_name],O),
 	write('Visiting Component - '),write(Component_name),nl,
 	not(event_subscription_entry(Component_name,Environment_name,Event_type,Content_filter_expression,Context_filter_expression)).
-	
+
+% THIS PREDICATE IS USED AS AN ALL PASS DEFINITION FOR THE RECURSIVE PREDICATE
 get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,I).
+
 
 get_context_variables(Environment_name,Component_name,Environment_context_variable):-
 	Component_name = Environment_name,
@@ -231,12 +260,14 @@ environment_component_event_subscription(Environment_name,Component_name,Event_i
 environment_component_event_subscription(Environment_name,Component_name,Event_id):-
 	environment_component(Environment_name,Component_name),
 	environment_instance(Component_name).
-	
+
+% THIS PREDICATE IS USED TO FETCH THE CONTEXT VARIABLES OF AN ENVIRONMENT, AND THE COMPONENTS CONTAINED WITHIN IT	
 get_context_variables(Environment_name,Component_name,Environment_context_variable):-
 	environment_instance(Environment_name),
 	ancestor(Environment_name,Component_name),
 	context_variable(Component_name,Environment_context_variable).
 
+% THIS PREDICATE IS USED TO GET A CONTEXT VARIABLE CREATED FOR AN ENVIRONMENT
 get_context_variables(Environment_name,Component_name,Environment_context_variable):-
 	context_variable(Environment_name,Environment_context_variable).
 
@@ -245,13 +276,16 @@ get_context_variables(Environment_name,Component_name,Environment_context_variab
 	ancestor(Environment_name,Sub_environment_name),
 	context_variable(Sub_environment_name,Environment_context_variable).
 
+% USED TO FIND THE ACESTORY OF A COMPONENT OR ENVIRONMENT
 ancestor(Environment_name,Component_name):-
 	environment_component(Environment_name,Component_name).
-	
+
+% USED TO FIND THE ACESTORY OF A COMPONENT OR ENVIRONMENT	
 ancestor(Environment_name,Component_name):-
 	environment_component(Sub_environment_name,Component_name),
 	ancestor(Environment_name,Sub_environment_name).
-	
+
+% THE PREDICATE IS USED TO CAHNGE THE VALUE OF A CONTEXT VARIABLE 	
 change_context_variable_value(Context_variable_name,Context_variable_new_value):-
 	context_variable(Component_name,[Context_variable_name,Old_value]),
 	
@@ -259,6 +293,7 @@ change_context_variable_value(Context_variable_name,Context_variable_new_value):
 	write('Setting new value '),write(Context_variable_new_value),write(' for context variable '),write(Context_variable_name),nl,
 	assert(context_variable(Component_name,[Context_variable_name,Context_variable_new_value])).
 
+% USED TO COMPUTE THE DISTANCE BETWEEN THE 2 PLANAR POINTS
 distance(X1,Y1,X2,Y2,D):- 
     D is sqrt((X2-X1)**2 + (Y2-Y1)**2).
 
