@@ -55,7 +55,7 @@ unify_event(Event,Schema):-
 	
 	!,unify_length(Event,Schema),
 	% write('length compared'),nl,
-	!,compare_elements(Event,Schema),
+	!,compare_elements(Event,Schema).
 	% write('Schema compared'),nl.
 
 compare_elements([Eh|[]],[Sh|[]]):-

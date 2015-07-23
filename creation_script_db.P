@@ -45,7 +45,7 @@ add_component_to_environment(Environment_name, Component_name):-
 	environment_instance(Environment_name),
 	component_instance(Component_name),	
 	assert(environment_component(Environment_name,Component_name)),	
-	findall(X,context_variable(Component_name,X),Component_context_variable_list),
+	findall(X,context_variable(Component_name,X),Component_context_variable_list).
 	% write(Component_context_variable_list),nl.
 	
 add_context_variable_list_environment(Environment_name,[H|T]):-

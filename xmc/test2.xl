@@ -1,19 +1,21 @@
-
 {*
 send_event(1):-
 	simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,1.0],[longitude,1.0]]]).
 
+send_event(2):-
+	simulate_event_environment(users_phone,incomingCallEvent,[incomingCallEvent,[[callerName,akshat],[callingNumber,a99]]]).
+
 trigger_component_event_response(users_phone,locationEvent,Event_data):-
-	write('users_phone reacting to location event'),nl,
+	% write('users_phone reacting to location event'),nl,
 	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),
 	
 	get_value_for_key(latitude,Flat_kv_pairs,Latitude_value),
 	get_value_for_key(longitude,Flat_kv_pairs,Longitude_value),	
-	write('Latitude - '),write(Latitude_value),nl,
-	write('Longitude - '),write(Longitude_value),nl,
+	% write('Latitude - '),write(Latitude_value),nl,
+	% write('Longitude - '),write(Longitude_value),nl,
 	
 	distance(Latitude_value,Longitude_value,5,5,Distance),
-	write('Distance calculated - '),write(Distance),nl,
+	% write('Distance calculated - '),write(Distance),nl,
 	change_context_variable_value(distanceToWorkContextElement,Distance).
 	
 trigger_component_event_response(calendar_application,meetingStartedEvent,Event_data):-
@@ -60,12 +62,12 @@ trigger_component_event_response(Component_name,Event_id,Event_data).
 *}
 
 send_event_xl ::=
-	send_event(1);
+	send_event(2);
 	action(event_sent);
-	send_event.
+	send_event_xl.
 
 meta_mck ::=
 	send_event_xl.
 
-drop_packet += <incoming_call>packet_rx \/ <->drop_packet.
-packet_rx += <incoming_call>packet_rx \/ <event_sent>tt.
+drop_packet += <event_sent>packet_rx \/ <->drop_packet.
+packet_rx += <-incoming_location>packet_rx \/ <event_sent>tt.
