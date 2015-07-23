@@ -46,7 +46,7 @@ add_component_to_environment(Environment_name, Component_name):-
 	component_instance(Component_name),	
 	assert(environment_component(Environment_name,Component_name)),	
 	findall(X,context_variable(Component_name,X),Component_context_variable_list),
-	write(Component_context_variable_list),nl.
+	% write(Component_context_variable_list),nl.
 	
 add_context_variable_list_environment(Environment_name,[H|T]):-
 	assert(context_variable(Environment_name,H)),
@@ -104,11 +104,11 @@ simulate_event_component(Component_name,Environment_name,Event_id,Event_data_lis
 	
 	% CONTEX FILTER START, SINCE THE OUTGOING EVENT S ONLY NEED TO PASS THE CONTEXT FILTER AND NOT THE CONTENT FILTER
 	findall(X,get_context_variables(Environment_name,_,X),Environment_context_variable_list),
-	write('Context filter expression - '),write(Context_filter_expression),nl,
-	write('Context filter data'),write(Environment_context_variable_list),nl,
+	% write('Context filter expression - '),write(Context_filter_expression),nl,
+	% write('Context filter data'),write(Environment_context_variable_list),nl,
 	% THE BELOW IS USED TO TEST IF THE EVENT PASSES THE CONTEXT FILTER OF THE ADVERTISEMENT
 	compute(Context_filter_expression,Environment_context_variable_list),
-	write('Context filter passed'),nl,
+	% write('Context filter passed'),nl,
 	% CONTEX FILTER END
 	
 	% VALIDATE THE EVENT TO ONE OF THE KNOWN EVENT SCHEMAS
@@ -143,8 +143,8 @@ simulate_event_environment(Environment_name,Event_id,Event_data_list):-
 	
 process_event_environment(Environment_name,Event_id,Event_data_list,Calling_component_name):-
 	event_subscription_entry(Environment_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression),	
-	write('processing event '),write(Event_id),write(' for environment '),write(Environment_name),nl,
-	write('calling component '),write(Calling_component_name),nl,
+	% write('processing event '),write(Event_id),write(' for environment '),write(Environment_name),nl,
+	% write('calling component '),write(Calling_component_name),nl,
 	
 	% CONTEX VARIABLE START
 	(environment_component(Environment_name,Calling_component_name)
@@ -153,15 +153,15 @@ process_event_environment(Environment_name,Event_id,Event_data_list,Calling_comp
 	;
 	findall(X,get_context_variables(Calling_component_name,_,X),Environment_context_variable_list)
 	),
-	write('Context filter expression - '),write(Context_filter_expression),nl,
-	write('Context filter data'),write(Environment_context_variable_list),nl,
+	% write('Context filter expression - '),write(Context_filter_expression),nl,
+	% write('Context filter data'),write(Environment_context_variable_list),nl,
 	compute(Context_filter_expression,Environment_context_variable_list),
-	write('Context filter passed'),nl,
+	% write('Context filter passed'),nl,
 	% CONTEX VARIABLE END
 	
 	% CONTENT FILTER START
 	can_pass_event(Event_data_list,Content_filter_expression),
-	write('**Passed** Component Content Filter - '),write(Environment_name),nl,
+	% write('**Passed** Component Content Filter - '),write(Environment_name),nl,
 	% CONTENT FILTER END
 	
 	trigger_component_event_response(Environment_name,Event_id,Event_data_list).
@@ -181,7 +181,7 @@ get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_com
 	environment_instance(Component_name),
 	% CHECKING THAT THE ENVIRONMENT HAS NOT BEEN VISITIED BEFORE
 	not(member(Component_name,I)),
-	write('Visiting Environment - '),write(Component_name),nl,
+	% write('Visiting Environment - '),write(Component_name),nl,
 	% write('_-> Already Visited - '),write(I),nl,
 	% ADD THE NAME OF THIS ENVIRONMENT IN THE LIST TO PREVENT VISITING IT AGAIN
 	append(I,[Component_name],I2),
@@ -215,23 +215,23 @@ get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_com
 	event_subscription_entry(Component_name,Environment_name,Event_type,Content_filter_expression,Context_filter_expression),
 	% TYPE FILTER END
 	
-	write('##Matching## Component Found - '),write(Component_name),nl,
+	% write('##Matching## Component Found - '),write(Component_name),nl,
 	
 	% CONTEX FILTER START
 	findall(X,get_context_variables(Calling_component_name,_,X),Environment_context_variable_list),
-	write('Context filter expression - '),write(Context_filter_expression),nl,
-	write('Context filter data'),write(Environment_context_variable_list),nl,
+	% write('Context filter expression - '),write(Context_filter_expression),nl,
+	% write('Context filter data'),write(Environment_context_variable_list),nl,
 	% CHECKING IF THE EVENT PASSES THE CONTEXT FILTER
 	compute(Context_filter_expression,Environment_context_variable_list),
-	write('Context filter passed'),nl,
+	% write('Context filter passed'),nl,
 	% CONTEX FILTER END
 	
 	% CONTENT FILTER START
 	can_pass_event(Event_data_list,Content_filter_expression),
-	write('**Passed** Component Content Filter - '),write(Component_name),nl,
+	% write('**Passed** Component Content Filter - '),write(Component_name),nl,
 	% CONTENT FILTER END
 	
-	write('Visiting Component - '),write(Component_name),nl,
+	% write('Visiting Component - '),write(Component_name),nl,
 	
 	% NOW WE EXECUTE THE PREDICATE THAT SIGNALS THAT THE EVENT HAS BEEN ACCEPTED BY THE COMPONENT, IT IS ALSO WHERE THE COMPONENT SERVICES THE EVENT
 	trigger_component_event_response(Component_name,Event_type,Event_data_list).
@@ -242,7 +242,7 @@ get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_com
 	component_instance(Component_name),
 	not(member(Component_name,I)),
 	append(I,[Component_name],O),
-	write('Visiting Component - '),write(Component_name),nl,
+	% write('Visiting Component - '),write(Component_name),nl,
 	not(event_subscription_entry(Component_name,Environment_name,Event_type,Content_filter_expression,Context_filter_expression)).
 
 % THIS PREDICATE IS USED AS AN ALL PASS DEFINITION FOR THE RECURSIVE PREDICATE
@@ -290,7 +290,7 @@ change_context_variable_value(Context_variable_name,Context_variable_new_value):
 	context_variable(Component_name,[Context_variable_name,Old_value]),
 	
 	retract(context_variable(Component_name,[Context_variable_name,_])),
-	write('Setting new value '),write(Context_variable_new_value),write(' for context variable '),write(Context_variable_name),nl,
+	% write('Setting new value '),write(Context_variable_new_value),write(' for context variable '),write(Context_variable_name),nl,
 	assert(context_variable(Component_name,[Context_variable_name,Context_variable_new_value])).
 
 % USED TO COMPUTE THE DISTANCE BETWEEN THE 2 PLANAR POINTS

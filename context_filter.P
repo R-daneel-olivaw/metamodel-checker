@@ -43,7 +43,7 @@ faltten_to_key_value_pairs([Key,Value|[]],I,Flat_kv_pairs):-
 % compute([[3,=,3],&,[3,=,3]]).
 % compute([[[5,=,3],or,[5,=,3]],or,[[5,=,5],or,[5,=,3]]]).
 compute(Context_filter_expression,Flat_kv_pairs):-
-	write('starting filter computation'),nl,
+	% write('starting filter computation'),nl,
 	compute_logic_molecule(Context_filter_expression,Flat_kv_pairs).
 
 compute([],_).
@@ -51,8 +51,8 @@ compute([],_).
 compute_logic_molecule([Term_1,Operator,Term_2|[]],Flat_kv_pairs):-
 	!,
 	member(Operator,[>,<,=<,>=,and,or,=\=,=]),
-	write('term1 = '),write(Term_1),nl,
-	write('term2 = '),write(Term_2),nl,
+	% write('term1 = '),write(Term_1),nl,
+	% write('term2 = '),write(Term_2),nl,
 	
 	(not(is_list(Term_1))->get_value_for_key(Term_1,Flat_kv_pairs,R1);(compute_logic_molecule(Term_1,Flat_kv_pairs)->R1 = true;R1 = fail)),
 	(not(is_list(Term_2))->R2=Term_2;(compute_logic_molecule(Term_2,Flat_kv_pairs)->R2 = true;R2 = fail)), 
