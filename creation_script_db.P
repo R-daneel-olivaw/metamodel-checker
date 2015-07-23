@@ -295,7 +295,7 @@ change_context_variable_value(Context_variable_name,Context_variable_new_value):
 
 % USED TO COMPUTE THE DISTANCE BETWEEN THE 2 PLANAR POINTS
 distance(X1,Y1,X2,Y2,D):- 
-    D is sqrt((X2-X1)**2 + (Y2-Y1)**2).
+    D is sqrt((X2-X1) + (Y2-Y1)).
 
 % context variable format - [[testVar1,50],[testVar2,90],[testvar3,10]]
 % environment(Environment_name).
