@@ -12,6 +12,7 @@ can_pass_event(Event,Filter_expression):-
 	%replace_keys_by_values(Context_filter_expression,Flat_kv_pairs,Logic_filled_expression),
 	compute(Filter_expression,Flat_kv_pairs).	
 
+% THESE PREDICATES ARE USED TO FLATTEN THE NESTED LIST OF KV PAIRS INTO A FLAT LIST OF KV PAIRS
 faltten_to_key_value_pairs([H|[]],I,Flat_kv_pairs):-
 	% write('(2)-> '),write(H),write(' '),
 	faltten_to_key_value_pairs(H,I,Flat_kv_pairs).	
@@ -55,10 +56,12 @@ compute([],_).
 % THIS PREDICATE IS USED TO COMPUTE THE FITER EXPRESSION RECURSIVELY, IT BREAKS THE FILTER EXPRESSION INTO NESTED LISTS OF 3 ELEMENTS EACH
 compute_logic_molecule([Term_1,Operator,Term_2|[]],Flat_kv_pairs):-
 	!,
+	% CHECKING IF THE OPERATOR IS SUPPORTED
 	member(Operator,[>,<,=<,>=,and,or,=\=,=]),
 	% write('term1 = '),write(Term_1),nl,
 	% write('term2 = '),write(Term_2),nl,
 	
+	% CHECKING IF EITHER THE FIRST OR THE SECOND TERM OF THE EXPRESSION IS A LIST IN ITS SELF, THIS WOULD MEAN THAT THE EXPRESSION IS A NESTED EXPRESSION, IN HTIS CASE THE PREDICATE IS CALLED ON THE INNER EXPRESSION RECURSIVELY
 	(not(is_list(Term_1))->get_value_for_key(Term_1,Flat_kv_pairs,R1);(compute_logic_molecule(Term_1,Flat_kv_pairs)->R1 = true;R1 = fail)),
 	(not(is_list(Term_2))->R2=Term_2;(compute_logic_molecule(Term_2,Flat_kv_pairs)->R2 = true;R2 = fail)), 
 	
