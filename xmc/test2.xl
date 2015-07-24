@@ -3,7 +3,7 @@ send_event(1):-
 	simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,1.0],[longitude,1.0]]]).
 
 send_event(2):-
-	simulate_event_environment(users_phone,incomingCallEvent,[incomingCallEvent,[[callerName,akshat],[callingNumber,a99]]]).
+	simulate_event_environment(phone_network,incomingCallEvent,[incomingCallEvent,[[callerName,akshat],[callingNumber,a99]]]).
 
 trigger_component_event_response(users_phone,locationEvent,Event_data):-
 	% write('users_phone reacting to location event'),nl,
@@ -16,7 +16,8 @@ trigger_component_event_response(users_phone,locationEvent,Event_data):-
 	
 	distance(Latitude_value,Longitude_value,5,5,Distance),
 	% write('Distance calculated - '),write(Distance),nl,
-	change_context_variable_value(distanceToWorkContextElement,Distance).
+	change_context_variable_value(distanceToWorkContextElement,Distance),
+	assert(event_receive_notification(locationEvent)).
 	
 trigger_component_event_response(calendar_application,meetingStartedEvent,Event_data):-
 	write('calendar_application reacting to meeting started event'),nl,
@@ -53,21 +54,52 @@ trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 	
 trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 
-	write('users_phone reacting to incoming call event'),nl,
-	write('NotInMeetingProfile - NORMAL CALL'),nl,
-	action(incoming_call).
+	% write('users_phone reacting to incoming call event'),nl,
+	% write('NotInMeetingProfile - NORMAL CALL'),nl,
+	assert(event_receive_notification(incomingCallEvent)).
 % INCOMING CALL EVENT END
 	
 trigger_component_event_response(Component_name,Event_id,Event_data).
+
+receive_event(1,Status):-
+	event_receive_notification(locationEvent),
+	retract(event_receive_notification(locationEvent)),
+	Status=1.
+
+receive_event(2,Status):-
+	event_receive_notification(incomingCallEvent),
+	retract(event_receive_notification(incomingCallEvent)),
+	Status=1.
+
+receive_event(_,0).
 *}
 
 send_event_xl ::=
+{
 	send_event(2);
-	action(event_sent);
-	send_event_xl.
+	action(event_sent)
+}.
+
+receive_event_xl ::=
+{
+	receive_event(2,Status);
+	if(Status == 1)
+	then
+	{
+		action(incoming_call)
+	}
+	/*else
+	{
+		action(incoming_call)
+	}*/
+}.
 
 meta_mck ::=
-	send_event_xl.
+{
+	send_event_xl
+	; receive_event_xl
+	; meta_mck
+}.
 
 drop_packet += <event_sent>packet_rx \/ <->drop_packet.
-packet_rx += <-incoming_location>packet_rx \/ <event_sent>tt.
+packet_rx += <-incoming_call>packet_rx \/ <event_sent>tt.
