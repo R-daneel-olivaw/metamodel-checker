@@ -1,0 +1,6 @@
+abp ::=
+	action(hello).
+	
+always_true += [-] tt \/ <-> always_true.
+always_false += [-] ff \/ <-> always_false.
+deadlock += [-] ff \/ <-> deadlock.
