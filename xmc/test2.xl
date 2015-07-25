@@ -92,9 +92,9 @@ chk_receive_incoming_call_event_xl ::=
 incoming_call ::=
 {
 	send_incoming_call_event_xl
-	; chk_receive_incoming_call_event_xl
+	| chk_receive_incoming_call_event_xl
 	; incoming_call
 }.
 
 drop_call_event += <event_sent>lost_call \/ <->drop_call_event.
-lost_call += <-incoming_call>lost_call \/ <event_sent>tt.
+lost_call += <event_sent>tt \/ <-incoming_call>lost_call.
