@@ -55,14 +55,9 @@ trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 
 	% write('users_phone reacting to incoming call event'),nl,
-	% write('NotInMeetingProfile - NORMAL CALL'),nl,
+	write('NotInMeetingProfile - NORMAL CALL'),nl,
 	assert(event_receive_notification(incomingCallEvent)).
 % INCOMING CALL EVENT END
-
-receive_event(1,Status):-
-	event_receive_notification(locationEvent),
-	retract(event_receive_notification(locationEvent)),
-	Status=1.
 
 chk_receive_incoming_call_event(2,1):-
 	write('before'),
@@ -70,14 +65,13 @@ chk_receive_incoming_call_event(2,1):-
 	write('after'),
 	retract(event_receive_notification(incomingCallEvent)).
 
-receive_event(_,0).
+chk_receive_incoming_call_event(_,0).
 *}
 
 send_incoming_call_event_xl ::=
 {
 	send_incoming_call_event(2);
 	action(event_sent);
-	% action(incoming_call);
 	send_incoming_call_event_xl
 }.
 
@@ -86,6 +80,10 @@ chk_receive_incoming_call_event_xl ::=
 	chk_receive_incoming_call_event(2,Status);
 	if(Status == 1)
 	then
+	{
+		action(incoming_call)
+	}
+	else
 	{
 		action(incoming_call)
 	};
