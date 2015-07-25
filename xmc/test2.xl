@@ -76,7 +76,8 @@ receive_event(_,0).
 send_incoming_call_event_xl ::=
 {
 	send_incoming_call_event(2);
-	action(event_sent)
+	action(event_sent);
+	send_incoming_call_event_xl
 }.
 
 chk_receive_incoming_call_event_xl ::=
@@ -86,14 +87,14 @@ chk_receive_incoming_call_event_xl ::=
 	then
 	{
 		action(incoming_call)
-	}
+	};
+	chk_receive_incoming_call_event_xl
 }.
 
 incoming_call ::=
 {
 	send_incoming_call_event_xl
-	| chk_receive_incoming_call_event_xl
-	; incoming_call
+	; chk_receive_incoming_call_event_xl
 }.
 
 drop_call_event += <event_sent>lost_call \/ <->drop_call_event.
