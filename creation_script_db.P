@@ -121,8 +121,8 @@ simulate_event_component(Component_name,Environment_name,Event_id,Event_data_lis
 	!,trigger_component_event_response(Component_name,Event_type,Event_data_list),
 	
 	% WE NOW MOVE TO THE ENVIRONMRNT THAT CONTAINS THE COMPONENT
-	get_reachable_environments(Event_type,Event_data_list,[Environment_name],Component_name,[Component_name],Reachable_environment_list).
-	% nl,write('Event '),write(Event_id),write(' Visited List -->'),write(Reachable_environment_list),nl.
+	get_reachable_environments(Event_type,Event_data_list,[Environment_name],Component_name,[Component_name],Reachable_environment_list),
+	nl,write('Event '),write(Event_id),write(' Visited List -->'),write(Reachable_environment_list),nl.
 
 % THIS PREDICATE IS USED TO SIMULATE AN EVENT ORIGINATION FROM AN ENVIRONMENT	
 simulate_event_environment(Environment_name,Event_id,Event_data_list):-
@@ -143,7 +143,7 @@ simulate_event_environment(Environment_name,Event_id,Event_data_list):-
 	% write('Event_data_list - '),write(Event_data_list),
 	% write('Environment_name - '),write(Environment_name),
 	
-	get_reachable_environments(Event_id,Event_data_list,[Environment_name],Environment_name,[],Reachable_environment_list).
+	get_reachable_environments(Event_id,Event_data_list,[Environment_name],Environment_name,[],Reachable_environment_list),
 	nl,write('Event '),write(Event_id),write(' Visited List -->'),write(Reachable_environment_list),nl.
 	
 process_event_environment(Environment_name,Event_id,Event_data_list,Calling_component_name):-
