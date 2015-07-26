@@ -1,0 +1,12 @@
+t1 ::=
+action(sendnew);
+simulate_event_environment(users_phone,incomingCallEvent,[incomingCallEvent,[[callerName,akshat],[callingNumber,a99]]]).
+
+t2 ::=
+action(recv).
+
+ta ::=
+t1|t2.
+
+drop_packet += <sendnew>lost \/ <->drop_packet.
+lost    += <sendnew>tt \/ <-recv>lost.

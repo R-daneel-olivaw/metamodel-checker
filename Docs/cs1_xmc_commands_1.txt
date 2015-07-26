@@ -1,0 +1,19 @@
+import append/3 from basics.
+import length/2 from basics.
+consult('/root/XSB_code/metamodel-checker/context_filter.P').
+consult('/root/XSB_code/metamodel-checker/creation_script_db.P').
+consult('/root/XSB_code/metamodel-checker/nested_list_approach.P').
+consult('/root/XSB_code/metamodel-checker/case_study/cellphone_behavior_adaption_case_study_specific_behavior.P').
+create_environment(users_phone,[[name,phone]]).
+create_component(calendar_application,[[inBusinessMeetingContextElement,0],[distanceToWorkContextElement,0],[meetingInProgressContextElement,0]]).
+add_component_to_environment(users_phone,calendar_application).
+create_event_schema(meetingStartedEvent,[meetingStartedEvent,[[meetingName,string],[date,string],[startTime,string],[duration,float]]]).
+create_event_schema(locationEvent,[locationEvent,[[latitude,float],[longitude,float]]]).
+create_event_schema(incomingCallEvent,[incomingCallEvent,[[callerName,string],[callingNumber,string]]]).
+create_advertisement(calendar_application,users_phone,meetingStartedEvent,[]).
+create_advertisement(users_phone,locationEvent,[]).
+create_advertisement(users_phone,incomingCallEvent,[]).
+create_subscription(users_phone,users_phone,incomingCallEvent,[],[]).
+create_subscription(users_phone,users_phone,locationEvent,[],[]).
+xlc('/root/XSB_code/metamodel-checker/xmc/t1').
+mck(t1,drop_packet).
