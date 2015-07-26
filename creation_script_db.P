@@ -1,96 +1,133 @@
+% PREDICATE TO CREATE ENVIRONMENT WITH A LIST OF CONTEXT VARIABLES
 create_environment(Environment_name, Context_var_list):-
 	%not(environment_instance(Environment_name)),
 	assert(environment_instance(Environment_name)),
+	% CREATE A COMPONENT INSTANCE FOR EACH ENVIRONMENT SO THAT THE ENVIRONMENT CAN BE NESTED INSIDE ANOTHER ENVIRONMENT
 	assert(component_instance(Environment_name)),
+	% ASSOSIATE CONTEXT VARIABLES TO THE NEW ENVIRONMENT
 	add_context_variable_list_environment(Environment_name,Context_var_list).	
 
+% PREDICATE TO CREATE A COMPONENTWITH A LIST OF CONTEXT VARIABLES
 create_component(Component_name, Context_variable_list):-
 	%not(component_instance(Component_name)),
 	assert(component_instance(Component_name)),
+	% ASSOSIATE THE CONTEXT VARIABLES TO THE NEW CONTEXT
 	add_component_context_variable_list(Component_name,Context_variable_list).
-	
+
+% PREDICATE TO DECLARE A NEW EVENT SCHEMA, THE EVENT SCHEMA IS REPRESENTED IN A NESTED LIST FORMAT WHERE DATA IS REPRESENTED AS KV PAIR	
 create_event_schema(Event_id,Event_schema_list):-
 	assert(event_schema(Event_id,Event_schema_list)).
-	
+
+% PREDICATE TO CREATE AN ADVERTISEMENT FOR A COMPONENT, AN ADVERTISEMENT IS ASSOSIATED WITH A COMPONENT, AN EVENT TYPE, AN ENVIRONMENT AND A CONTEXT FILTER. AN ENVIRONMENT IS NEEDED BECAUSE ADVERTISEMENTS ARE NOT SHARED BETWEEN ENVIRONMENTS. THEREFORE IF A COMPONENT WANTS TO DISTRIBUTE AN EVENT TO MULTIPLE PARENTS IT WILL NEED MULTIPLE ADVERTISEMENTS FOR EACH PARENT ENVIRONMENT. THE ADVERTISEMENT ALSO STORES A CONTEXT FILTER EXPRESSION THAT AN EVENT NEEDS TO PASS BEFORE REACHING THE IMMEDIATE PARENT ENVIRONMENT.
 create_advertisement(Component_name,Environment_name,Event_id,Context_filter_expression):-
+	% CHECKING IF THE COMPONENT ALREADY EXISTS
 	component_instance(Component_name),
+	% CHECKING IF THE ENVIRONMENT EXISTS
 	environment_instance(Environment_name),
+	% CHECKING IF THE COMPONENT IS CONTAINED IN THE ENVIRONMENT
 	environment_component(Environment_name,Component_name),
+	% CHECKING IF THE EVENT TYPE EXISTS
 	event_schema(Event_id,_),
 
 	assert(event_advertisement_entry(Component_name,Environment_name,Event_id,Context_filter_expression)).
-	
+
+% PREDICATE TO CREATE AN ADVERTISEMENT FOR AN ENVIRONMENT. . THE ADVERTISEMENT ALSO STORES A CONTEXT FILTER EXPRESSION THAT AN EVENT NEEDS TO PASS BEFORE REACHING THE IMMEDIATE PARENT ENVIRONMENT.
 create_advertisement(Environment_name,Event_id,Context_filter_expression):-
+	% CHECKING IF THE ENVIRONMENT EXISTS
 	environment_instance(Environment_name),
+	% CHECKING IF THE EVENT TYPE EXISTS
 	event_schema(Event_id,_),
 
 	assert(event_advertisement_entry(Environment_name,Environment_name,Event_id,Context_filter_expression)).
-	
+
+% PREDICATE TO CREATE A SUBSCRIPTION FOR A COMPONENT, A SUSCRIPTION IS ASSOSIATED WITH A COMPONENT, AN ENVIRONMENT, AN EVENT TYPE, A CONTEXT FILTER AND A CONTENT FILTER. AN ENVIRONMENT IS NEEDED AS SUBSCRIPTIONS ARE NOT SHARD AMONG ENVIRONMENTS. THEREFORE IF A COMPONENT WANTS TO SUBSCRIBE TO AN EVENT FROM MULTIPLE PARENTS IT WILL NEED MULTIPLE SUBSCRIPTIONS FOR EACH PARENT ENVIRONMENT. A CONTENT FILTER IS EVALUATED BASED ON THE CONTENT FILTER EXPRESSION AND THE CONTENTS OF THE EVENT. A CONTEXT FILTER IS EVALUATED BASED ON THE CONTEXT FILTER EXPRESSION AND THE VALUES OF THE CONTEXT VARIABLES HOSTED BY THE PARENT ENVIRONMENTS.
 create_subscription(Component_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression):-
+	% CHECKING IF THE COMPONENT EXISTS
 	component_instance(Component_name),
+	% CHECKING IF THE EVENT TYPE EXISTS
 	event_schema(Event_id,_),
 	
 	assert(event_subscription_entry(Component_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression)).
 
 add_component_context_variable_list(Component_name,[]).
 
+% THESE PREDICATES ARE USED TO ITERATE THE LIST OF CONTEXT VARIABLES OF COMPONENTS
 add_component_context_variable_list(Component_name,[H|T]):-
 	add_component_context_variable(Component_name,H),
 	add_component_context_variable_list(Component_name,T).
-	
+
+% THIS PREDICATE IS USED TO STORE EACH CONTEXT VARIABLE	
 add_component_context_variable(Component_name,[Key,Value|[]]):-
 	assert(context_variable(Component_name,[Key,Value])).
 
+% THIS PREDICATE IS USED TO ADD A COMPONENT TO AN ENVIRONMENT. THIS PREDICATE CAN ALSO BE USED TO NEST ENVIRONMENTS AS EACH ENVIRONMENT IS ALSO ASSERTTED AS A COMPONENT.
 add_component_to_environment(Environment_name, Component_name):-
+	% CHECK IF ENVIRONMENT EXISTS
 	environment_instance(Environment_name),
+	% CHECK IF THE COMPONENT EXISTS
 	component_instance(Component_name),	
-	assert(environment_component(Environment_name,Component_name)),	
-	findall(X,context_variable(Component_name,X),Component_context_variable_list).
+	assert(environment_component(Environment_name,Component_name)).
+	% findall(X,context_variable(Component_name,X),Component_context_variable_list).
 	% write(Component_context_variable_list),nl.
-	
+
+% THIS PREDICATE IS USED TO ITTERATE THE LIST OF ENVIRONMENT CONTEXT VARIABLES 
 add_context_variable_list_environment(Environment_name,[H|T]):-
 	assert(context_variable(Environment_name,H)),
 	add_context_variable_list_environment(Environment_name,T).
 	
 add_context_variable_list_environment(Environment_name,[]).
 
+% THIS PREDICATE IS USED TO ADD A LIST OF COMPONENTS TO ENVIRONMENT
 add_component_list_environment(Environment_name,[H|T]):-
 	add_component_to_environment(Environment_name,H),
 	add_component_list_environment(Environment_name,T).
 	
 add_component_list_environment(Environment_name,[]).	
 
+% THIS PREDIACTE IS USED FOR GETING ALL THE EVENT TYPES FOR AN ENVIRONMENTS SUBCOMPONENTS FOR THAT HAVE ADVERTISEMENTS 
 get_event_id_list_advertisement_environment(Environment_name,Event_id_list):-
 	findall(X,environment_event_advertisement(Environment_name,X),Event_id_list).
 
+% THIS PREDICATE IS TRUE IS THE ENVIRONMENT OR ONE OF ITS COMPONENTS HAS AN ADVERTISEMENTS FOR THE EVENT TYPE
 environment_event_advertisement(Environment_name,Event_id):-
+	% CHECK IF THE ENVIRONMENT EXISTS
 	environment_instance(Environment_name),
+	% CHECK IF THE EVENT TYPE EXISTS
 	event_schema(Event_id,_),
 	
+	% CHECK IF THE COMPONENT IS CONTAINED INSIDE THE ENVIRONMENT
 	environment_component(Environment_name,Component_name),
 	event_advertisement_entry(Component_name,Environment_name,Event_id,Context_filter_expression).
-	
+
+% THIS PREDICATE IS TRUE IS THE ENVIRONMENT OR ONE OF ITS COMPONENTS HAS AN SUBSCRIPTIONS FOR THE EVENT TYPE	
 environment_event_subscription(Environment_name,Event_id):-
+	%CHECK IF THE ENVIRONMENT EXISTS
 	environment_instance(Environment_name),
+	% CHECK IF THE EVENT TYPE EXISTS
 	event_schema(Event_id,_),
 	
+	% CHECK IF THE COMPONENT IS CONTAINED INSIDE THE ENVIRONMENT
 	environment_component(Environment_name,Component_name),
 	event_subscription_entry(Component_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression).
 
+% PREDICATE TO CHECK IF ANY OF THE N DEGREE CHILD OF THE COMPONENT HAS A SUBSCRIPTION FOR THIS KIND OF EVENT
 component_event_subscription(Component_name,Event_id):-
 	event_subscription_entry(Component_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression).
 
 component_event_subscription(Component_name,Event_id):-
+	% GET A CHILD CONTAINED INSIDE THE COMPONENT
 	environment_component(Component_name,Sub_component_name),
 	component_event_subscription(Sub_component_name,Event_id).
-	
+
+% PREDICATE TO CHECK IF ANY OF THE N DEGREE CHILD OF THE COMPONENT HAS AN ADVERTISEMENT FOR THIS KIND OF EVENT	
 component_event_advertisement(Component_name,Environment_name,Event_id):-
 	event_advertisement_entry(Component_name,Environment_name,Event_id,Context_filter_expression).
 
 component_event_advertisement(Component_name,Environment_name,Event_id):-
 	environment_component(Component_name,Sub_component_name),
 	component_event_advertisement(Sub_component_name,Component_name,Event_id).
-	
+
+% PREDICATE TO GET ALL THE FIRST DEGREE COMPONENTS OF AN ENVIRONMENT	
 get_component_list_environment(Environment_name,Component_name_list):-
 	findall(X,environment_component(Environment_name,X),Component_name_list).
 

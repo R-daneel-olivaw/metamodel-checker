@@ -1,56 +1,82 @@
+% THE PREDICATE IS A SERVICE ROUTINE FOR THE TRCA FOR THE ALARM EVENT
 trigger_component_event_response(true_remote_control_application,alarmGoesOffEvent,Event_data):-
 	write('Component true_remote_control_application reacting to the alarmGoesOffEvent.'),nl,
+	% CHECK CONTEXT VARIABLE VALUE
 	change_context_variable_value(alarmOccured,1),
 	write('AFTER 1 MINUTE PASSES...'),nl,
+	% TRIGGER AN EVENT
 	simulate_event_environment(user_cellphone,cellphoneTimeChangedEvent,[cellphoneTimeChangedEvent,[[dateTime,hammerTime]]]).
-	
+
+% THE PREDICATE IS A SERVICE ROUTINE FOR THE TRCA FOR THE CELLPHONE TIME CHANGED EVENT	
 trigger_component_event_response(true_remote_control_application,cellphoneTimeChangedEvent,Event_data):-
 	write('Component true_remote_control_application reacting to the cellphoneTimeChangedEvent.'),nl,
+	% CHECK CONTEXT VARIABLE VALUE
 	context_variable(Component_name,[alarmOccured,1]),
+	% UPDATE CONTEXT VARIABLE VALUE
 	change_context_variable_value(activationTimeHasElapsedContextElement,1),
+	% TRIGGER EVENT
 	simulate_event_environment(user_cellphone,cellphoneLocationEvent,[cellphoneLocationEvent,[[latitude,0.0],[longitude,0.0]]]).
-	
+
+% THIS PREDICATE IS A SERVICE ROUTINE FOR THE TRCA FOR THE CELLPHONE LOCATION EVENT	
 trigger_component_event_response(true_remote_control_application,cellphoneLocationEvent,Event_data):-
 	write('Component true_remote_control_application reacting to the cellphoneLocationEvent.'),nl,
+	% CHECK CONTEXT VARIABLE VALUE
 	context_variable(Component_name,[alarmOccured,1]),
 	context_variable(Component_name,[activationTimeHasElapsedContextElement,1]),
 	
 	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),	
 	get_value_for_key(latitude,Flat_kv_pairs,Latitude_value),
 	get_value_for_key(longitude,Flat_kv_pairs,Longitude_value),
+	% CALCULATE THE DESTANCE
 	distance(Latitude_value,Longitude_value,0,0,Distance),
 	write('Distance from home calculated - '),write(Distance),nl,
+	% UNIFY THE DISTANCE
 	Distance = 0.0,
 	
+	% UPDATE THE CONTEXT VARIABLE VALUE
 	change_context_variable_value(mustStartCarEngineContextElement,1),
+	% TRIGGER AN EVENT
 	simulate_event_environment(true_remote_control_application,remoteStarterActionEvent,[remoteStarterActionEvent,[[action,start]]]).
-	
+
+% THIS PREDICATE IS A SERVICE ROUTINE FOR THE USER CELLPHONE FOR THE NOTIFICATION EVENT FOR CAR ENGINE START	
 trigger_component_event_response(user_cellphone,notifyUserOfCarEngineStartedEvent,Event_data):-
 	write('@@@ Component user_cellphone reacting to the notifyUserOfCarEngineStartedEvent. @@@'),nl.
-	
+
+% THIS PREDICATE IS A SERVICE ROUTINE FOR THE CCCU FOR THE REMORT STARTER ACTION EVENT	
 trigger_component_event_response(car_computer_control_unit,remoteStarterActionEvent,Event_data):-
 	write('Component car_computer_control_unit reacting to the remoteStarterActionEvent.'),nl,
 	
+	% FLATTEN THE EVENT NESTED LIST
 	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),	
+	% EXTRACT VALUE CORRESTPONDING TO A KEY FROM THE EVENT
 	get_value_for_key(action,Flat_kv_pairs,Action_type),
+	% UNIFY THE ACTION TYPE
 	Action_type = start,
 	
 	write('ATTEMPTING TO START CAR ENGINE.'),nl,
 	write('Triggering ResultOfRemoteStarterAction Event.'),nl,
+	% TRIGGER AN EVENT
 	simulate_event_environment(car_computer_control_unit,resultOfRemoteStarterActionEvent,[resultOfRemoteStarterActionEvent,[[action,start],[result,1]]]).
-	
+
+% THIS PREDICATE IS THE SERVICE ROUTINE FOR THE TRCA FOR THE RESULT OF THE REMORT STARTER EVENT	
 trigger_component_event_response(true_remote_control_application,resultOfRemoteStarterActionEvent,Event_data):-
 	write('Component true_remote_control_application reacting to the resultOfRemoteStarterActionEvent.'),nl,
-	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),	
+	% FLATTEN THE EVENT NESTED LIST
+	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),
+	% EXTRACT VALUE CORRESTPONDING TO A KEY FROM THE EVENT
 	get_value_for_key(result,Flat_kv_pairs,Action_result),
 	
 	write('Triggering NotifyUserOfCarEngineStarted Event.'),nl,
+	% TRIGGER AN EVENT
 	simulate_event_environment(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,Action_result]]]).
 	
+% THIS PREDICATE IS THE SERVICE ROUTINE FOR THE TRCA FOR THE CELL PHONE SUSSIQUENT LOCATION EVENT	
 trigger_component_event_response(true_remote_control_application,cellphoneSubsequentLocationEvent,Event_data):-
 	write('Component true_remote_control_application reacting to the cellphoneSubsequentLocationEvent.'),nl,
+	% FLATTEN THE EVENT NESTED LIST
 	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),
 	
+	% EXTRACT VALUES CORRESTPONDING TO KEYS FROM THE EVENT
 	get_value_for_key(latitude0,Flat_kv_pairs,Latitude_value0),
 	get_value_for_key(latitude1,Flat_kv_pairs,Latitude_value1),
 	get_value_for_key(latitude2,Flat_kv_pairs,Latitude_value2),
@@ -59,6 +85,7 @@ trigger_component_event_response(true_remote_control_application,cellphoneSubseq
 	get_value_for_key(longitude1,Flat_kv_pairs,Longitude_value1),
 	get_value_for_key(longitude2,Flat_kv_pairs,Longitude_value2),
 	
+	% CALCULATE THE DISTANCES TO VERIFY THAT THE PHONE IS MOVING AWAY IF THE DISTANCE IS CONSTANLY INCREASING
 	distance(Latitude_value0,Longitude_value0,0,0,Distance0),
 	distance(Latitude_value1,Longitude_value1,0,0,Distance1),
 	distance(Latitude_value2,Longitude_value2,0,0,Distance2),
@@ -67,42 +94,61 @@ trigger_component_event_response(true_remote_control_application,cellphoneSubseq
 	write('Distance1 - '),write(Distance1),nl,
 	write('Distance2 - '),write(Distance2),nl,
 	
+	% CHECK THAT DISTANCE IS INCREASING
 	(
 	Distance0 < Distance1,Distance1 < Distance2
     -> 
+	% IF THE CONDITION IS TRUE
 	write('Cellphone moving away from Home'),nl,
+	% UPDATE CONTEXT VARIABLE VALUE
 	change_context_variable_value(mustTriggerHomeActionsContextElement,1),
+	% TRIGGER EVENT
 	simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]]),
+	% TRIGGER EVENT
 	simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,engageSecurityAlarm],[value,1]]])
     ;
+	% IF THE CONDITION IS FLASE
 	% pass without doing anything
 	write('Cellphone NOT moving away from Home'),nl).
-	
+
+% THE PREDICATE BELOW IS THE SERVICE ROUTINE FOR THE SHC FOR THE TRIGGER HOME ACTION EVENT FOR DETTING THE TEMPRATURE
 trigger_component_event_response(smart_home_controller_unit,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,Value]]]):-
 	write('Component smart_home_controller_unit reacting to the triggerHomeActionEvent for setting temperature.'),nl,
 	write('SETTING TEMPRATURE TO '),write(Value),nl,
+	% TRIGGER ANOTHER EVENT
 	simulate_event_environment(smart_home_controller_unit,resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,setTemprature],[value,Value],[result,1]]]).
-	
+
+% THE PREDICATE IS THE SERVICE ROUTINE FOR THE SHCU FOR THE TRIGGER HOME ACTION EVENT FOR ACTIVATING THE SECURITY ALARM
 trigger_component_event_response(smart_home_controller_unit,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,engageSecurityAlarm],[value,Value]]]):-
 	write('Component smart_home_controller_unit reacting to the triggerHomeActionEvent for engage security alarm.'),nl,
 	write('ENGAGING ALARM SYSTEM'),nl,
+	% TRIGGER ANOTHER EVENT
 	simulate_event_environment(smart_home_controller_unit,resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,engageSecurityAlarm],[value,Value],[result,1]]]).
 	
+% BELOW PREDICATE IS THE SERVICE ROUTINE FOR THE SHCU FOR THE TRIGGER HOME ACTION EVENT OF AN UNKNOW TYPE
 trigger_component_event_response(smart_home_controller_unit,triggerHomeActionEvent,Event_data):-
 	write('Component smart_home_controller_unit reacting to the triggerHomeActionEvent of UNKNOWN type'),nl.
 	
+% THE PREDICATE IS A SERVICE ROUTINE FOR THE TRCA FOR THE RESULT OF HOME ACTION EVENT FOR THE SECURITY ALARM
 trigger_component_event_response(true_remote_control_application,resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,engageSecurityAlarm],[value,Value],[result,Result]]]):-
 	write('Component true_remote_control_application reacting to the resultOfHomeActionEvent for engageSecurityAlarm.'),nl,
+	% TRIGGER ANOTHER EVENT
 	simulate_event_environment(true_remote_control_application,notifyUserOfHomeActionEvent,[notifyUserOfHomeActionEvent,[[action,engageSecurityAlarm],[value,Value],[result,Result]]]).
-	
+
+% THE PREDICATE BELOW IS THE SERVIE ROUTINE FOR THE TRCA FOR THE RESULT OF HOME ACTION EVENT FOR SETTING THE TEMPRATURE	
 trigger_component_event_response(true_remote_control_application,resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,setTemprature],[value,Value],[result,Result]]]):-
 	write('Component true_remote_control_application reacting to the resultOfHomeActionEvent for setTemprature.'),nl,
+	% TRIGGER ANOTHER EVENT
 	simulate_event_environment(true_remote_control_application,notifyUserOfHomeActionEvent,[notifyUserOfHomeActionEvent,[[action,setTempraturesetTemprature],[value,Value],[result,Result]]]).
-	
+
+% THE BELOW PREDICATE IS A SERVICE ROUTINE FOR THE USER CELLPHONE FOR THE NOTIFY HOME ACTION EVENT	
 trigger_component_event_response(user_cellphone,notifyUserOfHomeActionEvent,Event_data):-
 	write('@@@ Component user_cellphone reacting to the notifyUserOfCarEngineStartedEvent '),
+	% FALTTEN THE EVENT NESTED LIST
 	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),	
+	% EXTRACT THE VALUE CORRESPONDING TO A KEY FROM THE EVENT
 	get_value_for_key(action,Flat_kv_pairs,Action_value),
 	write('For '),write(Action_value), write('. @@@'),nl.
-	
+
+% THIS ALL PASS DEFINITION IS FOR PREVENTING THE PREDICATES TO FAIL INCASE A SERVICE ROUTINE IS MISSING.	
 trigger_component_event_response(Component_name,Event_id,Event_data).

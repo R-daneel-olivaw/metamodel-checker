@@ -1,53 +1,69 @@
+% PREDICATE FOR SERVICING THE LOCATION EVENT WHEN RECEIVED BY THE COMPONENT USERS PHONE
 trigger_component_event_response(users_phone,locationEvent,Event_data):-
 	write('users_phone reacting to location event'),nl,
+	% FALTTEN THE EVENT NESTED LIST
 	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),
 	
+	% READ VALUES FROM THE FLAT LIST
 	get_value_for_key(latitude,Flat_kv_pairs,Latitude_value),
 	get_value_for_key(longitude,Flat_kv_pairs,Longitude_value),	
 	write('Latitude - '),write(Latitude_value),nl,
 	write('Longitude - '),write(Longitude_value),nl,
 	
+	% PERFORM CALCULATIONS BASED ON THE VALUES FROM THE EVENT
 	distance(Latitude_value,Longitude_value,5,5,Distance),
 	write('Distance calculated - '),write(Distance),nl,
-	change_context_variable_value(distanceToWorkContextElement,Distance).
 	
+	% UPDATE THE VALUE OF THE CONTEXT VARIABLE
+	change_context_variable_value(distanceToWorkContextElement,Distance).
+
+% THE PREDICATE IS A SERVICE ROUTINE FOR THE MEETING STARTED EVENT FOR THE COMPONENT CALENDAR APPLICALTION	
 trigger_component_event_response(calendar_application,meetingStartedEvent,Event_data):-
 	write('calendar_application reacting to meeting started event'),nl,
+	
+	% UPDATE THE VALUE OF THE CONTEXT VARIABLE
 	change_context_variable_value(meetingInProgressContextElement,1).
 
+% THE PREDICATES BELOW ARE USED AS SERVICE ROUTINES FOR THE INCOMMING CALL EVENT FO THE COMPONENT USERS PHONE
 % INCOMING CALL EVENT START
 trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
-	% Meeting has started
+	% MEETING HAAS STARTED
 	context_variable(_,[meetingInProgressContextElement,1]),
-	% The user is at work
+	% THE USER IS AT WORK
 	context_variable(_,[distanceToWorkContextElement,0.0]),
 	
+	% FLATTEN THE EVENT NESTED LIST
 	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),
+	% THE VALUE CORRESPONDING TO A KEY FROM THE EVENT
 	get_value_for_key(callerName,Flat_kv_pairs,Caller_name),
 	
-	% Caller is in the preferred list
+	% CALLER IS FORM THE PREFFERD LIST OF CALLERS
 	member(Caller_name,[akshat,anugrah]),
 	
+	% UPDATE THE VALUE OF THE CONTEXT VARIABLE
 	change_context_variable_value(inBusinessMeetingContextElement,1),
 	
 	write('users_phone reacting to incoming call event'),nl,
 	write('BusinessMeetingPreferredCallerProfile - LET IT THROUGH'),nl.
 	
 trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
-	% Meeting has started
+	% MEETING HAAS STARTED
 	context_variable(_,[meetingInProgressContextElement,1]),
-	% The user is at work
+	% THE USER IS AT WORK
 	context_variable(_,[distanceToWorkContextElement,0.0]),
 
+	% UPDATE THE VALUE OF A CONTEXT VARIABLE
 	change_context_variable_value(inBusinessMeetingContextElement,1),
 	
 	write('users_phone reacting to incoming call event'),nl,
 	write('BusinessMeetingProfile - BLOCK CALL'),nl.
-	
+
+% THE BELOW DEFINITION IS USED WHEN ALL THE ABOVE DEFINITIONS FAIL	
 trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 
 	write('users_phone reacting to incoming call event'),nl,
 	write('NotInMeetingProfile - NORMAL CALL'),nl.
 % INCOMING CALL EVENT END
-	
+
+% THE ALL PASS DEFINITION IS USED FOR AVOIDING THE SCRIPT TO CONTINUE NORMAL EXECUTION WHEN A EVENT SERVICE ROUTION EIS NOT FOUND.	
 trigger_component_event_response(Component_name,Event_id,Event_data).
