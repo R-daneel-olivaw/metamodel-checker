@@ -3,8 +3,14 @@ action(sendnew);
 simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]]).
 
 t2 ::=
-action(recvnew);
-write('second').
+hasComponentReceivedResult(calendar_application,meetingStartedEvent,Result);
+if (Result=1)
+then
+{
+action(recvnew)
+};
+write('second');
+write(Result).
 
 ta ::=
 t1;t2.
