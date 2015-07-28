@@ -7,7 +7,8 @@ hasComponentReceivedResult(calendar_application,meetingStartedEvent,Result);
 if (Result=1)
 then
 {
-action(recvnew)
+action(recvnew);
+cleanupComponentTriggPredicates(calendar_application)
 };
 write('second');
 write(Result).
