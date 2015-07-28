@@ -11,3 +11,4 @@ t1;t2.
 
 losslesstx += <sendnew>tt \/ <->losslesstx.
 losslessrx += <recvnew>tt \/ <->losslessrx.
+lossless += losslesstx /\ losslessrx.
