@@ -9,4 +9,5 @@ write('second').
 ta ::=
 t1;t2.
 
-lossless += <sendnew>tt \/ <->lossless.
+losslesstx += <sendnew>tt \/ <->losslesstx.
+losslessrx += <recvnew>tt \/ <->losslessrx.
