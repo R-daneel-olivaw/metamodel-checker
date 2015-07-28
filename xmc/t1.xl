@@ -3,10 +3,9 @@ action(sendnew);
 simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]]).
 
 t2 ::=
-action(recv).
+write('second').
 
 ta ::=
-t1|t2.
+t1.
 
-drop_packet += <sendnew>lost \/ <->drop_packet.
-lost    += <sendnew>tt \/ <-recv>lost.
+lossless += <sendnew>tt /\ <recvnew>tt.
