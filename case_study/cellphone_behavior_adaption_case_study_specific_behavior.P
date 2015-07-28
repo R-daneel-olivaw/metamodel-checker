@@ -9,11 +9,15 @@ trigger_component_event_response(users_phone,locationEvent,Event_data):-
 	
 	distance(Latitude_value,Longitude_value,5,5,Distance),
 	write('Distance calculated - '),write(Distance),nl,
-	change_context_variable_value(distanceToWorkContextElement,Distance).
+	change_context_variable_value(distanceToWorkContextElement,Distance),
+	
+	assertTriggPredicate(users_phone,locationEvent,Event_data).
 	
 trigger_component_event_response(calendar_application,meetingStartedEvent,Event_data):-
 	write('calendar_application reacting to meeting started event'),nl,
-	change_context_variable_value(meetingInProgressContextElement,1).
+	change_context_variable_value(meetingInProgressContextElement,1),
+	
+	assertTriggPredicate(calendar_application,meetingStartedEvent,Event_data).
 
 % INCOMING CALL EVENT START
 trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
@@ -31,7 +35,9 @@ trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 	change_context_variable_value(inBusinessMeetingContextElement,1),
 	
 	write('users_phone reacting to incoming call event'),nl,
-	write('BusinessMeetingPreferredCallerProfile - LET IT THROUGH'),nl.
+	write('BusinessMeetingPreferredCallerProfile - LET IT THROUGH'),nl,
+	
+	assertTriggPredicate(users_phone,incomingCallEvent,Event_data).
 	
 trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 	% Meeting has started
@@ -47,7 +53,9 @@ trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 
 	write('users_phone reacting to incoming call event'),nl,
-	write('NotInMeetingProfile - NORMAL CALL'),nl.
+	write('NotInMeetingProfile - NORMAL CALL'),nl,
+	
+	assertTriggPredicate(users_phone,incomingCallEvent,Event_data).
 % INCOMING CALL EVENT END
 	
 trigger_component_event_response(Component_name,Event_id,Event_data).
