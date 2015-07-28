@@ -1,0 +1,17 @@
+assertTriggPredicate(Component_name,Event_id,Event_data):-
+	assert(triggered(Component_name,Event_id,Event_data)).
+
+cleanupAllTriggPredicates :-
+	retract(triggered(_,_,_)).
+	
+cleanupComponentTriggPredicates(Component_name):-
+	retract(triggered(Component_name,_,_)).
+	
+cleanupComponentEventTriggPredicates(Component_name,Event_id):-
+	retract(triggered(Component_name,Event_id,_)).
+	
+hasComponentReceived(Component_name,Event_id,Event_data):-
+	triggered(Component_name,Event_id,Event_data).
+	
+hasComponentReceived(Component_name,Event_id):-
+	triggered(Component_name,Event_id,_).
