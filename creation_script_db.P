@@ -94,7 +94,7 @@ component_event_advertisement(Component_name,Environment_name,Event_id):-
 get_component_list_environment(Environment_name,Component_name_list):-
 	findall(X,environment_component(Environment_name,X),Component_name_list).
 
-simulate_event_component(Component_name,Environment_name,Event_id,Event_data_list,Triggered_list):-
+simulate_event_component(Component_name,Environment_name,Event_id,Event_data_list):-
 	component_instance(Component_name),
 	
 	% TYPE FILTER START
@@ -113,12 +113,12 @@ simulate_event_component(Component_name,Environment_name,Event_id,Event_data_lis
 	event_schema(Event_type,Event_schema),
 	!,unify_event(Event_data_list,Event_schema),
 
-	!,trigger_component_event_response(Component_name,Event_type,Event_data_list,[],Triggered_list_i),
+	!,trigger_component_event_response(Component_name,Event_type,Event_data_list),
 	
-	get_reachable_environments(Event_type,Event_data_list,[Environment_name],Component_name,[Component_name],Reachable_environment_list,Triggered_list_i,Triggered_list),
+	get_reachable_environments(Event_type,Event_data_list,[Environment_name],Component_name,[Component_name],Reachable_environment_list),
 	nl,write('Event '),write(Event_id),write(' Visited List -->'),write(Reachable_environment_list),nl.
 	
-simulate_event_environment(Environment_name,Event_id,Event_data_list,Triggered_list):-
+simulate_event_environment(Environment_name,Event_id,Event_data_list):-
 	environment_instance(Environment_name),
 	% TYPE FILTER START
 	event_advertisement_entry(Environment_name,Environment_name,Event_id,Context_filter_expression),
@@ -128,10 +128,10 @@ simulate_event_environment(Environment_name,Event_id,Event_data_list,Triggered_l
 	event_schema(Event_id,Event_schema),
 	!,unify_event(Event_data_list,Event_schema),
 
-	get_reachable_environments(Event_id,Event_data_list,[Environment_name],Environment_name,[],Reachable_environment_list,[],Triggered_list),
+	get_reachable_environments(Event_id,Event_data_list,[Environment_name],Environment_name,[],Reachable_environment_list),
 	nl,write('Event '),write(Event_id),write(' Visited List -->'),write(Reachable_environment_list),nl.
 	
-process_event_environment(Environment_name,Event_id,Event_data_list,Calling_component_name,Triggered_list_i,Triggered_list_o):-
+process_event_environment(Environment_name,Event_id,Event_data_list,Calling_component_name):-
 	event_subscription_entry(Environment_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression),	
 	write('processing event '),write(Event_id),write(' for environment '),write(Environment_name),nl,
 	write('calling component '),write(Calling_component_name),nl,
@@ -154,34 +154,34 @@ process_event_environment(Environment_name,Event_id,Event_data_list,Calling_comp
 	write('**Passed** Component Content Filter - '),write(Environment_name),nl,
 	% CONTENT FILTER END
 	
-	trigger_component_event_response(Environment_name,Event_id,Event_data_list,Triggered_list_i,Triggered_list_o).
+	trigger_component_event_response(Environment_name,Event_id,Event_data_list).
 	
-process_event_environment(Environment_name,Event_id,Event_data_list,Calling_component_name,Triggered_list_i,Triggered_list_o).
+process_event_environment(Environment_name,Event_id,Event_data_list,Calling_component_name).
 
-get_reachable_environments(Event_type,Event_data_list,[],Calling_component_name,I,I,Triggered_list_i,Triggered_list_o).
+get_reachable_environments(Event_type,Event_data_list,[],Calling_component_name,I,I).
 	
-get_reachable_environments(Event_type,Event_data_list,[Rh|Rt],Calling_component_name,I,O,Triggered_list_i,Triggered_list_o):-
-	get_reachable_environments(Event_type,Event_data_list,Rh,Calling_component_name,I,O2,Triggered_list_i,Triggered_list_o2),
-	get_reachable_environments(Event_type,Event_data_list,Rt,Calling_component_name,O2,O,Triggered_list_o2,Triggered_list_o).
+get_reachable_environments(Event_type,Event_data_list,[Rh|Rt],Calling_component_name,I,O):-
+	get_reachable_environments(Event_type,Event_data_list,Rh,Calling_component_name,I,O2),
+	get_reachable_environments(Event_type,Event_data_list,Rt,Calling_component_name,O2,O).
 	
-get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,O,Triggered_list_i,Triggered_list_o):-
+get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,O):-
 	environment_instance(Component_name),
 	not(member(Component_name,I)),
 	write('Visiting Environment - '),write(Component_name),nl,
 	% write('_-> Already Visited - '),write(I),nl,
 	append(I,[Component_name],I2),
 	
-	process_event_environment(Component_name,Event_type,Event_data_list,Calling_component_name,Triggered_list_i,Triggered_list_o1),
+	process_event_environment(Component_name,Event_type,Event_data_list,Calling_component_name),
 	
 	findall(X,environment_component(X,Component_name),Environment_name_list),
 	% write('|-> Parent Environments - '),write(Environment_name_list),nl,
-	get_reachable_environments(Event_type,Event_data_list,Environment_name_list,Component_name,I2,I3,Triggered_list_o1,Triggered_list_o2),
+	get_reachable_environments(Event_type,Event_data_list,Environment_name_list,Component_name,I2,I3),
 	% write('@@'),write(I3),nl,
 	findall(X,environment_component_event_subscription(Component_name,X,Event_type),Sub_component_name_list),
 	% write('|-> Sub of '),write(Component_name),write(' - '),write(Sub_component_name_list),nl,
-	get_reachable_environments(Event_type,Event_data_list,Sub_component_name_list,Component_name,I3,O,Triggered_list_o2,Triggered_list_o).
+	get_reachable_environments(Event_type,Event_data_list,Sub_component_name_list,Component_name,I3,O).
 	
-get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,O,Triggered_list_i,Triggered_list_o):-
+get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,O):-
 	not(environment_instance(Component_name)),
 	component_instance(Component_name),
 	not(member(Component_name,I)),
@@ -208,9 +208,9 @@ get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_com
 	
 	write('Visiting Component - '),write(Component_name),nl,
 	
-	trigger_component_event_response(Component_name,Event_type,Event_data_list,Triggered_list_i,Triggered_list_o).
+	trigger_component_event_response(Component_name,Event_type,Event_data_list).
 	
-get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,O,Triggered_list_i,Triggered_list_i):-
+get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,O):-
 	not(environment_instance(Component_name)),
 	component_instance(Component_name),
 	not(member(Component_name,I)),
@@ -218,7 +218,7 @@ get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_com
 	write('Visiting Component - '),write(Component_name),nl,
 	not(event_subscription_entry(Component_name,Environment_name,Event_type,Content_filter_expression,Context_filter_expression)).
 	
-get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,I,Triggered_list_i,Triggered_list_i).
+get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,I).
 
 get_context_variables(Environment_name,Component_name,Environment_context_variable):-
 	Component_name = Environment_name,
