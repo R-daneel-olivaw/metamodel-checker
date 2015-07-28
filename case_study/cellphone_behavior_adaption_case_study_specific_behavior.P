@@ -1,4 +1,4 @@
-trigger_component_event_response(users_phone,locationEvent,Event_data):-
+trigger_component_event_response(users_phone,locationEvent,Event_data,Triggered_list_i,Triggered_list_o):-
 	write('users_phone reacting to location event'),nl,
 	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),
 	
@@ -9,14 +9,16 @@ trigger_component_event_response(users_phone,locationEvent,Event_data):-
 	
 	distance(Latitude_value,Longitude_value,5,5,Distance),
 	write('Distance calculated - '),write(Distance),nl,
-	change_context_variable_value(distanceToWorkContextElement,Distance).
+	change_context_variable_value(distanceToWorkContextElement,Distance),
+	append(Triggered_list_i,users_phone,Triggered_list_o).
 	
-trigger_component_event_response(calendar_application,meetingStartedEvent,Event_data):-
+trigger_component_event_response(calendar_application,meetingStartedEvent,Event_data,Triggered_list_i,Triggered_list_o):-
 	write('calendar_application reacting to meeting started event'),nl,
-	change_context_variable_value(meetingInProgressContextElement,1).
+	change_context_variable_value(meetingInProgressContextElement,1),
+	append(Triggered_list_i,calendar_application,Triggered_list_o).
 
 % INCOMING CALL EVENT START
-trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
+trigger_component_event_response(users_phone,incomingCallEvent,Event_data,Triggered_list_i,Triggered_list_o):-
 	% Meeting has started
 	context_variable(_,[meetingInProgressContextElement,1]),
 	% The user is at work
@@ -31,9 +33,10 @@ trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 	change_context_variable_value(inBusinessMeetingContextElement,1),
 	
 	write('users_phone reacting to incoming call event'),nl,
-	write('BusinessMeetingPreferredCallerProfile - LET IT THROUGH'),nl.
+	write('BusinessMeetingPreferredCallerProfile - LET IT THROUGH'),nl,
+	append(Triggered_list_i,users_phone,Triggered_list_o).
 	
-trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
+trigger_component_event_response(users_phone,incomingCallEvent,Event_data,Triggered_list_i,Triggered_list_o):-
 	% Meeting has started
 	context_variable(_,[meetingInProgressContextElement,1]),
 	% The user is at work
@@ -42,12 +45,15 @@ trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 	change_context_variable_value(inBusinessMeetingContextElement,1),
 	
 	write('users_phone reacting to incoming call event'),nl,
-	write('BusinessMeetingProfile - BLOCK CALL'),nl.
+	write('BusinessMeetingProfile - BLOCK CALL'),nl,
+	append(Triggered_list_i,users_phone,Triggered_list_o).
 	
-trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
+trigger_component_event_response(users_phone,incomingCallEvent,Event_data,Triggered_list_i,Triggered_list_o):-
 
 	write('users_phone reacting to incoming call event'),nl,
-	write('NotInMeetingProfile - NORMAL CALL'),nl.
+	write('NotInMeetingProfile - NORMAL CALL'),nl,
+	append(Triggered_list_i,users_phone,Triggered_list_o).
 % INCOMING CALL EVENT END
 	
-trigger_component_event_response(Component_name,Event_id,Event_data).
+trigger_component_event_response(Component_name,Event_id,Event_data,Triggered_list_i,Triggered_list_o):-
+	append(Triggered_list_i,Component_name,Triggered_list_o).
