@@ -259,8 +259,8 @@ change_context_variable_value(Context_variable_name,Context_variable_new_value):
 	write('Setting new value '),write(Context_variable_new_value),write(' for context variable '),write(Context_variable_name),nl,
 	assert(context_variable(Component_name,[Context_variable_name,Context_variable_new_value])).
 
-distance(X1,Y1,X2,Y2,D):- 
-    D is sqrt((X2-X1)**2 + (Y2-Y1)**2).
+%distance(X1,Y1,X2,Y2,D):- 
+%    D is sqrt((X2-X1)**2 + (Y2-Y1)**2).
 
 % context variable format - [[testVar1,50],[testVar2,90],[testvar3,10]]
 % environment(Environment_name).

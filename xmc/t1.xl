@@ -1,0 +1,21 @@
+t1 ::=
+action(sendnew);
+simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]]).
+
+t2 ::=
+hasComponentReceivedResult(calendar_application,meetingStartedEvent,Result);
+if (Result=1)
+then
+{
+action(recvnew);
+cleanupComponentTriggPredicates(calendar_application)
+};
+write('second');
+write(Result).
+
+ta ::=
+t1;t2;ta.
+
+losslesstx += <sendnew>tt \/ <->losslesstx.
+losslessrx += <recvnew>tt \/ <->losslessrx.
+lossless += losslesstx /\ losslessrx.

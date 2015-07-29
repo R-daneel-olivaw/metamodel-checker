@@ -1,0 +1,21 @@
+ts ::=
+action(sendnew);
+simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,hammerTime]]]).
+
+tr ::=
+hasComponentReceivedResult(true_remote_control_application,alarmGoesOffEvent,Result);
+if (Result=1)
+then
+{
+action(recvnew);
+cleanupComponentTriggPredicates(true_remote_control_application)
+};
+write('second');
+write(Result).
+
+ta ::=
+ts;tr;ta.
+
+losslesstx += <sendnew>tt \/ <->losslesstx.
+losslessrx += <recvnew>tt \/ <->losslessrx.
+lossless += losslesstx /\ losslessrx.

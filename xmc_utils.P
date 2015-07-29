@@ -15,3 +15,13 @@ hasComponentReceived(Component_name,Event_id,Event_data):-
 	
 hasComponentReceived(Component_name,Event_id):-
 	triggered(Component_name,Event_id,_).
+
+hasComponentReceivedResult(Component_name,Event_id, Result):-
+	triggered(Component_name,Event_id, _),
+	Result = 1.
+
+hasComponentReceivedResult(Component_name,Event_id, Result):-
+	Result = 0.
+	
+distance(X1,Y1,X2,Y2,D):- 
+    D is sqrt((X2-X1)+ (Y2-Y1)).
