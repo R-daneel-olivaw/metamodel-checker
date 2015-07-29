@@ -1,2 +1,6 @@
 #XSB-PROLOG
 *.xwam
+*.tmp
+*~
+*~$*
+*.bak
