@@ -14,7 +14,7 @@ write('second');
 write(Result).
 
 ta ::=
-ts;tr.
+ts;tr;ta.
 
 losslesstx += <sendnew>tt \/ <->losslesstx.
 losslessrx += <recvnew>tt \/ <->losslessrx.
