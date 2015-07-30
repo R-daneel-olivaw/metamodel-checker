@@ -1,21 +1,20 @@
-ts ::=
-action(sendnew);
-simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,hammerTime]]]).
+% TEST CONTEXT FILTER 
 
-tr ::=
-hasComponentReceivedResult(true_remote_control_application,alarmGoesOffEvent,Result);
-if (Result=1)
+send_remote_starter_event ::=
+simulate_event_environment(true_remote_control_application,remoteStarterActionEvent,[remoteStarterActionEvent,[[action,start]]]);
+action(sendRemoteStarterEvent).
+
+chk_received_remote_starter_event ::=
+hasComponentReceivedResult(car_computer_control_unit,remoteStarterActionEvent,Result);
+if (Result==1)
 then
 {
-action(recvnew);
-cleanupComponentTriggPredicates(true_remote_control_application)
-};
-write('second');
-write(Result).
+action(receivedStarterEvent)
+}.
 
-ta ::=
-ts;tr;ta.
+testContextFilter ::=
+send_remote_starter_event;chk_not_received_remote_starter_event.
 
-losslesstx += <sendnew>tt \/ <->losslesstx.
-losslessrx += <recvnew>tt \/ <->losslessrx.
-lossless += losslesstx /\ losslessrx.
+filterBlocking += clb1 /\ clb2.
+clb1 += [-sendRemoteStarterEvent]clb1 /\ <->tt.
+clb2 += [receivedStarterEvent]ff \/ <->clb2.
