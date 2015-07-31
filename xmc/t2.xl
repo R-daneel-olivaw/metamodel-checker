@@ -23,7 +23,7 @@ contextFilterBlock2 -= [receivedTriggerHomeActionEvent]ff /\ [-]contextFilterBlo
 
 % BLOCKING RECEIVER CONTENT FILTER
 
-send_cellphone_location_event_blocked ::=
+send_alarm_event_blocked ::=
 simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,sometime]]]);
 action(sendBlockedAlarmEvent).
 
@@ -35,8 +35,11 @@ then
 action(receivedAlarmEvent)
 }.
 
-contentFilterBlocking += fb1 /\ fb2.
-fb1 += [-sendBlockedAlarmEvent]fb1 /\ <->tt.
-fb2 += [receivedAlarmEvent]ff \/ <->fb2.
+testContentFilter ::=
+send_alarm_event_blocked;chk_received_alarm_event.
+
+contentFilterBlocking += contentFilterBlock1 /\ contentFilterBlock2.
+contentFilterBlock1 += <sendBlockedAlarmEvent>tt \/ <->contentFilterBlock1.
+contentFilterBlock2 -= [receivedAlarmEvent]ff /\ [-]contentFilterBlock2.
 
 % BLOCKING RECEIVER CONTENT FILTER
