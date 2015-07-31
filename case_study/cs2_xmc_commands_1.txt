@@ -1,5 +1,6 @@
 import append/3 from basics.
 import length/2 from basics.
+dynamic triggered/3.
 consult('/root/XSB_code/metamodel-checker/context_filter.P').
 consult('/root/XSB_code/metamodel-checker/creation_script_db.P').
 consult('/root/XSB_code/metamodel-checker/nested_list_approach.P').
@@ -41,7 +42,7 @@ create_advertisement(true_remote_control_application,triggerHomeActionEvent,[mus
 create_advertisement(true_remote_control_application,notifyUserOfHomeActionEvent,[]).
 create_advertisement(smart_home_controller_unit,resultOfHomeActionEvent,[]).
 create_subscription(user_cellphone,user_cellphone,notifyUserOfCarEngineStartedEvent,[],[]).
-create_subscription(true_remote_control_application,true_remote_control_application,alarmGoesOffEvent,[],[]).
+create_subscription(true_remote_control_application,true_remote_control_application,alarmGoesOffEvent,[dateTime,=\=,sometime],[]).
 create_subscription(true_remote_control_application,true_remote_control_application,cellphoneLocationEvent,[],[[alarmOccured,=,1],and,[activationTimeHasElapsedContextElement,=,1]]).
 create_subscription(true_remote_control_application,true_remote_control_application,cellphoneTimeChangedEvent,[],[alarmOccured,=,1]).
 create_subscription(car_computer_control_unit,car_computer_control_unit,remoteStarterActionEvent,[action,=,start],[]).

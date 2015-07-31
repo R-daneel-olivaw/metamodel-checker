@@ -1,7 +1,7 @@
 % BLOCKING RECEIVER CONTEXT FILTER 
 
 send_trigger_home_action_event ::=
-simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,string],[value,string]]]);
+simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]]);
 action(sendTriggerHomeActionEvent).
 
 chk_not_received_trigger_home_action_event ::=
@@ -17,7 +17,7 @@ send_trigger_home_action_event;chk_not_received_trigger_home_action_event.
 
 filterBlocking += contextFilterBlock1 /\ contextFilterBlock2.
 contextFilterBlock1 += <sendTriggerHomeActionEvent>tt \/ <->contextFilterBlock1.
-contextFilterBlock2 -= [receivedTriggerHomeActionEvent]ff.
+contextFilterBlock2 -= [receivedTriggerHomeActionEvent]ff /\ [-]contextFilterBlock2.
 
 % BLOCKING RECEIVER CONTEXT FILTER 
 
