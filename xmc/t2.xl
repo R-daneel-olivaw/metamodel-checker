@@ -30,6 +30,10 @@ send_alarm_event_blocked ::=
 simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,sometime]]]);
 action(sendBlockedAlarmEvent).
 
+send_alarm_event_not_blocked ::=
+simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,othertime]]]);
+action(sendBlockedAlarmEvent).
+
 chk_received_alarm_event ::=
 hasComponentReceivedResult(true_remote_control_application,alarmGoesOffEvent,Result);
 if (Result==1)
@@ -41,8 +45,14 @@ action(receivedAlarmEvent)
 testContentFilter ::=
 send_alarm_event_blocked;chk_received_alarm_event.
 
+testContentFilterNotBlocked ::=
+send_alarm_event_not_blocked;chk_received_alarm_event.
+
 contentFilterBlocking += contentFilterBlock1 /\ contentFilterBlock2.
 contentFilterBlock1 += <sendBlockedAlarmEvent>tt \/ <->contentFilterBlock1.
 contentFilterBlock2 -= [receivedAlarmEvent]ff /\ [-]contentFilterBlock2.
+
+contentFilterNotBlocking += contentFilterBlock1 /\ contentFilterNonBlock1.
+contentFilterNonBlock1 += <receivedAlarmEvent>tt \/ <->contentFilterNonBlock1.
 
 % BLOCKING RECEIVER CONTENT FILTER
