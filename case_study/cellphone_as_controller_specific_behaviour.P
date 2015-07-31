@@ -112,7 +112,7 @@ trigger_component_event_response(true_remote_control_application,resultOfHomeAct
 	simulate_event_environment(true_remote_control_application,notifyUserOfHomeActionEvent,[notifyUserOfHomeActionEvent,[[action,setTempraturesetTemprature],[value,Value],[result,Result]]]).
 	
 trigger_component_event_response(user_cellphone,notifyUserOfHomeActionEvent,Event_data):-
-	write('@@@ Component user_cellphone reacting to the notifyUserOfCarEngineStartedEvent '),
+	write('@@@ Component user_cellphone reacting to the notifyUserOfHomeActionEvent '),
 	faltten_to_key_value_pairs(Event_data,[],Flat_kv_pairs),	
 	get_value_for_key(action,Flat_kv_pairs,Action_value),
 	write('For '),write(Action_value), write('. @@@'),nl,
