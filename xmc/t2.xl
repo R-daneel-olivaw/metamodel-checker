@@ -1,25 +1,27 @@
-% PROCESSES START
+% BLOCKING RECEIVER CONTEXT FILTER 
 
-% TEST CONTEXT FILTER START
+send_trigger_home_action_event ::=
+simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,string],[value,string]]]);
+action(sendTriggerHomeActionEvent).
 
-send_remote_starter_event ::=
-simulate_event_environment(true_remote_control_application,remoteStarterActionEvent,[remoteStarterActionEvent,[[action,start]]]);
-action(sendRemoteStarterEvent).
-
-chk_received_remote_starter_event ::=
-hasComponentReceivedResult(car_computer_control_unit,remoteStarterActionEvent,Result);
+chk_not_received_trigger_home_action_event ::=
+hasComponentReceivedResult(smart_home_controller_unit,triggerHomeActionEvent,Result);
 if (Result==1)
 then
 {
-action(receivedStarterEvent)
+action(receivedTriggerHomeActionEvent)
 }.
 
 testContextFilter ::=
-send_remote_starter_event;chk_received_remote_starter_event.
+send_trigger_home_action_event;chk_not_received_trigger_home_action_event.
 
-% TEST CONTEXT FILTER END
+filterBlocking += contextFilterBlock1 /\ contextFilterBlock2.
+contextFilterBlock1 += <sendTriggerHomeActionEvent>tt \/ <->contextFilterBlock1.
+contextFilterBlock2 -= [receivedTriggerHomeActionEvent]ff.
 
-% TEST CONTENT FILTER START
+% BLOCKING RECEIVER CONTEXT FILTER 
+
+% BLOCKING RECEIVER CONTENT FILTER
 
 send_cellphone_location_event_blocked ::=
 simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,sometime]]]);
@@ -33,18 +35,8 @@ then
 action(receivedAlarmEvent)
 }.
 
-% TEST CONTENT FILTER END
-
-% PROCESSES END
-
-% PROPERTIES START
-
-contextFilterBlocking += clb1 /\ clb2.
-clb1 += [-sendRemoteStarterEvent]clb1 /\ <->tt.
-clb2 += [receivedStarterEvent]ff \/ <->clb2.
-
 contentFilterBlocking += fb1 /\ fb2.
 fb1 += [-sendBlockedAlarmEvent]fb1 /\ <->tt.
 fb2 += [receivedAlarmEvent]ff \/ <->fb2.
 
-% PROPERTIES END
+% BLOCKING RECEIVER CONTENT FILTER
