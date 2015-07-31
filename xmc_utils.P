@@ -25,3 +25,37 @@ hasComponentReceivedResult(Component_name,Event_id, Result):-
 	
 distance(X1,Y1,X2,Y2,D):- 
     D is sqrt(((X2-X1)*(X2-X1))+((Y2-Y1)*(Y2-Y1))).
+	
+no_duplicates(L) :-
+    setof(X, member(X, L), Set), 
+    length(Set, Len), 
+    length(L, Len).
+	
+all_environemtns(In_list,Out_environment_name_list):-	
+	findall(X,environment_instance(X),Environment_name_list),
+	append(In_list,Environment_name_list,Out_environment_name_list).
+
+all_components(In_list,Out_component_name_list):-
+	findall(X,component_instance(X),Component_name_list),
+	append(In_list,Component_name_list,Out_component_name_list).
+	
+all_event_names(In_list,Out_event_name_list):-
+	findall(X,event_schema(X,_),Event_name_list),
+	append(In_list,Event_name_list,Out_event_name_list).
+	
+all_advertisements(In_list,Out_advertisement_list):-
+	findall(X(Y),event_advertisement_entry(X,_,Y,_),Advertisement_list),
+	append(In_list,Advertisement_list,Out_advertisement_list).
+	
+all_subscriptions(In_list,Out_subscription_list):-
+	findall(X(Y),event_subscription_entry(X,_,Y,_,_),Subscription_list),
+	append(In_list,Subscription_list,Out_subscription_list).
+	
+all_context_variables(In_list,Out_context_variable_list):-
+	findall(X,context_variable(_,[X,_]),Context_variable_list),
+	append(In_list,Context_variable_list,Out_context_variable_list).
+	
+all_environment_component_relation(In_list,Environment_component_relation_list):-
+	findall(X(Y),environment_component(X,Y),Relation_list),
+	append(In_list,Relation_list,Environment_component_relation_list).
+	
