@@ -4,8 +4,11 @@
 % [temperature,[[temp,integer],location,[[latitude,float],[longitude,float],time,[[hh,integer],[mm,integer],[ss,integer]]],[dummy,integer]]]
 % unify_event([temperature,[[temp,12],location,[[latitude,9.1],[longitude,9.1],time,[[hh,12],[mm,12],[ss,12]]],[dummy,12]]]).
 
+% THIS PREDICATE IS USED TO CREATE NESTED EVENT SCHEMAS, IT GENERATES SCHEMAS FOR EVENTS THAT CONTAIN OTHER EVENTS. THIS IS NO LONGER DIRECTLY USED NOW BUT IT IS A USEFULT UTILITY WHEN THINKING ABOUT LARGE EVENT SCHEMAS.
 lower_event([Key,Value|[]],I,O):-
+	% CHECK IF THE KEY IS AN DEFINED EVENT TYPE
 	not(event_schema([Key|SchemaTail])),
+	% CHECK IF THE VALUE IS AN DEFINED EVENT TYPE
 	not(event_schema([Value|SchemaTail])),
 	not(is_list(Key)),
 	not(is_list(Value)),
@@ -22,10 +25,12 @@ lower_event([Head|Tail],I,O):-
 	lower_event(Tail,Os1,O).
 
 lower_event(Type,I,O):-
+	% FETCH THE SCHEMA DEFINITTION OF THE SCHEMA TYPE
 	event_schema([Type|SchemaTail]),
 	%write(Type),write('->'),
 	append(I,[Type],Os1),
 	%write([SchemaTail]),nl,
+	% RESOLVE THE COMPONENTS OF THE SCHEMA DEFINITION FOR OTHER NESTED TYPES
 	lower_event(SchemaTail,[],Os2),
 	append(Os1,[Os2],O).
 
@@ -40,24 +45,29 @@ step_forward([Head|Tail]):-
 	%write(Head),
 	lower_event(Head),
 	step_forward(Tail).
-	
+
+% THIS IS THE ENTRY PREDICATE FOR THE EVENT SCHEMA GENERATOR	
 top_event(Type,O):-
-	write('Resolving Schema'),nl,
+	% write('Resolving Schema'),nl,
 	lower_event(Type,[],O).
-	
+
+% THIS PREDICATE IS USED TO CHECK IF THE PROVIDED EVENT AND THE SCHEMA UNIFY	
 unify_event(Event,Schema):-
-	write('Start'),nl,
+	% write('Start'),nl,
 	[Eh|Et] = Event,
 	
 	% For computing the schema internally, this is no longer needed but can be a helpful utility.
 	% top_event(Eh,Schema),
 	% write('Schema Decided'),nl,
 	
+	% EASIEST CHECK FIRST, CHECK IF THE LENGHTS OF THE 2 ARE SAME, IF NOT WE DO NOT NEED TO CHECK FURTHER
 	!,unify_length(Event,Schema),
-	write('length compared'),nl,
-	!,compare_elements(Event,Schema),
-	write('Schema compared'),nl.
+	% write('length compared'),nl,
+	% IF THE LENGHS MATCH, WE MOVE ON THE ELEMENTS OF THE EVENT AND COMPARE THE KEYS AND THE TYPE OF VALUES
+	!,compare_elements(Event,Schema).
+	% write('Schema compared'),nl.
 
+% THIS PREDICATE IS USED TO ITERRATE THE EVENT AND THE SCHEMA TOGATHER
 compare_elements([Eh|[]],[Sh|[]]):-
 	%write('End'),nl,
 	!,compare_elements(Eh,Sh).
@@ -66,28 +76,39 @@ compare_elements([Eh|Et],[Sh|St]):-
 	%write('middle'),nl,
 	!,compare_elements(Eh,Sh),
 	compare_elements(Et,St).
-	
+
+% CHECK IF THE EVENT ELEMENT IS AN INTEGER	
 compare_elements(Eventelement,integer):-
 	%write('comparing-integer => '),write(Eventelement),write('='),write(integer),nl,
 	!,integer(Eventelement).
-	
+
+% CHECK IF THE EVENT ELEMENT IS A FLOAT	
 compare_elements(Eventelement,float):-
 	%write('comparing-float => '),write(Eventelement),write('='),write(float),nl,
 	!,float(Eventelement).
 
+% CHECK IF THE EVENT ELEMENT IS A STRING
 compare_elements(Eventelement,string):-
 	%write('comparing-string => '),write(Eventelement),write('='),write(string),nl,
 	!,atom(Eventelement).
-	
+
+% THIS DEFINITION OF THE PREDICATE ENSURES THAT ALL THE KEYS ARE THE SAME BETWEEN THE EVENT AND THE SCHEMA
 compare_elements(Sameelement,Sameelement).
-	
+
+% THIS PREDICATE IS SUCESSFULL IF THE LENGHT OD THE 2 NESTED LISTS ARE THE SAME	
 unify_length(Event,Schema):-
+	% FLATTEN THE SCHEMA NESTED LIST TO A FLAT LIST
 	flatten2(Schema,FlatSchema),
+	% FLATTEN THE EVENT NESTED LIST TO A FLAT LIST
 	flatten2(Event,FlatEvent),
-	length(FlatSchema,Lengthschema),		 	
+	% FIND THE LENGHT OF THE SCHEMA FLAT LIST
+	length(FlatSchema,Lengthschema),		 
+	% FIND THE LENGHT OF THE EVENT FLAT LIST
  	length(FlatEvent,Lengthevent),
+	% UNIFY THE 2 LENGHTS
  	Lengthschema=Lengthevent.
-	
+
+% UTILITY PREDICATE TO FLATTEN A NESTED LIST	
 flatten2([], []) :- !.
 flatten2([L|Ls], FlatL) :-
     !,

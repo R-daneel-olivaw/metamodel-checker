@@ -1,21 +1,58 @@
-ts ::=
-action(sendnew);
-simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,hammerTime]]]).
+% RECEIVER CONTEXT FILTER 
 
-tr ::=
-hasComponentReceivedResult(true_remote_control_application,alarmGoesOffEvent,Result);
-if (Result=1)
+send_trigger_home_action_event ::=
+simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]]);
+action(sendTriggerHomeActionEvent).
+
+chk_received_trigger_home_action_event ::=
+hasComponentReceivedResult(smart_home_controller_unit,triggerHomeActionEvent,Result);
+if (Result==1)
 then
 {
-action(recvnew);
-cleanupComponentTriggPredicates(true_remote_control_application)
-};
-write('second');
-write(Result).
+action(receivedTriggerHomeActionEvent)
+}.
 
-ta ::=
-ts;tr;ta.
+testContextFilter(Pass) ::=
+change_context_variable_value(mustTriggerHomeActionsContextElement,Pass);send_trigger_home_action_event;chk_received_trigger_home_action_event.
 
-losslesstx += <sendnew>tt \/ <->losslesstx.
-losslessrx += <recvnew>tt \/ <->losslessrx.
-lossless += losslesstx /\ losslessrx.
+filterBlocking += contextFilterBlock1 /\ contextFilterBlock2.
+contextFilterBlock1 += <sendTriggerHomeActionEvent>tt \/ <->contextFilterBlock1.
+contextFilterBlock2 -= [receivedTriggerHomeActionEvent]ff /\ [-]contextFilterBlock2.
+
+filterNotBlocking += contextFilterBlock1 /\ contextFilterNonBlock1.
+contextFilterNonBlock1 += <receivedTriggerHomeActionEvent>tt \/ <->contextFilterNonBlock1.
+
+% RECEIVER CONTEXT FILTER 
+
+% BLOCKING RECEIVER CONTENT FILTER
+
+send_alarm_event_blocked ::=
+simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,sometime]]]);
+action(sendBlockedAlarmEvent).
+
+send_alarm_event_not_blocked ::=
+simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,othertime]]]);
+action(sendBlockedAlarmEvent).
+
+chk_received_alarm_event ::=
+hasComponentReceivedResult(true_remote_control_application,alarmGoesOffEvent,Result);
+if (Result==1)
+then
+{
+action(receivedAlarmEvent)
+}.
+
+testContentFilter ::=
+send_alarm_event_blocked;chk_received_alarm_event.
+
+testContentFilterNotBlocked ::=
+send_alarm_event_not_blocked;chk_received_alarm_event.
+
+contentFilterBlocking += contentFilterBlock1 /\ contentFilterBlock2.
+contentFilterBlock1 += <sendBlockedAlarmEvent>tt \/ <->contentFilterBlock1.
+contentFilterBlock2 -= [receivedAlarmEvent]ff /\ [-]contentFilterBlock2.
+
+contentFilterNotBlocking += contentFilterBlock1 /\ contentFilterNonBlock1.
+contentFilterNonBlock1 += <receivedAlarmEvent>tt \/ <->contentFilterNonBlock1.
+
+% BLOCKING RECEIVER CONTENT FILTER

@@ -1,107 +1,145 @@
+% PREDICATE TO CREATE ENVIRONMENT WITH A LIST OF CONTEXT VARIABLES
 create_environment(Environment_name, Context_var_list):-
 	%not(environment_instance(Environment_name)),
 	assert(environment_instance(Environment_name)),
+	% CREATE A COMPONENT INSTANCE FOR EACH ENVIRONMENT SO THAT THE ENVIRONMENT CAN BE NESTED INSIDE ANOTHER ENVIRONMENT
 	assert(component_instance(Environment_name)),
+	% ASSOSIATE CONTEXT VARIABLES TO THE NEW ENVIRONMENT
 	add_context_variable_list_environment(Environment_name,Context_var_list).	
 
+% PREDICATE TO CREATE A COMPONENTWITH A LIST OF CONTEXT VARIABLES	
 create_component(Component_name, Context_variable_list):-
 	%not(component_instance(Component_name)),
 	assert(component_instance(Component_name)),
+	% ASSOSIATE THE CONTEXT VARIABLES TO THE NEW CONTEXT
 	add_component_context_variable_list(Component_name,Context_variable_list).
-	
+
+% PREDICATE TO DECLARE A NEW EVENT SCHEMA, THE EVENT SCHEMA IS REPRESENTED IN A NESTED LIST FORMAT WHERE DATA IS REPRESENTED AS KV PAIR		
 create_event_schema(Event_id,Event_schema_list):-
 	assert(event_schema(Event_id,Event_schema_list)).
-	
+
+% PREDICATE TO CREATE AN ADVERTISEMENT FOR A COMPONENT, AN ADVERTISEMENT IS ASSOSIATED WITH A COMPONENT, AN EVENT TYPE, AN ENVIRONMENT AND A CONTEXT FILTER. AN ENVIRONMENT IS NEEDED BECAUSE ADVERTISEMENTS ARE NOT SHARED BETWEEN ENVIRONMENTS. THEREFORE IF A COMPONENT WANTS TO DISTRIBUTE AN EVENT TO MULTIPLE PARENTS IT WILL NEED MULTIPLE ADVERTISEMENTS FOR EACH PARENT ENVIRONMENT. THE ADVERTISEMENT ALSO STORES A CONTEXT FILTER EXPRESSION THAT AN EVENT NEEDS TO PASS BEFORE REACHING THE IMMEDIATE PARENT ENVIRONMENT.	
 create_advertisement(Component_name,Environment_name,Event_id,Context_filter_expression):-
+	% CHECKING IF THE COMPONENT ALREADY EXISTS
 	component_instance(Component_name),
+	% CHECKING IF THE ENVIRONMENT EXISTS
 	environment_instance(Environment_name),
+	% CHECKING IF THE COMPONENT IS CONTAINED IN THE ENVIRONMENT
 	environment_component(Environment_name,Component_name),
+	% CHECKING IF THE EVENT TYPE EXISTS
 	event_schema(Event_id,_),
 
 	assert(event_advertisement_entry(Component_name,Environment_name,Event_id,Context_filter_expression)).
-	
+
+% PREDICATE TO CREATE AN ADVERTISEMENT FOR AN ENVIRONMENT. . THE ADVERTISEMENT ALSO STORES A CONTEXT FILTER EXPRESSION THAT AN EVENT NEEDS TO PASS BEFORE REACHING THE IMMEDIATE PARENT ENVIRONMENT.	
 create_advertisement(Environment_name,Event_id,Context_filter_expression):-
+	% CHECKING IF THE ENVIRONMENT EXISTS
 	environment_instance(Environment_name),
+	% CHECKING IF THE EVENT TYPE EXISTS
 	event_schema(Event_id,_),
 
 	assert(event_advertisement_entry(Environment_name,Environment_name,Event_id,Context_filter_expression)).
-	
+
+% PREDICATE TO CREATE A SUBSCRIPTION FOR A COMPONENT, A SUSCRIPTION IS ASSOSIATED WITH A COMPONENT, AN ENVIRONMENT, AN EVENT TYPE, A CONTEXT FILTER AND A CONTENT FILTER. AN ENVIRONMENT IS NEEDED AS SUBSCRIPTIONS ARE NOT SHARD AMONG ENVIRONMENTS. THEREFORE IF A COMPONENT WANTS TO SUBSCRIBE TO AN EVENT FROM MULTIPLE PARENTS IT WILL NEED MULTIPLE SUBSCRIPTIONS FOR EACH PARENT ENVIRONMENT. A CONTENT FILTER IS EVALUATED BASED ON THE CONTENT FILTER EXPRESSION AND THE CONTENTS OF THE EVENT. A CONTEXT FILTER IS EVALUATED BASED ON THE CONTEXT FILTER EXPRESSION AND THE VALUES OF THE CONTEXT VARIABLES HOSTED BY THE PARENT ENVIRONMENTS.	
 create_subscription(Component_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression):-
+	% CHECKING IF THE COMPONENT EXISTS
 	component_instance(Component_name),
+	% CHECKING IF THE EVENT TYPE EXISTS
 	event_schema(Event_id,_),
 	
 	assert(event_subscription_entry(Component_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression)).
 
 add_component_context_variable_list(Component_name,[]).
 
+% THESE PREDICATES ARE USED TO ITERATE THE LIST OF CONTEXT VARIABLES OF COMPONENTS
 add_component_context_variable_list(Component_name,[H|T]):-
 	add_component_context_variable(Component_name,H),
 	add_component_context_variable_list(Component_name,T).
-	
+
+% THIS PREDICATE IS USED TO STORE EACH CONTEXT VARIABLE		
 add_component_context_variable(Component_name,[Key,Value|[]]):-
 	assert(context_variable(Component_name,[Key,Value])).
 
+% THIS PREDICATE IS USED TO ADD A COMPONENT TO AN ENVIRONMENT. THIS PREDICATE CAN ALSO BE USED TO NEST ENVIRONMENTS AS EACH ENVIRONMENT IS ALSO ASSERTTED AS A COMPONENT.
 add_component_to_environment(Environment_name, Component_name):-
+	% CHECK IF ENVIRONMENT EXISTS
 	environment_instance(Environment_name),
+	% CHECK IF THE COMPONENT EXISTS
 	component_instance(Component_name),	
 	assert(environment_component(Environment_name,Component_name)),	
 	findall(X,context_variable(Component_name,X),Component_context_variable_list),
 	write(Component_context_variable_list),nl.
-	
+
+% THIS PREDICATE IS USED TO ITTERATE THE LIST OF ENVIRONMENT CONTEXT VARIABLES 	
 add_context_variable_list_environment(Environment_name,[H|T]):-
 	assert(context_variable(Environment_name,H)),
 	add_context_variable_list_environment(Environment_name,T).
 	
 add_context_variable_list_environment(Environment_name,[]).
 
+% THIS PREDICATE IS USED TO ADD A LIST OF COMPONENTS TO ENVIRONMENT
 add_component_list_environment(Environment_name,[H|T]):-
 	add_component_to_environment(Environment_name,H),
 	add_component_list_environment(Environment_name,T).
 	
 add_component_list_environment(Environment_name,[]).	
 
+% THIS PREDIACTE IS USED FOR GETING ALL THE EVENT TYPES FOR AN ENVIRONMENTS SUBCOMPONENTS FOR THAT HAVE ADVERTISEMENTS 
 get_event_id_list_advertisement_environment(Environment_name,Event_id_list):-
 	findall(X,environment_event_advertisement(Environment_name,X),Event_id_list).
 
+% THIS PREDICATE IS TRUE IS THE ENVIRONMENT OR ONE OF ITS COMPONENTS HAS AN ADVERTISEMENTS FOR THE EVENT TYPE	
 environment_event_advertisement(Environment_name,Event_id):-
+	% CHECK IF THE ENVIRONMENT EXISTS
 	environment_instance(Environment_name),
+	% CHECK IF THE EVENT TYPE EXISTS
 	event_schema(Event_id,_),
 	
+	% CHECK IF THE COMPONENT IS CONTAINED INSIDE THE ENVIRONMENT
 	environment_component(Environment_name,Component_name),
 	event_advertisement_entry(Component_name,Environment_name,Event_id,Context_filter_expression).
-	
+
+% THIS PREDICATE IS TRUE IS THE ENVIRONMENT OR ONE OF ITS COMPONENTS HAS AN SUBSCRIPTIONS FOR THE EVENT TYPE		
 environment_event_subscription(Environment_name,Event_id):-
+	%CHECK IF THE ENVIRONMENT EXISTS
 	environment_instance(Environment_name),
+	% CHECK IF THE EVENT TYPE EXISTS
 	event_schema(Event_id,_),
 	
+	% CHECK IF THE COMPONENT IS CONTAINED INSIDE THE ENVIRONMENT
 	environment_component(Environment_name,Component_name),
 	event_subscription_entry(Component_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression).
 
+% PREDICATE TO CHECK IF ANY OF THE N DEGREE CHILD OF THE COMPONENT HAS A SUBSCRIPTION FOR THIS KIND OF EVENT
 component_event_subscription(Component_name,Event_id):-
 	event_subscription_entry(Component_name,Environment_name,Event_id,Content_filter_expression,Context_filter_expression).
-
+	
 component_event_subscription(Component_name,Event_id):-
+	% GET A CHILD CONTAINED INSIDE THE COMPONENT
 	environment_component(Component_name,Sub_component_name),
 	component_event_subscription(Sub_component_name,Event_id).
 	
+% PREDICATE TO CHECK IF ANY OF THE N DEGREE CHILD OF THE COMPONENT HAS AN ADVERTISEMENT FOR THIS KIND OF EVENT		
 component_event_advertisement(Component_name,Environment_name,Event_id):-
 	event_advertisement_entry(Component_name,Environment_name,Event_id,Context_filter_expression).
 
 component_event_advertisement(Component_name,Environment_name,Event_id):-
 	environment_component(Component_name,Sub_component_name),
 	component_event_advertisement(Sub_component_name,Component_name,Event_id).
-	
+
+% PREDICATE TO GET ALL THE FIRST DEGREE COMPONENTS OF AN ENVIRONMENT		
 get_component_list_environment(Environment_name,Component_name_list):-
 	findall(X,environment_component(Environment_name,X),Component_name_list).
 
+% THIS PREDICATE IS USED TO SIMULATE AN EVENT ORIGINATION FROM A COMPONENT	
 simulate_event_component(Component_name,Environment_name,Event_id,Event_data_list):-
 	component_instance(Component_name),
 	
-	% TYPE FILTER START
+	% TYPE FILTER START, THIS IS A CHECK IF THE COMPONENT HAS AN ADVERTISEMENT FOR THIS TYPE OF EVENT
 	event_advertisement_entry(Component_name,Environment_name,Event_id,Context_filter_expression),
 	% TYPE FILTER END
 	
-	% CONTEX FILTER START
+	% CONTEX FILTER START, SINCE THE OUTGOING EVENT S ONLY NEED TO PASS THE CONTEXT FILTER AND NOT THE CONTENT FILTER
 	findall(X,get_context_variables(Environment_name,_,X),Environment_context_variable_list),
 	write('Context filter expression - '),write(Context_filter_expression),nl,
 	write('Context filter data'),write(Environment_context_variable_list),nl,
@@ -109,25 +147,34 @@ simulate_event_component(Component_name,Environment_name,Event_id,Event_data_lis
 	write('Context filter passed'),nl,
 	% CONTEX FILTER END
 	
+	% VALIDATE THE EVENT TO ONE OF THE KNOWN EVENT SCHEMAS
 	[Event_type|Et] = Event_data_list,
 	event_schema(Event_type,Event_schema),
+	
+	% VALIDATE IT FURTHER BY A DATA TYPE CHECK OS OF THE VALUES OF THE KV PAIRS
 	!,unify_event(Event_data_list,Event_schema),
 
+	% THE BELOW IS USED TO THE ACTIONS THAT ARE TAKEN BY THE COMPONENT ON THE ARRIVAL OF THIS TYPE OF EVENT
 	!,trigger_component_event_response(Component_name,Event_type,Event_data_list),
 	
+	% WE NOW MOVE TO THE ENVIRONMRNT THAT CONTAINS THE COMPONENT
 	get_reachable_environments(Event_type,Event_data_list,[Environment_name],Component_name,[Component_name],Reachable_environment_list),
 	nl,write('Event '),write(Event_id),write(' Visited List -->'),write(Reachable_environment_list),nl.
-	
+
+% THIS PREDICATE IS USED TO SIMULATE AN EVENT ORIGINATION FROM AN ENVIRONMENT		
 simulate_event_environment(Environment_name,Event_id,Event_data_list):-
 	environment_instance(Environment_name),
 	% TYPE FILTER START
 	event_advertisement_entry(Environment_name,Environment_name,Event_id,Context_filter_expression),
 	% TYPE FILTER END
 	
+	% VALIDATE THE EVENT TO ONE OF THE KNOWN EVENT SCHEMAS
 	[Event_type|Et] = Event_data_list,
 	event_schema(Event_id,Event_schema),
+	% VALIDATE IT FURTHER BY A DATA TYPE CHECK OS OF THE VALUES OF THE KV PAIRS
 	!,unify_event(Event_data_list,Event_schema),
 
+	% WE NOW MOVE TO THE ENVIRONMRNT THAT CONTAINS THE ENVIRONMENT
 	get_reachable_environments(Event_id,Event_data_list,[Environment_name],Environment_name,[],Reachable_environment_list),
 	nl,write('Event '),write(Event_id),write(' Visited List -->'),write(Reachable_environment_list),nl.
 	
@@ -158,36 +205,51 @@ process_event_environment(Environment_name,Event_id,Event_data_list,Calling_comp
 	
 process_event_environment(Environment_name,Event_id,Event_data_list,Calling_component_name).
 
+% ONE OF THE DEFINITIONS OF THE A RECURSIVE PREDICATE FOR ITERATING THROUGH ALL THE COMPONENTS IN AN ENVIRONMENT
 get_reachable_environments(Event_type,Event_data_list,[],Calling_component_name,I,I).
-	
+
+% ONE OF THE DEFINITIONS OF THE A RECURSIVE PREDICATE FOR ITERATING THROUGH ALL THE COMPONENTS IN AN ENVIRONMENT		
 get_reachable_environments(Event_type,Event_data_list,[Rh|Rt],Calling_component_name,I,O):-
 	get_reachable_environments(Event_type,Event_data_list,Rh,Calling_component_name,I,O2),
 	get_reachable_environments(Event_type,Event_data_list,Rt,Calling_component_name,O2,O).
-	
+
+% THIS PREDICATE IS USED TO COMPUTE THE EFFECT OF AN EVENT ON REACHING AN ENVIRONMENT	
 get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,O):-
 	environment_instance(Component_name),
+	% CHECKING THAT THE ENVIRONMENT HAS NOT BEEN VISITIED BEFORE
 	not(member(Component_name,I)),
 	write('Visiting Environment - '),write(Component_name),nl,
 	% write('_-> Already Visited - '),write(I),nl,
+	% ADD THE NAME OF THIS ENVIRONMENT IN THE LIST TO PREVENT VISITING IT AGAIN
 	append(I,[Component_name],I2),
 	
 	process_event_environment(Component_name,Event_type,Event_data_list,Calling_component_name),
-	
+
+	% FIND ALL THE ENVIRONMENTS THAT CONTAIN THIS ENVIRONMENT
+	% THIS CALL IS SPREADING THE ENENT UPWARDS TOWARDS THE PARENT ENVIRONMENTS	
 	findall(X,environment_component(X,Component_name),Environment_name_list),
 	% write('|-> Parent Environments - '),write(Environment_name_list),nl,
+	
+	% THE THE METHOD RECURSIVELY TO VISIT PARENT ENVIRONMENT
 	get_reachable_environments(Event_type,Event_data_list,Environment_name_list,Component_name,I2,I3),
 	% write('@@'),write(I3),nl,
+	
+	% WE ARE NOW LOOKING FOA ALL THE COMPONENTS AND ENVIRONMENTS CONTAINED IN THIS ENVIRONMENT
 	findall(X,environment_component_event_subscription(Component_name,X,Event_type),Sub_component_name_list),
 	% write('|-> Sub of '),write(Component_name),write(' - '),write(Sub_component_name_list),nl,
-	get_reachable_environments(Event_type,Event_data_list,Sub_component_name_list,Component_name,I3,O).
 	
+	% NOW WE ARE GOING TO SPRED THE EVENT DOWNWARDS TOWARDS THIS ENVIRONMENTS CHILDRREN COMPONENTS AND ENVIRONEMENTS
+	get_reachable_environments(Event_type,Event_data_list,Sub_component_name_list,Component_name,I3,O).
+
+% THIS PREDICATE IS USED TO COMPUTE THE EFFECT OF AN EVENT ON REACHING A COMPONENT	
 get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,O):-
 	not(environment_instance(Component_name)),
 	component_instance(Component_name),
+	% CHECKING THAT THE ENVIRONMENT HAS NOT BEEN VISITIED BEFORE
 	not(member(Component_name,I)),
 	append(I,[Component_name],O),
 	
-	% TYPE FILTER START
+	% TYPE FILTER START, CHECKING IF THE COMPONENT HAS SUBSCRIBED TO THIS TYPE OF EVENT
 	event_subscription_entry(Component_name,Environment_name,Event_type,Content_filter_expression,Context_filter_expression),
 	% TYPE FILTER END
 	
@@ -208,8 +270,10 @@ get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_com
 	
 	write('Visiting Component - '),write(Component_name),nl,
 	
+	% NOW WE EXECUTE THE PREDICATE THAT SIGNALS THAT THE EVENT HAS BEEN ACCEPTED BY THE COMPONENT, IT IS ALSO WHERE THE COMPONENT SERVICES THE EVENT
 	trigger_component_event_response(Component_name,Event_type,Event_data_list).
-	
+
+% ONE OF THE DEFINITIONS, IT IS USED TO PREVENT THE BREAK IN THE RECURSION CHAIN IF THE COMPONENT DOES NOT SUBSCRIBE TO A EVENT TYPE		
 get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,O):-
 	not(environment_instance(Component_name)),
 	component_instance(Component_name),
@@ -217,7 +281,8 @@ get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_com
 	append(I,[Component_name],O),
 	write('Visiting Component - '),write(Component_name),nl,
 	not(event_subscription_entry(Component_name,Environment_name,Event_type,Content_filter_expression,Context_filter_expression)).
-	
+
+% THIS PREDICATE IS USED AS AN ALL PASS DEFINITION FOR THE RECURSIVE PREDICATE	
 get_reachable_environments(Event_type,Event_data_list,Component_name,Calling_component_name,I,I).
 
 get_context_variables(Environment_name,Component_name,Environment_context_variable):-
@@ -231,12 +296,14 @@ environment_component_event_subscription(Environment_name,Component_name,Event_i
 environment_component_event_subscription(Environment_name,Component_name,Event_id):-
 	environment_component(Environment_name,Component_name),
 	environment_instance(Component_name).
-	
+
+% THIS PREDICATE IS USED TO FETCH THE CONTEXT VARIABLES OF AN ENVIRONMENT, AND THE COMPONENTS CONTAINED WITHIN IT		
 get_context_variables(Environment_name,Component_name,Environment_context_variable):-
 	environment_instance(Environment_name),
 	ancestor(Environment_name,Component_name),
 	context_variable(Component_name,Environment_context_variable).
 
+% THIS PREDICATE IS USED TO GET A CONTEXT VARIABLE CREATED FOR AN ENVIRONMENT	
 get_context_variables(Environment_name,Component_name,Environment_context_variable):-
 	context_variable(Environment_name,Environment_context_variable).
 
@@ -245,13 +312,16 @@ get_context_variables(Environment_name,Component_name,Environment_context_variab
 	ancestor(Environment_name,Sub_environment_name),
 	context_variable(Sub_environment_name,Environment_context_variable).
 
+% USED TO FIND THE ACESTORY OF A COMPONENT OR ENVIRONMENT
 ancestor(Environment_name,Component_name):-
 	environment_component(Environment_name,Component_name).
-	
+
+% USED TO FIND THE ACESTORY OF A COMPONENT OR ENVIRONMENT		
 ancestor(Environment_name,Component_name):-
 	environment_component(Sub_environment_name,Component_name),
 	ancestor(Environment_name,Sub_environment_name).
-	
+
+% THE PREDICATE IS USED TO CAHNGE THE VALUE OF A CONTEXT VARIABLE 		
 change_context_variable_value(Context_variable_name,Context_variable_new_value):-
 	context_variable(Component_name,[Context_variable_name,Old_value]),
 	

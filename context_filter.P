@@ -4,12 +4,15 @@
 % can_pass_event([temperature,[[temp,12],location,[[latitude,9.1],[longitude,9.1],time,[[hh,12],[mm,12],[ss,12]]],[dummy,12]]],[[[temp,>,30],or,[temp,<,10]],or,[[hh,>,9],or,[hh,<,19]]]).
 % can_pass_event([temperature,[[temp,42],location,[[latitude,9.1],[longitude,9.1],time,[[hh,12],[mm,12],[ss,12]]],[dummy,12]]],[[[temp,>,30],or,[temp,<,10]],and,[[hh,>,9],or,[hh,<,19]]]).
 
-can_pass_event(Event,Context_filter_expression):-
+% THIS PREDICATE IS USED TO CHECK IS AN EVENT CAN PASS THROUGH THE FILTER
+can_pass_event(Event,Filter_expression):-
+	% WE FALTTEN THE EVENT FROM A NESTED LIST TO A LIST OF KEY-VALUE PAIRS
 	faltten_to_key_value_pairs(Event,[],Flat_kv_pairs),
 	% write(Flat_kv_pairs),nl,
 	%replace_keys_by_values(Context_filter_expression,Flat_kv_pairs,Logic_filled_expression),
-	compute(Context_filter_expression,Flat_kv_pairs).	
+	compute(Filter_expression,Flat_kv_pairs).	
 
+% THESE PREDICATES ARE USED TO FLATTEN THE NESTED LIST OF KV PAIRS INTO A FLAT LIST OF KV PAIRS
 faltten_to_key_value_pairs([H|[]],I,Flat_kv_pairs):-
 	% write('(2)-> '),write(H),write(' '),
 	faltten_to_key_value_pairs(H,I,Flat_kv_pairs).	
@@ -42,23 +45,29 @@ faltten_to_key_value_pairs([Key,Value|[]],I,Flat_kv_pairs):-
 % compute([3,=,3],Result).
 % compute([[3,=,3],&,[3,=,3]]).
 % compute([[[5,=,3],or,[5,=,3]],or,[[5,=,5],or,[5,=,3]]]).
-compute(Context_filter_expression,Flat_kv_pairs):-
-	write('starting filter computation'),nl,
-	compute_logic_molecule(Context_filter_expression,Flat_kv_pairs).
+% THIS PREDICATE PRODUCES A BOOLEAN OUTPUT FOR THE INPUT OF FILTER EXPRESSION AND LIST OF KEY-VALUE PAIRS
+compute(Filter_expression,Flat_kv_pairs):-
+	% write('starting filter computation'),nl,
+	compute_logic_molecule(Filter_expression,Flat_kv_pairs).
 
+% THIS A SHORT EXECUTION PATH FOR IF THE FILTER EXPRESSION IS NOT PROVIDED FOR A COMPONENT
 compute([],_).
-	 
+
+% THIS PREDICATE IS USED TO COMPUTE THE FITER EXPRESSION RECURSIVELY, IT BREAKS THE FILTER EXPRESSION INTO NESTED LISTS OF 3 ELEMENTS EACH
 compute_logic_molecule([Term_1,Operator,Term_2|[]],Flat_kv_pairs):-
 	!,
+	% CHECKING IF THE OPERATOR IS SUPPORTED
 	member(Operator,[>,<,=<,>=,and,or,=\=,=]),
-	write('term1 = '),write(Term_1),nl,
-	write('term2 = '),write(Term_2),nl,
+	% write('term1 = '),write(Term_1),nl,
+	% write('term2 = '),write(Term_2),nl,
 	
+	% CHECKING IF EITHER THE FIRST OR THE SECOND TERM OF THE EXPRESSION IS A LIST IN ITS SELF, THIS WOULD MEAN THAT THE EXPRESSION IS A NESTED EXPRESSION, IN HTIS CASE THE PREDICATE IS CALLED ON THE INNER EXPRESSION RECURSIVELY
 	(not(is_list(Term_1))->get_value_for_key(Term_1,Flat_kv_pairs,R1);(compute_logic_molecule(Term_1,Flat_kv_pairs)->R1 = true;R1 = fail)),
 	(not(is_list(Term_2))->R2=Term_2;(compute_logic_molecule(Term_2,Flat_kv_pairs)->R2 = true;R2 = fail)), 
 	
 	compute_logic(R1,Operator,R2).
-	
+
+% THIS PREDICATE IS USED TO FETCH THE VALUE CORRESPONDING TO A KEY FROM A LIST OF KEY-VALUE PAIRS.
 get_value_for_key(R1,[[Key,Value]|T],V1):-
 	% write('looking for '),write(R1),write(' comparing with '),write(Key),nl,
 	(R1==Key->V1 = Value;get_value_for_key(R1,T,V1)).
@@ -67,20 +76,23 @@ get_value_for_key(R1,[[Key,Value]|[]],V1):-
 	% write('looking for '),write(R1),write(' comparing with '),write(Key),nl,
 	(R1==Key->V1 = Value;fail).
 
+% THIS PREDICATE HANDLES THE EQUALITY OPERATOR
 compute_logic(R1,=,R2):-
 	% write(R1),write('='),write(R2),nl,
 	(  R1 == R2
     -> true
     ;  fail
      ).
-	
+
+% THIS PREDICATE HANDLES THE > OPERATOR
 compute_logic(R1,>,R2):-
 	% write(R1),write('>'),write(R2),nl,
 	(  R1 > R2
     -> true
     ;  fail
      ).
-	
+
+% THIS PREDICATE HANDLES THE < OPERATOR
 compute_logic(R1,<,R2):-
 	% write(R1),write('<'),write(R2),nl,
 	(  R1 < R2
@@ -88,6 +100,7 @@ compute_logic(R1,<,R2):-
     ;  fail
      ).
 
+% THIS PREDICATE HANDLES THE =< OPERATOR
 compute_logic(R1,=<,R2):-
 	% write(R1),write('=<'),write(R2),nl,
 	(  R1 =< R2
@@ -95,6 +108,7 @@ compute_logic(R1,=<,R2):-
     ;  fail
      ).
 
+% THIS PREDICATE HANDLES THE >= OPERATOR
 compute_logic(R1,>=,R2):-
 	% write(R1),write('>='),write(R2),nl,
 	(  R1 >= R2
@@ -102,20 +116,23 @@ compute_logic(R1,>=,R2):-
     ;  fail
      ).
 
+% THIS PREDICATE HANDLES THE =/= INEQUALITY OPERATOR
 compute_logic(R1,=\=,R2):-
 	% write(R1),write('=\='),write(R2),nl,
 	(  \+(R1 == R2)
     -> true
     ;  fail
      ).
-	
+
+% THIS PREDICATE HANDLES THE AND OPERATOR
 compute_logic(R1,and,R2):-
 	% write(R1),write(' and '),write(R2),nl,
 	(  R1,R2
     -> true
     ;  fail 
      ).
-	
+
+% THIS PREDICATE HANDLES THE OR OPERATOR
 compute_logic(R1,or,R2):-
 	% write(R1),write(' or '),write(R2),nl,
 	(  R1;R2
