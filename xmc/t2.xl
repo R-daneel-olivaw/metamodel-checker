@@ -57,7 +57,7 @@ contentFilterNonBlock1 += <receivedAlarmEvent>tt \/ <->contentFilterNonBlock1.
 
 % BLOCKING RECEIVER CONTENT FILTER
 
-% STRUCTURAL PROPERTIES
+% UNIQUE COMPONENTS
 
 chk_duplicates ::=
 unique_environments
@@ -134,4 +134,18 @@ uniqueSubscription += [-noDuplicateSubscription]uniqueSubscription /\ <->tt.
 uniqueContextVariable += [-noDuplicateContextVariable]uniqueContextVariable /\ <->tt.
 uniqueEnvironmentComponentRelation += [-noDuplicateEnvironmentComponentRelation]uniqueEnvironmentComponentRelation /\ <->tt.
 
-% STRUCTURAL PROPERTIES
+% UNIQUE COMPONENTS
+
+% VALID RELATIONS
+
+chk_env_component_relation ::=
+all_environment_component_relation_as_nested_lists([],All_environment_component_relation_list);
+if (validate_env_component_relation_list(All_environment_component_relation_list))
+then
+{
+action(allValidEnvComponentRelation)
+}.
+
+valid_env_component_relations += [-allValidEnvComponentRelation]valid_env_component_relations /\ <->tt.
+
+% VALID RELATIONS

@@ -59,3 +59,18 @@ all_environment_component_relation(In_list,Environment_component_relation_list):
 	findall(X(Y),environment_component(X,Y),Relation_list),
 	append(In_list,Relation_list,Environment_component_relation_list).
 	
+all_environment_component_relation_as_nested_lists(In_list,Environment_component_relation_list):-
+	findall([X,Y],environment_component(X,Y),Relation_list),
+	append(In_list,Relation_list,Environment_component_relation_list).
+
+validate_env_component_relation_list([H|T]):-
+	validate_relation(H),
+	validate_env_component_relation_list(T).
+ 
+validate_env_component_relation_list([H|[]]):-
+	validate_relation(H).
+	
+validate_relation([Environment_name,Component_name]):-
+	environment_instance(Environment_name),
+	component_instance(Component_name).
+	
