@@ -56,3 +56,17 @@ contentFilterNotBlocking += contentFilterBlock1 /\ contentFilterNonBlock1.
 contentFilterNonBlock1 += <receivedAlarmEvent>tt \/ <->contentFilterNonBlock1.
 
 % BLOCKING RECEIVER CONTENT FILTER
+
+% STRUCTURAL PROPERTIES
+
+unique_environments ::=
+all_environemtns([],All_env_list);
+if (no_duplicates(All_env_list))
+then
+{
+action(noDuplicateEnv)
+}.
+
+noDuplicates += [-noDuplicateEnv]noDuplicates /\ <->tt.
+
+% STRUCTURAL PROPERTIES
