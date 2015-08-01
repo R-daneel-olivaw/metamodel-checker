@@ -1,21 +1,137 @@
-ts ::=
-action(sendnew);
-simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,hammerTime]]]).
+% RECEIVER CONTEXT FILTER 
 
-tr ::=
-hasComponentReceivedResult(true_remote_control_application,alarmGoesOffEvent,Result);
-if (Result=1)
+send_trigger_home_action_event ::=
+simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]]);
+action(sendTriggerHomeActionEvent).
+
+chk_received_trigger_home_action_event ::=
+hasComponentReceivedResult(smart_home_controller_unit,triggerHomeActionEvent,Result);
+if (Result==1)
 then
 {
-action(recvnew);
-cleanupComponentTriggPredicates(true_remote_control_application)
-};
-write('second');
-write(Result).
+action(receivedTriggerHomeActionEvent)
+}.
 
-ta ::=
-ts;tr;ta.
+testContextFilter(Pass) ::=
+change_context_variable_value(mustTriggerHomeActionsContextElement,Pass);send_trigger_home_action_event;chk_received_trigger_home_action_event.
 
-losslesstx += <sendnew>tt \/ <->losslesstx.
-losslessrx += <recvnew>tt \/ <->losslessrx.
-lossless += losslesstx /\ losslessrx.
+filterBlocking += contextFilterBlock1 /\ contextFilterBlock2.
+contextFilterBlock1 += <sendTriggerHomeActionEvent>tt \/ <->contextFilterBlock1.
+contextFilterBlock2 -= [receivedTriggerHomeActionEvent]ff /\ [-]contextFilterBlock2.
+
+filterNotBlocking += contextFilterBlock1 /\ contextFilterNonBlock1.
+contextFilterNonBlock1 += <receivedTriggerHomeActionEvent>tt \/ <->contextFilterNonBlock1.
+
+% RECEIVER CONTEXT FILTER 
+
+% BLOCKING RECEIVER CONTENT FILTER
+
+send_alarm_event_blocked ::=
+simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,sometime]]]);
+action(sendBlockedAlarmEvent).
+
+send_alarm_event_not_blocked ::=
+simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,othertime]]]);
+action(sendBlockedAlarmEvent).
+
+chk_received_alarm_event ::=
+hasComponentReceivedResult(true_remote_control_application,alarmGoesOffEvent,Result);
+if (Result==1)
+then
+{
+action(receivedAlarmEvent)
+}.
+
+testContentFilter ::=
+send_alarm_event_blocked;chk_received_alarm_event.
+
+testContentFilterNotBlocked ::=
+send_alarm_event_not_blocked;chk_received_alarm_event.
+
+contentFilterBlocking += contentFilterBlock1 /\ contentFilterBlock2.
+contentFilterBlock1 += <sendBlockedAlarmEvent>tt \/ <->contentFilterBlock1.
+contentFilterBlock2 -= [receivedAlarmEvent]ff /\ [-]contentFilterBlock2.
+
+contentFilterNotBlocking += contentFilterBlock1 /\ contentFilterNonBlock1.
+contentFilterNonBlock1 += <receivedAlarmEvent>tt \/ <->contentFilterNonBlock1.
+
+% BLOCKING RECEIVER CONTENT FILTER
+
+% STRUCTURAL PROPERTIES
+
+chk_duplicates ::=
+unique_environments
+; unique_components
+; unique_events
+; unique_advertisements
+; unique_subscriptions
+; unique_context_variables
+; unique_environment_component_relation.
+
+unique_environments ::=
+all_environemtns([],All_env_list);
+if (no_duplicates(All_env_list))
+then
+{
+action(noDuplicateEnv)
+}.
+
+unique_components ::=
+all_components([],All_component_list);
+if (no_duplicates(All_component_list))
+then
+{
+action(noDuplicateComponent)
+}.
+
+unique_events ::=
+all_event_names([],All_event_list);
+if (no_duplicates(All_event_list))
+then
+{
+action(noDuplicateEvent)
+}.
+
+unique_advertisements ::=
+all_advertisements([],All_advertisement_list);
+if (no_duplicates(All_advertisement_list))
+then
+{
+action(noDuplicateAdvertisement)
+}.
+
+unique_subscriptions ::=
+all_subscriptions([],All_subscription_list);
+if (no_duplicates(All_subscription_list))
+then
+{
+action(noDuplicateSubscription)
+}.
+
+unique_context_variables ::=
+all_context_variables([],All_context_variable_list);
+if (no_duplicates(All_context_variable_list))
+then
+{
+action(noDuplicateContextVariable)
+}.
+
+unique_environment_component_relation ::=
+all_environment_component_relation([],All_environment_component_relation_list);
+if (no_duplicates(All_environment_component_relation_list))
+then
+{
+action(noDuplicateEnvironmentComponentRelation)
+}.
+
+unique_all += uniqueEnv /\ uniqueComponent /\ uniqueEvent /\ uniqueAdvertisement /\ uniqueSubscription /\ uniqueContextVariable /\ uniqueEnvironmentComponentRelation.
+
+uniqueEnv += [-noDuplicateEnv]uniqueEnv /\ <->tt.
+uniqueComponent += [-noDuplicateComponent]uniqueComponent /\ <->tt.
+uniqueEvent += [-noDuplicateEvent]uniqueEvent /\ <->tt.
+uniqueAdvertisement += [-noDuplicateAdvertisement]uniqueAdvertisement /\ <->tt.
+uniqueSubscription += [-noDuplicateSubscription]uniqueSubscription /\ <->tt.
+uniqueContextVariable += [-noDuplicateContextVariable]uniqueContextVariable /\ <->tt.
+uniqueEnvironmentComponentRelation += [-noDuplicateEnvironmentComponentRelation]uniqueEnvironmentComponentRelation /\ <->tt.
+
+% STRUCTURAL PROPERTIES
