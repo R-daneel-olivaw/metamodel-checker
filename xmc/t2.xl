@@ -60,7 +60,13 @@ contentFilterNonBlock1 += <receivedAlarmEvent>tt \/ <->contentFilterNonBlock1.
 % STRUCTURAL PROPERTIES
 
 chk_duplicates ::=
-unique_environments;unique_components;unique_events.
+unique_environments
+; unique_components
+; unique_events
+; unique_advertisements
+; unique_subscriptions
+; unique_context_variables
+; unique_environment_component_relation.
 
 unique_environments ::=
 all_environemtns([],All_env_list);
@@ -86,10 +92,46 @@ then
 action(noDuplicateEvent)
 }.
 
-unique_all += uniqueEnv /\ uniqueComponent /\ uniqueEvent.
+unique_advertisements ::=
+all_advertisements([],All_advertisement_list);
+if (no_duplicates(All_advertisement_list))
+then
+{
+action(noDuplicateAdvertisement)
+}.
+
+unique_subscriptions ::=
+all_subscriptions([],All_subscription_list);
+if (no_duplicates(All_subscription_list))
+then
+{
+action(noDuplicateSubscription)
+}.
+
+unique_context_variables ::=
+all_context_variables([],All_context_variable_list);
+if (no_duplicates(All_context_variable_list))
+then
+{
+action(noDuplicateContextVariable)
+}.
+
+unique_environment_component_relation ::=
+all_environment_component_relation([],All_environment_component_relation_list);
+if (no_duplicates(All_environment_component_relation_list))
+then
+{
+action(noDuplicateEnvironmentComponentRelation)
+}.
+
+unique_all += uniqueEnv /\ uniqueComponent /\ uniqueEvent /\ uniqueAdvertisement /\ uniqueSubscription /\ uniqueContextVariable /\ uniqueEnvironmentComponentRelation.
 
 uniqueEnv += [-noDuplicateEnv]uniqueEnv /\ <->tt.
 uniqueComponent += [-noDuplicateComponent]uniqueComponent /\ <->tt.
 uniqueEvent += [-noDuplicateEvent]uniqueEvent /\ <->tt.
+uniqueAdvertisement += [-noDuplicateAdvertisement]uniqueAdvertisement /\ <->tt.
+uniqueSubscription += [-noDuplicateSubscription]uniqueSubscription /\ <->tt.
+uniqueContextVariable += [-noDuplicateContextVariable]uniqueContextVariable /\ <->tt.
+uniqueEnvironmentComponentRelation += [-noDuplicateEnvironmentComponentRelation]uniqueEnvironmentComponentRelation /\ <->tt.
 
 % STRUCTURAL PROPERTIES
