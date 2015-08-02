@@ -104,3 +104,14 @@ validate_subscription_relation([Component_name,Event_id,Environment_name]):-
 	environment_instance(Environment_name),
 	event_schema(Event_id,_).
 	
+all_context_variable_relation_as_nested_lists(In_list,Context_variable_relation_list):-
+	findall(Component_name,context_variable(Component_name,_),Component_list),
+	append(In_list,Component_list,Context_variable_relation_list).
+	
+validate_context_variable_relation_list([H|T]):-
+	component_instance(H),
+	validate_context_variable_relation_list(T).
+	
+validate_context_variable_relation_list([]).
+
+	
