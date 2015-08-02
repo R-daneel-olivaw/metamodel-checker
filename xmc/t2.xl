@@ -138,6 +138,10 @@ uniqueEnvironmentComponentRelation += [-noDuplicateEnvironmentComponentRelation]
 
 % VALID RELATIONS
 
+chk_all_relations ::=
+chk_env_component_relation
+; chk_advertisement_relation.
+
 chk_env_component_relation ::=
 all_environment_component_relation_as_nested_lists([],All_environment_component_relation_list);
 if (validate_env_component_relation_list(All_environment_component_relation_list))
@@ -146,6 +150,17 @@ then
 action(allValidEnvComponentRelation)
 }.
 
+chk_advertisement_relation ::=
+all_advertisements_relation_as_nested_lists([],Advertisement_component_event_relation_list);
+if(validate_advertisement_relation_list(Advertisement_component_event_relation_list))
+then
+{
+action(allValidAdvertisements)
+}.
+
+all_valid_relations += valid_env_component_relations /\ valid_adv_relations.
+
 valid_env_component_relations += [-allValidEnvComponentRelation]valid_env_component_relations /\ <->tt.
+valid_adv_relations += [-allValidAdvertisements]valid_adv_relations /\ <->tt.
 
 % VALID RELATIONS
