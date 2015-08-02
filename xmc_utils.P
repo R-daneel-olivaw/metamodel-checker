@@ -59,3 +59,59 @@ all_environment_component_relation(In_list,Environment_component_relation_list):
 	findall(X(Y),environment_component(X,Y),Relation_list),
 	append(In_list,Relation_list,Environment_component_relation_list).
 	
+all_environment_component_relation_as_nested_lists(In_list,Environment_component_relation_list):-
+	findall([X,Y],environment_component(X,Y),Relation_list),
+	append(In_list,Relation_list,Environment_component_relation_list).
+
+validate_env_component_relation_list([H|T]):-
+	validate_env_relation(H),
+	validate_env_component_relation_list(T).
+ 
+validate_env_component_relation_list([H|[]]):-
+	validate_env_relation(H).	
+	
+validate_env_relation([Environment_name,Component_name]):-
+	environment_instance(Environment_name),
+	component_instance(Component_name).
+	
+all_advertisements_relation_as_nested_lists(In_list,Advertisement_component_event_relation_list):-
+	findall([Component_name,Event_id,Environment_name],event_advertisement_entry(Component_name,Environment_name,Event_id,_),Relation_list),
+	append(In_list,Relation_list,Advertisement_component_event_relation_list).
+	
+validate_advertisement_relation_list([H|T]):-
+	validate_advertisement_relation(H),
+	validate_advertisement_relation_list(T).
+	
+validate_advertisement_relation_list([]).
+	
+validate_advertisement_relation([Component_name,Event_id,Environment_name]):-
+	component_instance(Component_name),
+	environment_instance(Environment_name),
+	event_schema(Event_id,_).
+	
+all_subscription_relation_as_nested_lists(In_list,Subscription_component_event_relation_list):-
+	findall([Component_name,Event_id,Environment_name],event_subscription_entry(Component_name,Environment_name,Event_id,_,_),Relation_list),
+	append(In_list,Relation_list,Subscription_component_event_relation_list).
+	
+validate_subscription_relation_list([H|T]):-
+	validate_subscription_relation(H),
+	validate_subscription_relation_list(T).
+	
+validate_subscription_relation_list([]).
+
+validate_subscription_relation([Component_name,Event_id,Environment_name]):-
+	component_instance(Component_name),
+	environment_instance(Environment_name),
+	event_schema(Event_id,_).
+	
+all_context_variable_relation_as_nested_lists(In_list,Context_variable_relation_list):-
+	findall(Component_name,context_variable(Component_name,_),Component_list),
+	append(In_list,Component_list,Context_variable_relation_list).
+	
+validate_context_variable_relation_list([H|T]):-
+	component_instance(H),
+	validate_context_variable_relation_list(T).
+	
+validate_context_variable_relation_list([]).
+
+	
