@@ -14,3 +14,4 @@
 ToDo:-
 f) check that any event is received only once by any subscribing component
 h) check (g) while the case study is executing that the topology of the network is never in the violation
+i) context variables are only defined for the components are defined
