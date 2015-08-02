@@ -88,3 +88,19 @@ validate_advertisement_relation([Component_name,Event_id,Environment_name]):-
 	component_instance(Component_name),
 	environment_instance(Environment_name),
 	event_schema(Event_id,_).
+	
+all_subscription_relation_as_nested_lists(In_list,Subscription_component_event_relation_list):-
+	findall([Component_name,Event_id,Environment_name],event_subscription_entry(Component_name,Environment_name,Event_id,_,_),Relation_list),
+	append(In_list,Relation_list,Subscription_component_event_relation_list).
+	
+validate_subscription_relation_list([H|T]):-
+	validate_subscription_relation(H),
+	validate_subscription_relation_list(T).
+	
+validate_subscription_relation_list([]).
+
+validate_subscription_relation([Component_name,Event_id,Environment_name]):-
+	component_instance(Component_name),
+	environment_instance(Environment_name),
+	event_schema(Event_id,_).
+	

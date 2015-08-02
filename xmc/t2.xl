@@ -140,7 +140,8 @@ uniqueEnvironmentComponentRelation += [-noDuplicateEnvironmentComponentRelation]
 
 chk_all_relations ::=
 chk_env_component_relation
-; chk_advertisement_relation.
+; chk_advertisement_relation
+; chk_subscription_relation.
 
 chk_env_component_relation ::=
 all_environment_component_relation_as_nested_lists([],All_environment_component_relation_list);
@@ -158,9 +159,18 @@ then
 action(allValidAdvertisements)
 }.
 
-all_valid_relations += valid_env_component_relations /\ valid_adv_relations.
+chk_subscription_relation ::=
+all_subscription_relation_as_nested_lists([],Subscription_component_event_relation_list);
+if(validate_subscription_relation_list(Subscription_component_event_relation_list))
+then
+{
+action(allValidSubscriptions)
+}.
+
+all_valid_relations += valid_env_component_relations /\ valid_adv_relations /\ valid_subs_relations.
 
 valid_env_component_relations += [-allValidEnvComponentRelation]valid_env_component_relations /\ <->tt.
 valid_adv_relations += [-allValidAdvertisements]valid_adv_relations /\ <->tt.
+valid_subs_relations += [-allValidSubscriptions]valid_subs_relations /\ <->tt.
 
 % VALID RELATIONS
