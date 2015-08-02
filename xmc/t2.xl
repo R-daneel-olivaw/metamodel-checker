@@ -57,7 +57,7 @@ contentFilterNonBlock1 += <receivedAlarmEvent>tt \/ <->contentFilterNonBlock1.
 
 % BLOCKING RECEIVER CONTENT FILTER
 
-% STRUCTURAL PROPERTIES
+% UNIQUE COMPONENTS
 
 chk_duplicates ::=
 unique_environments
@@ -134,4 +134,53 @@ uniqueSubscription += [-noDuplicateSubscription]uniqueSubscription /\ <->tt.
 uniqueContextVariable += [-noDuplicateContextVariable]uniqueContextVariable /\ <->tt.
 uniqueEnvironmentComponentRelation += [-noDuplicateEnvironmentComponentRelation]uniqueEnvironmentComponentRelation /\ <->tt.
 
-% STRUCTURAL PROPERTIES
+% UNIQUE COMPONENTS
+
+% VALID RELATIONS
+
+chk_all_relations ::=
+chk_env_component_relation
+; chk_advertisement_relation
+; chk_subscription_relation
+; chk_context_variable_relation.
+
+chk_env_component_relation ::=
+all_environment_component_relation_as_nested_lists([],All_environment_component_relation_list);
+if (validate_env_component_relation_list(All_environment_component_relation_list))
+then
+{
+action(allValidEnvComponentRelation)
+}.
+
+chk_advertisement_relation ::=
+all_advertisements_relation_as_nested_lists([],Advertisement_component_event_relation_list);
+if(validate_advertisement_relation_list(Advertisement_component_event_relation_list))
+then
+{
+action(allValidAdvertisements)
+}.
+
+chk_subscription_relation ::=
+all_subscription_relation_as_nested_lists([],Subscription_component_event_relation_list);
+if(validate_subscription_relation_list(Subscription_component_event_relation_list))
+then
+{
+action(allValidSubscriptions)
+}.
+
+chk_context_variable_relation ::=
+all_context_variable_relation_as_nested_lists([],Context_variable_relation_list);
+if(validate_context_variable_relation_list(Context_variable_relation_list))
+then
+{
+action(allValidContextVariable)
+}.
+
+all_valid_relations += valid_env_component_relations /\ valid_adv_relations /\ valid_subs_relations /\ valid_context_variable_relations.
+
+valid_env_component_relations += [-allValidEnvComponentRelation]valid_env_component_relations /\ <->tt.
+valid_adv_relations += [-allValidAdvertisements]valid_adv_relations /\ <->tt.
+valid_subs_relations += [-allValidSubscriptions]valid_subs_relations /\ <->tt.
+valid_context_variable_relations += [-allValidContextVariable]valid_context_variable_relations /\ <->tt.
+
+% VALID RELATIONS
