@@ -1,19 +1,19 @@
 % RECEIVER CONTEXT FILTER 
 
 send_trigger_home_action_event ::=
-simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]]);
-action(sendTriggerHomeActionEvent).
+	simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]]);
+	action(sendTriggerHomeActionEvent).
 
 chk_received_trigger_home_action_event ::=
-hasComponentReceivedResult(smart_home_controller_unit,triggerHomeActionEvent,Result);
-if (Result==1)
-then
-{
-action(receivedTriggerHomeActionEvent)
-}.
+	hasComponentReceivedResult(smart_home_controller_unit,triggerHomeActionEvent,Result);
+	if (Result==1)
+	then
+	{
+		action(receivedTriggerHomeActionEvent)
+	}.
 
 testContextFilter(Pass) ::=
-change_context_variable_value(mustTriggerHomeActionsContextElement,Pass);send_trigger_home_action_event;chk_received_trigger_home_action_event.
+	change_context_variable_value(mustTriggerHomeActionsContextElement,Pass);send_trigger_home_action_event;chk_received_trigger_home_action_event.
 
 filterBlocking += contextFilterBlock1 /\ contextFilterBlock2.
 contextFilterBlock1 += <sendTriggerHomeActionEvent>tt \/ <->contextFilterBlock1.
@@ -27,26 +27,26 @@ contextFilterNonBlock1 += <receivedTriggerHomeActionEvent>tt \/ <->contextFilter
 % BLOCKING RECEIVER CONTENT FILTER
 
 send_alarm_event_blocked ::=
-simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,sometime]]]);
-action(sendBlockedAlarmEvent).
+	simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,sometime]]]);
+	action(sendBlockedAlarmEvent).
 
 send_alarm_event_not_blocked ::=
-simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,othertime]]]);
-action(sendBlockedAlarmEvent).
+	simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,othertime]]]);
+	action(sendBlockedAlarmEvent).
 
 chk_received_alarm_event ::=
-hasComponentReceivedResult(true_remote_control_application,alarmGoesOffEvent,Result);
-if (Result==1)
-then
-{
-action(receivedAlarmEvent)
-}.
+	hasComponentReceivedResult(true_remote_control_application,alarmGoesOffEvent,Result);
+	if (Result==1)
+	then
+	{
+		action(receivedAlarmEvent)
+	}.
 
 testContentFilter ::=
-send_alarm_event_blocked;chk_received_alarm_event.
+	send_alarm_event_blocked;chk_received_alarm_event.
 
 testContentFilterNotBlocked ::=
-send_alarm_event_not_blocked;chk_received_alarm_event.
+	send_alarm_event_not_blocked;chk_received_alarm_event.
 
 contentFilterBlocking += contentFilterBlock1 /\ contentFilterBlock2.
 contentFilterBlock1 += <sendBlockedAlarmEvent>tt \/ <->contentFilterBlock1.
@@ -60,69 +60,69 @@ contentFilterNonBlock1 += <receivedAlarmEvent>tt \/ <->contentFilterNonBlock1.
 % UNIQUE COMPONENTS
 
 chk_duplicates ::=
-unique_environments
-; unique_components
-; unique_events
-; unique_advertisements
-; unique_subscriptions
-; unique_context_variables
-; unique_environment_component_relation.
+	unique_environments
+	; unique_components
+	; unique_events
+	; unique_advertisements
+	; unique_subscriptions
+	; unique_context_variables
+	; unique_environment_component_relation.
 
 unique_environments ::=
-all_environemtns([],All_env_list);
-if (no_duplicates(All_env_list))
-then
-{
-action(noDuplicateEnv)
-}.
+	all_environemtns([],All_env_list);
+	if (no_duplicates(All_env_list))
+	then
+	{
+		action(noDuplicateEnv)
+	}.
 
 unique_components ::=
-all_components([],All_component_list);
-if (no_duplicates(All_component_list))
-then
-{
-action(noDuplicateComponent)
-}.
+	all_components([],All_component_list);
+	if (no_duplicates(All_component_list))
+	then
+	{
+		action(noDuplicateComponent)
+	}.
 
 unique_events ::=
-all_event_names([],All_event_list);
-if (no_duplicates(All_event_list))
-then
-{
-action(noDuplicateEvent)
-}.
+	all_event_names([],All_event_list);
+	if (no_duplicates(All_event_list))
+	then
+	{
+		action(noDuplicateEvent)
+	}.
 
 unique_advertisements ::=
-all_advertisements([],All_advertisement_list);
-if (no_duplicates(All_advertisement_list))
-then
-{
-action(noDuplicateAdvertisement)
-}.
+	all_advertisements([],All_advertisement_list);
+	if (no_duplicates(All_advertisement_list))
+	then
+	{
+		action(noDuplicateAdvertisement)
+	}.
 
 unique_subscriptions ::=
-all_subscriptions([],All_subscription_list);
-if (no_duplicates(All_subscription_list))
-then
-{
-action(noDuplicateSubscription)
-}.
+	all_subscriptions([],All_subscription_list);
+	if (no_duplicates(All_subscription_list))
+	then
+	{
+		action(noDuplicateSubscription)
+	}.
 
 unique_context_variables ::=
-all_context_variables([],All_context_variable_list);
-if (no_duplicates(All_context_variable_list))
-then
-{
-action(noDuplicateContextVariable)
-}.
+	all_context_variables([],All_context_variable_list);
+	if (no_duplicates(All_context_variable_list))
+	then
+	{
+		action(noDuplicateContextVariable)
+	}.
 
 unique_environment_component_relation ::=
-all_environment_component_relation([],All_environment_component_relation_list);
-if (no_duplicates(All_environment_component_relation_list))
-then
-{
-action(noDuplicateEnvironmentComponentRelation)
-}.
+	all_environment_component_relation([],All_environment_component_relation_list);
+	if (no_duplicates(All_environment_component_relation_list))
+	then
+	{
+		action(noDuplicateEnvironmentComponentRelation)
+	}.
 
 unique_all += uniqueEnv /\ uniqueComponent /\ uniqueEvent /\ uniqueAdvertisement /\ uniqueSubscription /\ uniqueContextVariable /\ uniqueEnvironmentComponentRelation.
 
@@ -139,42 +139,42 @@ uniqueEnvironmentComponentRelation += [-noDuplicateEnvironmentComponentRelation]
 % VALID RELATIONS
 
 chk_all_relations ::=
-chk_env_component_relation
-; chk_advertisement_relation
-; chk_subscription_relation
-; chk_context_variable_relation.
+	chk_env_component_relation
+	; chk_advertisement_relation
+	; chk_subscription_relation
+	; chk_context_variable_relation.
 
 chk_env_component_relation ::=
-all_environment_component_relation_as_nested_lists([],All_environment_component_relation_list);
-if (validate_env_component_relation_list(All_environment_component_relation_list))
-then
-{
-action(allValidEnvComponentRelation)
-}.
+	all_environment_component_relation_as_nested_lists([],All_environment_component_relation_list);
+	if (validate_env_component_relation_list(All_environment_component_relation_list))
+	then
+	{
+		action(allValidEnvComponentRelation)
+	}.
 
 chk_advertisement_relation ::=
-all_advertisements_relation_as_nested_lists([],Advertisement_component_event_relation_list);
-if(validate_advertisement_relation_list(Advertisement_component_event_relation_list))
-then
-{
-action(allValidAdvertisements)
-}.
+	all_advertisements_relation_as_nested_lists([],Advertisement_component_event_relation_list);
+	if(validate_advertisement_relation_list(Advertisement_component_event_relation_list))
+	then
+	{
+		action(allValidAdvertisements)
+	}.
 
 chk_subscription_relation ::=
-all_subscription_relation_as_nested_lists([],Subscription_component_event_relation_list);
-if(validate_subscription_relation_list(Subscription_component_event_relation_list))
-then
-{
-action(allValidSubscriptions)
-}.
+	all_subscription_relation_as_nested_lists([],Subscription_component_event_relation_list);
+	if(validate_subscription_relation_list(Subscription_component_event_relation_list))
+	then
+	{
+		action(allValidSubscriptions)
+	}.
 
 chk_context_variable_relation ::=
-all_context_variable_relation_as_nested_lists([],Context_variable_relation_list);
-if(validate_context_variable_relation_list(Context_variable_relation_list))
-then
-{
-action(allValidContextVariable)
-}.
+	all_context_variable_relation_as_nested_lists([],Context_variable_relation_list);
+	if(validate_context_variable_relation_list(Context_variable_relation_list))
+	then
+	{
+		action(allValidContextVariable)
+	}.
 
 all_valid_relations += valid_env_component_relations /\ valid_adv_relations /\ valid_subs_relations /\ valid_context_variable_relations.
 
@@ -188,7 +188,7 @@ valid_context_variable_relations += [-allValidContextVariable]valid_context_vari
 % FIDELITY
 
 send_event_for_fidelity ::=
-simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]]);
-assert(event_fidelity_chk([triggerHomeActionEvent,[[action,setTemprature],[value,23]]])).
+	simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]]);
+	assert(event_fidelity_chk([triggerHomeActionEvent,[[action,setTemprature],[value,23]]])).
 
 % FIDELITY
