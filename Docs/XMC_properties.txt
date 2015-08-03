@@ -11,8 +11,8 @@
 11) advertisements are only allowed for the event schemas that re defined
 12) Subscriptions are only allowed for the event schemas that are defined
 13) context variables are only defined for the components are defined
+14) check if the event is unaltered during transmission
 
 ToDo:-
 f) check that any event is received only once by any subscribing component
 h) check (g) while the case study is executing that the topology of the network is never in the violation
-i) check if the event is unaltered during transmission
