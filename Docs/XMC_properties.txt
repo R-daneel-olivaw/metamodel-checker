@@ -11,6 +11,8 @@
 11) advertisements are only allowed for the event schemas that re defined
 12) Subscriptions are only allowed for the event schemas that are defined
 13) context variables are only defined for the components are defined
+14) check if the event is unaltered during transmission
+15) event should be received only after it is sent
 
 ToDo:-
 f) check that any event is received only once by any subscribing component
