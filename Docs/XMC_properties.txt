@@ -16,3 +16,4 @@
 ToDo:-
 f) check that any event is received only once by any subscribing component
 h) check (g) while the case study is executing that the topology of the network is never in the violation
+i) event should be received only after it is sent
