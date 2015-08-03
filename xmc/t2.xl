@@ -184,3 +184,11 @@ valid_subs_relations += [-allValidSubscriptions]valid_subs_relations /\ <->tt.
 valid_context_variable_relations += [-allValidContextVariable]valid_context_variable_relations /\ <->tt.
 
 % VALID RELATIONS
+
+% FIDELITY
+
+send_event_for_fidelity ::=
+simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]]);
+assert(event_fidelity_chk([triggerHomeActionEvent,[[action,setTemprature],[value,23]]])).
+
+% FIDELITY
