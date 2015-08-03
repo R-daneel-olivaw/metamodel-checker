@@ -218,3 +218,18 @@ fidelity_chk ::=
 fidelity += never_fidelity_fail.
 possible_fidelity_pass += <fidelityTestPassed>tt \/ <->possible_fidelity_pass.
 never_fidelity_fail -= [fidelityTestFailed]ff /\ [-]never_fidelity_fail.
+
+% FIDELITY
+
+% CAUSALITY
+% mck(send_before_receive_after,causality)
+
+send_before_receive_after ::=
+	change_context_variable_value(mustTriggerHomeActionsContextElement,Pass)
+	; send_trigger_home_action_event
+	; chk_received_trigger_home_action_event.
+	
+	% sendTriggerHomeActionEvent
+	% receivedTriggerHomeActionEvent
+
+causality += [receivedTriggerHomeActionEvent]tt \/ ([-]causality /\ [a]tt).
