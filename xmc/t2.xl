@@ -186,7 +186,7 @@ valid_context_variable_relations += [-allValidContextVariable]valid_context_vari
 % VALID RELATIONS
 
 % FIDELITY
-
+% mck(fidelity_chk,fidelity)
 send_event_for_fidelity ::=
 	simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]]);
 	assert(event_fidelity_chk(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]])).
@@ -199,7 +199,7 @@ receive_event_for_fidelity ::=
 		triggered(smart_home_controller_unit,triggerHomeActionEvent,Event_data);
 		event_fidelity_chk(true_remote_control_application,triggerHomeActionEvent,Event_data_stored);
 		
-		if(Event_data_stored = Event_data)
+		if(Event_data_stored == Event_data)
 		then
 		{
 			action(fidelityTestPassed)
@@ -215,8 +215,6 @@ fidelity_chk ::=
 	; receive_event_for_fidelity
 	.
 
-fidelity += possible_fidelity_pass /\ never_fidelity_fail.
+fidelity += never_fidelity_fail.
 possible_fidelity_pass += <fidelityTestPassed>tt \/ <->possible_fidelity_pass.
-never_fidelity_fail += [fidelityTestFailed]ff /\ [-]never_fidelity_fail.
-
-% FIDELITY
+never_fidelity_fail -= [fidelityTestFailed]ff /\ [-]never_fidelity_fail.
