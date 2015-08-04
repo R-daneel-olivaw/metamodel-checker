@@ -13,7 +13,7 @@
 13) context variables are only defined for the components are defined
 14) check if the event is unaltered during transmission
 15) event should be received only after it is sent
+16) check while the case study is executing that the topology of the network is never in the violation
 
 ToDo:-
 f) check that any event is received only once by any subscribing component
-h) check (g) while the case study is executing that the topology of the network is never in the violation
