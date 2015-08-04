@@ -136,7 +136,7 @@ uniqueEnvironmentComponentRelation += [-noDuplicateEnvironmentComponentRelation]
 
 % UNIQUE COMPONENTS
 
-% VALID RELATIONS
+% VALID RELATIONS = ROLE INTEGRITY + ACTION INEGRITY
 
 chk_all_relations ::=
 	chk_env_component_relation
