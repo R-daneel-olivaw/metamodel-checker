@@ -1,4 +1,6 @@
 % RECEIVER CONTEXT FILTER 
+% mck(testContextFilter(1),filterNotBlocking)
+% mck(testContextFilter(0),filterBlocking)
 
 send_trigger_home_action_event ::=
 	simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]]);
@@ -13,7 +15,10 @@ chk_received_trigger_home_action_event ::=
 	}.
 
 testContextFilter(Pass) ::=
-	change_context_variable_value(mustTriggerHomeActionsContextElement,Pass);send_trigger_home_action_event;chk_received_trigger_home_action_event.
+	change_context_variable_value(mustTriggerHomeActionsContextElement,Pass)
+	; send_trigger_home_action_event 
+	| chk_received_trigger_home_action_event
+	.
 
 filterBlocking += contextFilterBlock1 /\ contextFilterBlock2.
 contextFilterBlock1 += <sendTriggerHomeActionEvent>tt \/ <->contextFilterBlock1.
