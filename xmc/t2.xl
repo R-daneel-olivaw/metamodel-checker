@@ -44,18 +44,23 @@ send_alarm_event_not_blocked ::=
 	.
 
 chk_received_alarm_event ::=
-	hasComponentReceivedResult(true_remote_control_application,alarmGoesOffEvent,Result);
-	if (Result==1)
+	hasComponentReceivedResult(true_remote_control_application,alarmGoesOffEvent,Result)
+	; if (Result==1)
 	then
 	{
 		action(receivedAlarmEvent)
-	}.
+	}
+	.
 
 testContentFilter ::=
-	send_alarm_event_blocked;chk_received_alarm_event.
+	send_alarm_event_blocked
+	; chk_received_alarm_event
+	.
 
 testContentFilterNotBlocked ::=
-	send_alarm_event_not_blocked;chk_received_alarm_event.
+	send_alarm_event_not_blocked
+	; chk_received_alarm_event
+	.
 
 contentFilterBlocking += contentFilterBlock1 /\ contentFilterBlock2.
 contentFilterBlock1 += <sendBlockedAlarmEvent>tt \/ <->contentFilterBlock1.
@@ -78,20 +83,22 @@ chk_duplicates ::=
 	; unique_environment_component_relation.
 
 unique_environments ::=
-	all_environemtns([],All_env_list);
-	if (no_duplicates(All_env_list))
+	all_environemtns([],All_env_list)
+	; if (no_duplicates(All_env_list))
 	then
 	{
 		action(noDuplicateEnv)
-	}.
+	}
+	.
 
 unique_components ::=
-	all_components([],All_component_list);
-	if (no_duplicates(All_component_list))
+	all_components([],All_component_list)
+	; if (no_duplicates(All_component_list))
 	then
 	{
 		action(noDuplicateComponent)
-	}.
+	}
+	.
 
 unique_events ::=
 	all_event_names([],All_event_list);
