@@ -3,16 +3,18 @@
 % mck(testContextFilter(0),filterBlocking)
 
 send_trigger_home_action_event ::=
-	simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]]);
-	action(sendTriggerHomeActionEvent).
+	simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]])
+	; action(sendTriggerHomeActionEvent)
+	.
 
 chk_received_trigger_home_action_event ::=
-	hasComponentReceivedResult(smart_home_controller_unit,triggerHomeActionEvent,Result);
-	if (Result==1)
+	hasComponentReceivedResult(smart_home_controller_unit,triggerHomeActionEvent,Result)
+	; if (Result==1)
 	then
 	{
 		action(receivedTriggerHomeActionEvent)
-	}.
+	}
+	.
 
 testContextFilter(Pass) ::=
 	change_context_variable_value(mustTriggerHomeActionsContextElement,Pass)
@@ -32,12 +34,14 @@ contextFilterNonBlock1 += <receivedTriggerHomeActionEvent>tt \/ <->contextFilter
 % BLOCKING RECEIVER CONTENT FILTER
 
 send_alarm_event_blocked ::=
-	simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,sometime]]]);
-	action(sendBlockedAlarmEvent).
+	simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,sometime]]])
+	; action(sendBlockedAlarmEvent)
+	.
 
 send_alarm_event_not_blocked ::=
-	simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,othertime]]]);
-	action(sendBlockedAlarmEvent).
+	simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,othertime]]])
+	; action(sendBlockedAlarmEvent)
+	.
 
 chk_received_alarm_event ::=
 	hasComponentReceivedResult(true_remote_control_application,alarmGoesOffEvent,Result);
