@@ -233,3 +233,31 @@ send_before_receive_after ::=
 	% receivedTriggerHomeActionEvent
 
 causality += [receivedTriggerHomeActionEvent]tt \/ ([-]causality /\ [a]tt).
+
+% CAUSALITY
+
+% VALID STATE WHILE EVENT IS TRAVERSED
+
+runtime_duplicates ::=
+	send_trigger_home_action_event 
+	| chk_duplicates
+	.
+	
+runtime_relations ::=
+	send_trigger_home_action_event 
+	| chk_all_relations
+	.
+
+runtime_validity ::=
+	send_trigger_home_action_event
+	| chk_relations_duplicates
+	.
+	
+chk_relations_duplicates ::=
+	chk_all_relations
+	; chk_duplicates
+	.
+
+runtime_duplicates_property += unique_all.
+runtime_relations_property += all_valid_relations.
+runtime_validity_property += unique_all /\ all_valid_relations.
