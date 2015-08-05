@@ -216,7 +216,7 @@ valid_context_variable_relations += [-allValidContextVariable]valid_context_vari
 % VALID RELATIONS
 
 % FIDELITY
-% mck(fidelity_chk,fidelity)
+% mck(fidelity_chk,fidelity).
 send_event_for_fidelity ::=
 	simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]])
 	; assert(event_fidelity_chk(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,setTemprature],[value,23]]]))
@@ -254,7 +254,7 @@ never_fidelity_fail -= [fidelityTestFailed]ff /\ [-]never_fidelity_fail.
 % FIDELITY
 
 % CAUSALITY
-% mck(send_before_receive_after,causality)
+% mck(send_before_receive_after,causality).
 
 send_before_receive_after ::=
 	change_context_variable_value(mustTriggerHomeActionsContextElement,Pass)
@@ -267,6 +267,7 @@ causality += [receivedTriggerHomeActionEvent]tt \/ ([-]causality /\ [a]tt).
 % CAUSALITY
 
 % VALID STATE WHILE EVENT IS TRAVERSED
+% mck(runtime_validity,runtime_validity_property).
 
 runtime_duplicates ::=
 	send_trigger_home_action_event 
