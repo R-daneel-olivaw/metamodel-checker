@@ -230,7 +230,7 @@ receive_event_for_fidelity ::=
 		triggered(smart_home_controller_unit,triggerHomeActionEvent,Event_data)
 		; event_fidelity_chk(true_remote_control_application,triggerHomeActionEvent,Event_data_stored)
 		
-		; if(Event_data_stored == Event_data)
+		; if (Event_data_stored == Event_data)
 		then
 		{
 			action(fidelityTestPassed)
