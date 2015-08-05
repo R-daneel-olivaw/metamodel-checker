@@ -74,6 +74,7 @@ contentFilterNonBlock1 += <receivedAlarmEvent>tt \/ <->contentFilterNonBlock1.
 % BLOCKING RECEIVER CONTENT FILTER
 
 % UNIQUE COMPONENTS
+% mck(chk_duplicates,unique_all).
 
 chk_duplicates ::=
 	unique_environments
