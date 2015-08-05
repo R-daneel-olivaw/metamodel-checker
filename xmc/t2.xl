@@ -32,6 +32,8 @@ contextFilterNonBlock1 += <receivedTriggerHomeActionEvent>tt \/ <->contextFilter
 % RECEIVER CONTEXT FILTER 
 
 % BLOCKING RECEIVER CONTENT FILTER
+% mck(testContentFilter,contentFilterBlocking).
+% mck(testContentFilterNotBlocked,contentFilterNotBlocking).
 
 send_alarm_event_blocked ::=
 	simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,sometime]]])
