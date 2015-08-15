@@ -1,6 +1,6 @@
+dynamic triggered/3.
 import append/3 from basics.
 import length/2 from basics.
-dynamic triggered/3.
 consult('/root/XSB_code/metamodel-checker/context_filter.P').
 consult('/root/XSB_code/metamodel-checker/creation_script_db.P').
 consult('/root/XSB_code/metamodel-checker/nested_list_approach.P').
