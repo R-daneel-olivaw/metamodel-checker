@@ -114,4 +114,16 @@ validate_context_variable_relation_list([H|T]):-
 	
 validate_context_variable_relation_list([]).
 
+validate_no_dual_membership_list([H|T]):-
+	validate_no_dual_membership(H),
+	validate_no_dual_membership_list(T).
+	
+validate_no_dual_membership_list([]).
+
+validate_no_dual_membership([Component_name,Event_id,Environment_name]):-
+	(  not(event_advertisement_entry(Component_name,Environment_name,Event_id,_))
+    -> true
+    ;  fail
+     ).
+	
 	
