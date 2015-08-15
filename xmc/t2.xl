@@ -307,6 +307,7 @@ runtime_validity_property += unique_all /\ all_valid_relations.
 % VALID STATE WHILE EVENT IS TRAVERSED
 
 % SPONTANEOUS EVENT
+% mck(chk_spontaneous_event, never_receive_spontaneous_event)
 
 chk_spontaneous_event ::=
 	cleanupComponentTriggPredicates(true_remote_control_application)
@@ -323,6 +324,7 @@ never_receive_spontaneous_event -= [spontaneousEventReceived]ff /\ [-]never_rece
 % SPONTANEOUS EVENT
 
 % EVENT WITHOUT ADVERTISEMENT
+% mck(chk_event_without_advertisement, never_send_event_without_advertisement)
 
 chk_event_without_advertisement ::=
 	if (not(simulate_event_component(alarm_application,user_cellphone,resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,string],[value,string],[result,string]]])))
@@ -332,4 +334,21 @@ chk_event_without_advertisement ::=
 	}
 	.
 	
-never_send_event_without_advertisement -= [-unableToSendEventWithoutAdvertisement]never_send_event_without_advertisement /\ <->tt.
+never_send_event_without_advertisement += [-unableToSendEventWithoutAdvertisement]never_send_event_without_advertisement /\ <->tt.
+
+% EVENT WITHOUT ADVERTISEMENT
+
+% EVENT WITH INVALID SCHEMA
+
+chk_invalid_event_schema ::=
+	if (not(simulate_event_environment(true_remote_control_application,triggerHomeActionEvent,[triggerHomeActionEvent,[[action,99],[value,23]]])))
+	then
+	{
+		action(unableToSendEventWithInvalidSchema)
+	}
+	.
+	
+never_able_to_send_event_with_invalid_schema += [-unableToSendEventWithInvalidSchema]never_able_to_send_event_with_invalid_schema /\ <-> tt.
+	
+
+
