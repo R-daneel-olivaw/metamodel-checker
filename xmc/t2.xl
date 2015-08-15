@@ -306,7 +306,7 @@ runtime_validity_property += unique_all /\ all_valid_relations.
 
 % VALID STATE WHILE EVENT IS TRAVERSED
 
-% EVENT TYPE FIDELITY
+% SPONTANEOUS EVENT
 
 chk_spontaneous_event ::=
 	cleanupComponentTriggPredicates(true_remote_control_application)
@@ -319,3 +319,17 @@ chk_spontaneous_event ::=
 	.
 
 never_receive_spontaneous_event -= [spontaneousEventReceived]ff /\ [-]never_receive_spontaneous_event.
+
+% SPONTANEOUS EVENT
+
+% EVENT WITHOUT ADVERTISEMENT
+
+chk_event_without_advertisement ::=
+	if (not(simulate_event_component(alarm_application,user_cellphone,resultOfHomeActionEvent,[resultOfHomeActionEvent,[[action,string],[value,string],[result,string]]])))
+	then
+	{
+		action(unableToSendEventWithoutAdvertisement)
+	}
+	.
+	
+never_send_event_without_advertisement -= [-unableToSendEventWithoutAdvertisement]never_send_event_without_advertisement /\ <->tt.
