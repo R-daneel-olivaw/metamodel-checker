@@ -8,7 +8,7 @@
 8) no components are added to environments that do not exist
 9) environments do not contain components that do not exist
 10) check that no components contain other components
-11) advertisements are only allowed for the event schemas that re defined
+11) advertisements are only allowed for the event schemas that are defined
 12) Subscriptions are only allowed for the event schemas that are defined
 13) context variables are only defined for the components are defined
 14) check if the event is unaltered during transmission
