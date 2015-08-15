@@ -168,6 +168,7 @@ chk_all_relations ::=
 	; chk_advertisement_relation
 	; chk_subscription_relation
 	; chk_context_variable_relation
+	; chk_for_dual_role
 	.
 
 chk_env_component_relation ::=
@@ -206,12 +207,22 @@ chk_context_variable_relation ::=
 	}
 	.
 
-all_valid_relations += valid_env_component_relations /\ valid_adv_relations /\ valid_subs_relations /\ valid_context_variable_relations.
+chk_for_dual_role ::=
+	all_subscription_relation_as_nested_lists([],Subscription_component_event_relation_list)
+	; if(validate_no_dual_membership_list(Subscription_component_event_relation_list))
+	then
+	{
+		action(allValidNoDualMembership)
+	}
+	.
+
+all_valid_relations += valid_env_component_relations /\ valid_adv_relations /\ valid_subs_relations /\ valid_context_variable_relations /\ valid_no_dual_membership.
 
 valid_env_component_relations += [-allValidEnvComponentRelation]valid_env_component_relations /\ <->tt.
 valid_adv_relations += [-allValidAdvertisements]valid_adv_relations /\ <->tt.
 valid_subs_relations += [-allValidSubscriptions]valid_subs_relations /\ <->tt.
 valid_context_variable_relations += [-allValidContextVariable]valid_context_variable_relations /\ <->tt.
+valid_no_dual_membership += [-allValidNoDualMembership]valid_no_dual_membership /\ <->tt.
 
 % VALID RELATIONS
 
@@ -292,3 +303,19 @@ chk_relations_duplicates ::=
 runtime_duplicates_property += unique_all.
 runtime_relations_property += all_valid_relations.
 runtime_validity_property += unique_all /\ all_valid_relations.
+
+% VALID STATE WHILE EVENT IS TRAVERSED
+
+% EVENT TYPE FIDELITY
+
+chk_spontaneous_event ::=
+	cleanupComponentTriggPredicates(true_remote_control_application)
+	; hasComponentReceivedResult(true_remote_control_application,alarmGoesOffEvent,Result)
+	; if(Result == 1)
+	then
+	{
+		action(spontaneousEventReceived)
+	}
+	.
+
+never_receive_spontaneous_event -= [spontaneousEventReceived]ff /\ [-]never_receive_spontaneous_event.
