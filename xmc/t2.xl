@@ -349,6 +349,22 @@ chk_invalid_event_schema ::=
 	.
 	
 never_able_to_send_event_with_invalid_schema += [-unableToSendEventWithInvalidSchema]never_able_to_send_event_with_invalid_schema /\ <-> tt.
+
+% EVENT WITH INVALID SCHEMA'
+
+% EVENT WITHOUT SUBSCRIPTION
+
+chk_event_without_subscription ::=
+	simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,othertime]]])
+	; hasComponentReceivedResult(smart_home_controller_unit,alarmGoesOffEvent,Result)
+	; if (Result == 1)
+	then
+	{
+		action(receivedAlarmEventWithoutSubscription)
+	}
+	.
+	
+never_receive_event_without_subscription -= [receivedAlarmEventWithoutSubscription]ff /\ [-]never_receive_event_without_subscription.
 	
 
 
