@@ -369,9 +369,9 @@ never_receive_event_without_subscription -= [receivedAlarmEventWithoutSubscripti
 
 % EVENT WITHOUT SUBSCRIPTION
 
-% NON EXISTANT COMPONENT
+% NON EXISTANT COMPONENT CANNOT RECEIVE
 
-chk_cannot_receive_non_exist_component ::=
+chk_cannot_send_non_exist_component ::=
 	if(not(simulate_event_component(non_existent_component,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,othertime]]])))
 	then
 	{
@@ -381,4 +381,16 @@ chk_cannot_receive_non_exist_component ::=
 
 never_send_event_non_existent_component += [-nonExistentComponentUnableToSendEvent]never_send_event_non_existent_component /\ <->tt.
 
+% NON EXISTANT COMPONENT CANNOT RECEIVE
 
+% COMPONENT CANNOT SEND EVENT THAT IS NOT DEFINED
+
+chk_cannot_send_non_exist_event ::=
+	if (not(simulate_event_environment(true_remote_control_application,nonExistentEvent,[nonExistentEvent,[[action,99],[value,23]]])))
+	then
+	{
+		action(unableToSendUndefinedEvent)
+	}
+	.
+	
+never_send_undefined_event += [-unableToSendUndefinedEvent]never_send_undefined_event /\ <->tt.
