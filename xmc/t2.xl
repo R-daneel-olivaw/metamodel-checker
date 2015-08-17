@@ -353,19 +353,18 @@ never_able_to_send_event_with_invalid_schema += [-unableToSendEventWithInvalidSc
 % EVENT WITH INVALID SCHEMA'
 
 % EVENT WITHOUT SUBSCRIPTION
-% INFINITE LOOP PROBLEM
 
 chk_event_without_subscription ::=
-	simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,othertime]]])
-	; hasComponentReceivedResult(smart_home_controller_unit,alarmGoesOffEvent,Result)
+	simulate_event_environment(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,1]]])
+	; hasComponentReceivedResult(smart_home_controller_unit,notifyUserOfCarEngineStartedEvent,Result)
 	; if (Result == 1)
 	then
 	{
-		action(receivedAlarmEventWithoutSubscription)
+		action(receivedEventWithoutSubscription)
 	}
 	.
 	
-never_receive_event_without_subscription -= [receivedAlarmEventWithoutSubscription]ff /\ [-]never_receive_event_without_subscription.
+never_receive_event_without_subscription -= [receivedEventWithoutSubscription]ff /\ [-]never_receive_event_without_subscription.
 
 % EVENT WITHOUT SUBSCRIPTION
 
