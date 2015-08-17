@@ -410,3 +410,20 @@ chk_cannot_receive_undefined_event ::=
 	.
 
 never_receive_undefined_event -= [undefinedEventReceived]ff /\ [-]never_receive_undefined_event.
+
+% COMPONENT CANNOT RECEIVE AN EVENT FOR WHICH A SCHEMA IS NOT DEFINED
+
+% UNDEFINED COMPONENT CANNOT RECEIVE EVENT
+
+chk_undefined_component_cannot_receive_event ::=
+	simulate_event_environment(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,1]]])
+	; cleanupComponentTriggPredicates(undefined_component)
+	; hasComponentReceivedResult(undefined_component,notifyUserOfCarEngineStartedEvent,Result)
+	; if(Result == 1)
+	then
+	{
+		action(undefinedComponentReceivedEvent)
+	}
+	.
+	
+never_receive_event_undefined_component -= [undefinedComponentReceivedEvent]ff /\ [-]never_receive_event_undefined_component.
