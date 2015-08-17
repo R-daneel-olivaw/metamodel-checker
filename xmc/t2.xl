@@ -394,3 +394,19 @@ chk_cannot_send_non_exist_event ::=
 	.
 	
 never_send_undefined_event += [-unableToSendUndefinedEvent]never_send_undefined_event /\ <->tt.
+
+% COMPONENT CANNOT SEND EVENT THAT IS NOT DEFINED
+
+% COMPONENT CANNOT RECEIVE AN EVENT FOR WHICH A SCHEMA IS NOT DEFINED
+
+chk_cannot_receive_undefined_event ::=
+	cleanupComponentTriggPredicates(true_remote_control_application)
+	; hasComponentReceivedResult(true_remote_control_application,undefined_event_type,Result)
+	; if(Result == 1)
+	then
+	{
+		action(undefinedEventReceived)
+	}
+	.
+
+never_receive_undefined_event -= [undefinedEventReceived]ff /\ [-]never_receive_undefined_event.
