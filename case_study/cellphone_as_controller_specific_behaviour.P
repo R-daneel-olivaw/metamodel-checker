@@ -118,4 +118,9 @@ trigger_component_event_response(user_cellphone,notifyUserOfHomeActionEvent,Even
 	write('For '),write(Action_value), write('. @@@'),nl,
 	assertTriggPredicate(user_cellphone,notifyUserOfHomeActionEvent,Event_data).
 	
+trigger_component_event_response(Component_name,Event_id,Event_data):-
+	component_instance(Component_name),
+	event_schema(Event_id,_),
+	assertTriggPredicate(Component_name,Event_id,Event_data).
+	
 trigger_component_event_response(Component_name,Event_id,Event_data).
