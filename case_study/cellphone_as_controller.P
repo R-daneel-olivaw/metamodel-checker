@@ -63,7 +63,7 @@ simulate_event_component(alarm_application,user_cellphone,alarmGoesOffEvent,[ala
 simulate_event_environment(user_cellphone,cellphoneTimeChangedEvent,[cellphoneTimeChangedEvent,[[dateTime,hammerTime]]]).
 simulate_event_environment(user_cellphone,cellphoneLocationEvent,[cellphoneLocationEvent,[[latitude,5.5],[longitude,95.5]]]).
 simulate_event_environment(true_remote_control_application,remoteStarterActionEvent,[remoteStarterActionEvent,[[action,start]]]).
-simulate_event_environment(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,string]]]).
+simulate_event_environment(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,1]]]).
 simulate_event_environment(car_computer_control_unit,resultOfRemoteStarterActionEvent,[resultOfRemoteStarterActionEvent,[[action,string],[result,0]]]).
 
 =======================PART-2========================
