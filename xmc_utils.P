@@ -6,6 +6,8 @@ cleanupAllTriggPredicates :-
 	
 cleanupComponentTriggPredicates(Component_name):-
 	retract(triggered(Component_name,_,_)).
+
+cleanupComponentTriggPredicates(Component_name).
 	
 cleanupComponentEventTriggPredicates(Component_name,Event_id):-
 	retract(triggered(Component_name,Event_id,_)).
