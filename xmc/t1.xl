@@ -1,9 +1,11 @@
-t1 ::=
+% CHECK THAT NO LOSS IS ENCOUNTERED WHILE SENDING THE EVENTS, AND THAT IT IS POSSIBLE THAT THE EVENT IS RECEIVED
+
+chk_send_event ::=
 	simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]]);
 	action(sendnew)
 	.
 
-t2 ::=
+chk_receive_event ::=
 	hasComponentReceivedResult(calendar_application,meetingStartedEvent,Result);
 	if (Result==1)
 	then
@@ -12,13 +14,11 @@ t2 ::=
 	}
 	.
 
-ta ::=
-	t1
-	; t2
+chk_send_receive ::=
+	chk_send_event
+	; chk_receive_event
 	.
 
 losslesstx += [-sendnew]losslesstx /\ <->tt.
 losslessrx += <recvnew>tt \/ <->losslessrx.
 lossless += losslesstx /\ losslessrx.
-
-tprop += [recvnew]tt \/ ([-]tprop /\ [sendnew]tt).
