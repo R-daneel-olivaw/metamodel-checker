@@ -415,8 +415,8 @@ never_receive_undefined_event -= [undefinedEventReceived]ff /\ [-]never_receive_
 % UNDEFINED COMPONENT CANNOT RECEIVE EVENT
 
 chk_undefined_component_cannot_receive_event ::=
-	simulate_event_environment(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,1]]])
-	; cleanupComponentTriggPredicates(undefined_component)
+	cleanupComponentTriggPredicates(undefined_component)
+	; simulate_event_environment(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,1]]])
 	; hasComponentReceivedResult(undefined_component,notifyUserOfCarEngineStartedEvent,Result)
 	; if(Result == 1)
 	then
@@ -426,3 +426,47 @@ chk_undefined_component_cannot_receive_event ::=
 	.
 	
 never_receive_event_undefined_component -= [undefinedComponentReceivedEvent]ff /\ [-]never_receive_event_undefined_component.
+
+% UNDEFINED COMPONENT CANNOT RECEIVE EVENT
+
+% UNCONNECTED COMPONENT
+
+chk_disconnected_component ::=
+	disconnect_component
+	; chk_disconnected_component_send_notify_event_disconnected
+	; reconnect_component
+	.
+	
+chk_disconnected_component_send_notify_event_connected ::=
+	simulate_event_environment(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,1]]])
+	; hasComponentReceivedResult(user_cellphone,notifyUserOfCarEngineStartedEvent,Result)
+	; if(Result == 1)
+	then
+	{
+		action(eventByComponentWhileConnected)
+	}
+	.
+	
+chk_disconnected_component_send_notify_event_disconnected ::=
+	cleanupComponentTriggPredicates(user_cellphone)
+	; simulate_event_environment(true_remote_control_application,notifyUserOfCarEngineStartedEvent,[notifyUserOfCarEngineStartedEvent,[[result,1]]])
+	; hasComponentReceivedResult(user_cellphone,notifyUserOfCarEngineStartedEvent,Result)
+	; if(Result == 1)
+	then
+	{
+		action(eventByComponentWhileDisconnected)
+	}
+	.
+	
+disconnect_component ::=
+	retract(environment_component(true_remote_control_application,user_cellphone))
+	.
+	
+reconnect_component ::=
+	assert(environment_component(true_remote_control_application,user_cellphone))
+	.
+	
+possible_event_received_when_connected += <eventByComponentWhileConnected>tt \/ <->possible_event_received_when_connected.
+never_event_received_when_disconnected -= [eventByComponentWhileDisconnected]ff /\ [-]never_event_received_when_disconnected.
+chk_component_connection += possible_event_received_when_connected /\ never_event_received_when_disconnected.
+
