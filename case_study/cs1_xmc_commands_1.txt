@@ -10,7 +10,7 @@ create_environment(users_phone,[[name,phone]]).
 create_component(calendar_application,[[inBusinessMeetingContextElement,0],[distanceToWorkContextElement,0],[meetingInProgressContextElement,0]]).
 add_component_to_environment(users_phone,calendar_application).
 create_event_schema(meetingStartedEvent,[meetingStartedEvent,[[meetingName,string],[date,string],[startTime,string],[duration,integer]]]).
-create_event_schema(locationEvent,[locationEvent,[[latitude,float],[longitude,float]]]).
+create_event_schema(locationEvent,[locationEvent,[[latitude,integer],[longitude,integer]]]).
 create_event_schema(incomingCallEvent,[incomingCallEvent,[[callerName,string],[callingNumber,string]]]).
 create_advertisement(calendar_application,users_phone,meetingStartedEvent,[]).
 create_advertisement(users_phone,locationEvent,[]).
