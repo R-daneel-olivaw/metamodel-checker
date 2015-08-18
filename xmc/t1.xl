@@ -1,4 +1,5 @@
 % CHECK THAT NO LOSS IS ENCOUNTERED WHILE SENDING THE EVENTS, AND THAT IT IS POSSIBLE THAT THE EVENT IS RECEIVED
+% mck(chk_send_receive,lossless)
 
 chk_send_event ::=
 	simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]]);
@@ -22,3 +23,29 @@ chk_send_receive ::=
 losslesstx += [-sendnew]losslesstx /\ <->tt.
 losslessrx += <recvnew>tt \/ <->losslessrx.
 lossless += losslesstx /\ losslessrx.
+
+% CHECK THAT NO LOSS IS ENCOUNTERED WHILE SENDING THE EVENTS, AND THAT IT IS POSSIBLE THAT THE EVENT IS RECEIVED
+
+% RECEIVER CONTEXT FILTER 
+
+chk_receiver_context_filter_unblocked ::= 
+	change_context_variable_value(name,phone)
+	; simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,1],[longitude,1]]])
+	; chk_receiver_context_filter_received.
+	
+chk_receiver_context_filter_blocked ::= 
+	change_context_variable_value(name,someotherphone)
+	; simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,1],[longitude,1]]])
+	; chk_receiver_context_filter_received.
+
+chk_receiver_context_filter_received ::=
+	hasComponentReceivedResult(users_phone,locationEvent,Result)
+	; if (Result==1)
+	then
+	{
+		action(receivedLocationEvent)
+	}
+	.
+	
+never_receive_blocked_event -= [receivedLocationEvent]ff /\ [-]never_receive_blocked_event.
+possibly_receive_unblocked_event += <receivedLocationEvent>tt \/ <->possibly_receive_unblocked_event.
