@@ -1,3 +1,4 @@
+dynamic triggered/3.
 import append/3 from basics.
 import length/2 from basics.
 consult('/root/XSB_code/metamodel-checker/context_filter.P').
@@ -17,4 +18,3 @@ create_advertisement(users_phone,incomingCallEvent,[]).
 create_subscription(users_phone,users_phone,incomingCallEvent,[],[]).
 create_subscription(users_phone,users_phone,locationEvent,[],[]).
 xlc('/root/XSB_code/metamodel-checker/xmc/t1').
-mck(t1,drop_packet).
