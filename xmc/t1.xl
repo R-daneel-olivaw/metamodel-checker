@@ -1,14 +1,10 @@
-{*
-hasComponentReceivedResult_bd(calendar_application,meetingStartedEvent,1).
-*}
-
 t1 ::=
 	simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]]);
 	action(sendnew)
 	.
 
 t2 ::=
-	hasComponentReceivedResult_bd(calendar_application,meetingStartedEvent,Result);
+	hasComponentReceivedResult(calendar_application,meetingStartedEvent,Result);
 	if (Result==1)
 	then
 	{
