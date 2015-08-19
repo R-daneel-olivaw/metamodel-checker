@@ -273,7 +273,7 @@ send_before_receive_after ::=
 	; chk_received_trigger_home_action_event
 	.
 
-causality += [receivedTriggerHomeActionEvent]tt \/ ([-]causality /\ [a]tt).
+causality += [receivedTriggerHomeActionEvent]tt \/ ([-]causality /\ [sendTriggerHomeActionEvent]tt).
 
 % CAUSALITY
 
