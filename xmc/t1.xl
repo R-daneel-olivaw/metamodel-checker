@@ -211,3 +211,13 @@ valid_adv_relations_cs_one += [-allValidAdvertisements]valid_adv_relations_cs_on
 valid_subs_relations_cs_one += [-allValidSubscriptions]valid_subs_relations_cs_one /\ <->tt.
 valid_context_variable_relations_cs_one += [-allValidContextVariable]valid_context_variable_relations_cs_one /\ <->tt.
 valid_no_dual_membership_cs_one += [-allValidNoDualMembership]valid_no_dual_membership_cs_one /\ <->tt.
+
+% CAUSALITY
+% mck(send_before_receive_after,causality).
+
+send_before_receive_after_cs_one ::=
+	chk_send_event
+	; chk_receive_event
+	.
+
+causality_cs_one += [recvnew]tt \/ ([-]causality /\ [sendnew]tt).
