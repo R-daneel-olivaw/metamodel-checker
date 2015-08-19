@@ -281,3 +281,17 @@ chk_cannot_send_non_exist_component_cs_one ::=
 	.
 
 never_send_event_non_existent_component_cs_one += [-nonExistentComponentUnableToSendEvent]never_send_event_non_existent_component /\ <->tt.
+
+% NON EXISTANT COMPONENT CANNOT SEND EVENT
+
+% COMPONENT CANNOT SEND EVENT THAT IS NOT DEFINED
+
+chk_cannot_send_non_exist_event_cs_one ::=
+	if (not(simulate_event_environment(calendar_application,nonExistentEvent,[nonExistentEvent,[[action,99],[value,23]]])))
+	then
+	{
+		action(unableToSendUndefinedEvent)
+	}
+	.
+	
+never_send_undefined_event_cs_one += [-unableToSendUndefinedEvent]never_send_undefined_event /\ <->tt.
