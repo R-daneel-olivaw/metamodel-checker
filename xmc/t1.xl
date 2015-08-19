@@ -239,3 +239,17 @@ chk_spontaneous_event_cs_one ::=
 
 never_receive_spontaneous_event_cs_one -= [spontaneousEventReceived]ff /\ [-]never_receive_spontaneous_event.
 
+% SPONTANEOUS EVENT
+
+% EVENT WITHOUT ADVERTISEMENT
+% mck(chk_event_without_advertisement, never_send_event_without_advertisement)
+
+chk_event_without_advertisement_cs_one ::=
+	if (not(simulate_event_environment(users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]])))
+	then
+	{
+		action(unableToSendEventWithoutAdvertisement)
+	}
+	.
+	
+never_send_event_without_advertisement_cs_one += [-unableToSendEventWithoutAdvertisement]never_send_event_without_advertisement /\ <->tt.
