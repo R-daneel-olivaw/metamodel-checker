@@ -31,21 +31,30 @@ lossless += losslesstx /\ losslessrx.
 chk_receiver_context_filter_unblocked ::= 
 	change_context_variable_value(name,phone)
 	; simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,1],[longitude,1]]])
-	; chk_receiver_context_filter_received.
+	; chk_receiver_context_filter_received_unblocked.
 	
 chk_receiver_context_filter_blocked ::= 
 	change_context_variable_value(name,someotherphone)
 	; simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,1],[longitude,1]]])
-	; chk_receiver_context_filter_received.
+	; chk_receiver_context_filter_received_blocked.
 
-chk_receiver_context_filter_received ::=
+chk_receiver_context_filter_received_blocked ::=
+	hasComponentReceivedResult(calendar_application,locationEvent,Result)
+	; if (Result==1)
+	then
+	{
+		action(receivedLocationEventBlocked)
+	}
+	.
+	
+chk_receiver_context_filter_received_unblocked ::=
 	hasComponentReceivedResult(users_phone,locationEvent,Result)
 	; if (Result==1)
 	then
 	{
-		action(receivedLocationEvent)
+		action(receivedLocationEventUnblocked)
 	}
 	.
 	
-never_receive_blocked_event -= [receivedLocationEvent]ff /\ [-]never_receive_blocked_event.
-possibly_receive_unblocked_event += <receivedLocationEvent>tt \/ <->possibly_receive_unblocked_event.
+never_receive_blocked_event -= [receivedLocationEventBlocked]ff /\ [-]never_receive_blocked_event.
+possibly_receive_unblocked_event += <receivedLocationEventUnblocked>tt \/ <->possibly_receive_unblocked_event.
