@@ -58,3 +58,68 @@ chk_receiver_context_filter_received_unblocked ::=
 	
 never_receive_blocked_event -= [receivedLocationEventBlocked]ff /\ [-]never_receive_blocked_event.
 possibly_receive_unblocked_event += <receivedLocationEventUnblocked>tt \/ <->possibly_receive_unblocked_event.
+
+% RECEIVER CONTEXT FILTER 
+
+% VALIDATE RELATIONS
+
+chk_all_relations_cs_one ::=
+	chk_env_component_relation_cs_one
+	; chk_advertisement_relation_cs_one
+	; chk_subscription_relation_cs_one
+	; chk_context_variable_relation_cs_one
+	; chk_for_dual_role_cs_one
+	.
+
+chk_env_component_relation_cs_one ::=
+	all_environment_component_relation_as_nested_lists([],All_environment_component_relation_list)
+	; if (validate_env_component_relation_list(All_environment_component_relation_list))
+	then
+	{
+		action(allValidEnvComponentRelation)
+	}
+	.
+
+chk_advertisement_relation_cs_one ::=
+	all_advertisements_relation_as_nested_lists([],Advertisement_component_event_relation_list)
+	; if(validate_advertisement_relation_list(Advertisement_component_event_relation_list))
+	then
+	{
+		action(allValidAdvertisements)
+	}
+	.
+
+chk_subscription_relation_cs_one ::=
+	all_subscription_relation_as_nested_lists([],Subscription_component_event_relation_list)
+	; if(validate_subscription_relation_list(Subscription_component_event_relation_list))
+	then
+	{
+		action(allValidSubscriptions)
+	}
+	.
+
+chk_context_variable_relation_cs_one ::=
+	all_context_variable_relation_as_nested_lists([],Context_variable_relation_list)
+	; if(validate_context_variable_relation_list(Context_variable_relation_list))
+	then
+	{
+		action(allValidContextVariable)
+	}
+	.
+
+chk_for_dual_role_cs_one ::=
+	all_subscription_relation_as_nested_lists([],Subscription_component_event_relation_list)
+	; if(validate_no_dual_membership_list(Subscription_component_event_relation_list))
+	then
+	{
+		action(allValidNoDualMembership)
+	}
+	.
+
+all_valid_relations_cs_one += valid_env_component_relations_cs_one /\ valid_adv_relations_cs_one /\ valid_subs_relations_cs_one /\ valid_context_variable_relations_cs_one /\ valid_no_dual_membership_cs_one.
+
+valid_env_component_relations_cs_one += [-allValidEnvComponentRelation]valid_env_component_relations_cs_one /\ <->tt.
+valid_adv_relations_cs_one += [-allValidAdvertisements]valid_adv_relations_cs_one /\ <->tt.
+valid_subs_relations_cs_one += [-allValidSubscriptions]valid_subs_relations_cs_one /\ <->tt.
+valid_context_variable_relations_cs_one += [-allValidContextVariable]valid_context_variable_relations_cs_one /\ <->tt.
+valid_no_dual_membership_cs_one += [-allValidNoDualMembership]valid_no_dual_membership_cs_one /\ <->tt.
