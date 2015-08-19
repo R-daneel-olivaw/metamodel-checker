@@ -267,3 +267,17 @@ chk_invalid_event_schema_cs_one ::=
 	.
 	
 never_able_to_send_event_with_invalid_schema_cs_one += [-unableToSendEventWithInvalidSchema]never_able_to_send_event_with_invalid_schema /\ <-> tt.
+
+% EVENT WITH INVALID SCHEMA
+
+% NON EXISTANT COMPONENT CANNOT SEND EVENT
+
+chk_cannot_send_non_exist_component_cs_one ::=
+	if(not(simulate_event_component(non_existent_component,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]])))
+	then
+	{
+		action(nonExistentComponentUnableToSendEvent)
+	}
+	.
+
+never_send_event_non_existent_component_cs_one += [-nonExistentComponentUnableToSendEvent]never_send_event_non_existent_component /\ <->tt.
