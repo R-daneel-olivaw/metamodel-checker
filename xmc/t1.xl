@@ -2,8 +2,8 @@
 % mck(chk_send_receive,lossless)
 
 chk_send_event ::=
-	simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]]);
-	action(sendnew)
+	simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]])
+	; action(sendnew)
 	.
 
 chk_receive_event ::=
@@ -253,3 +253,17 @@ chk_event_without_advertisement_cs_one ::=
 	.
 	
 never_send_event_without_advertisement_cs_one += [-unableToSendEventWithoutAdvertisement]never_send_event_without_advertisement /\ <->tt.
+
+% EVENT WITHOUT ADVERTISEMENT
+
+% EVENT WITH INVALID SCHEMA
+
+chk_invalid_event_schema_cs_one ::=
+	if (not(simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,xx]]])))
+	then
+	{
+		action(unableToSendEventWithInvalidSchema)
+	}
+	.
+	
+never_able_to_send_event_with_invalid_schema_cs_one += [-unableToSendEventWithInvalidSchema]never_able_to_send_event_with_invalid_schema /\ <-> tt.
