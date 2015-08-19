@@ -1,28 +1,297 @@
-{*
-hasComponentReceivedResult_bd(calendar_application,meetingStartedEvent,1).
-*}
+% CHECK THAT NO LOSS IS ENCOUNTERED WHILE SENDING THE EVENTS, AND THAT IT IS POSSIBLE THAT THE EVENT IS RECEIVED
+% mck(chk_send_receive,lossless)
 
-t1 ::=
-simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]]);
-action(sendnew).
+chk_send_event ::=
+	simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]])
+	; action(sendnew)
+	.
 
-t2 ::=
-hasComponentReceivedResult_bd(calendar_application,meetingStartedEvent,Result);
-if (Result==1)
-then
-{
-action(recvnew)
-};
-write('second');
-write(Result).
+chk_receive_event ::=
+	hasComponentReceivedResult(calendar_application,meetingStartedEvent,Result);
+	if (Result==1)
+	then
+	{
+		action(recvnew)
+	}
+	.
 
-ta ::=
-t1
-; t2
-.
+chk_send_receive ::=
+	chk_send_event
+	; chk_receive_event
+	.
 
 losslesstx += [-sendnew]losslesstx /\ <->tt.
 losslessrx += <recvnew>tt \/ <->losslessrx.
 lossless += losslesstx /\ losslessrx.
 
-tprop += [recvnew]tt \/ ([-]tprop /\ [sendnew]tt).
+% CHECK THAT NO LOSS IS ENCOUNTERED WHILE SENDING THE EVENTS, AND THAT IT IS POSSIBLE THAT THE EVENT IS RECEIVED
+
+% RECEIVER CONTEXT FILTER 
+
+chk_receiver_context_filter_unblocked ::= 
+	change_context_variable_value(name,phone)
+	; simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,1],[longitude,1]]])
+	; chk_receiver_context_filter_received_unblocked.
+	
+chk_receiver_context_filter_blocked ::= 
+	change_context_variable_value(name,someotherphone)
+	; simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,1],[longitude,1]]])
+	; chk_receiver_context_filter_received_blocked.
+
+chk_receiver_context_filter_received_blocked ::=
+	hasComponentReceivedResult(calendar_application,locationEvent,Result)
+	; if (Result==1)
+	then
+	{
+		action(receivedLocationEventBlocked)
+	}
+	.
+	
+chk_receiver_context_filter_received_unblocked ::=
+	hasComponentReceivedResult(users_phone,locationEvent,Result)
+	; if (Result==1)
+	then
+	{
+		action(receivedLocationEventUnblocked)
+	}
+	.
+	
+never_receive_blocked_event -= [receivedLocationEventBlocked]ff /\ [-]never_receive_blocked_event.
+possibly_receive_unblocked_event += <receivedLocationEventUnblocked>tt \/ <->possibly_receive_unblocked_event.
+
+% RECEIVER CONTEXT FILTER 
+
+% UNIQUE COMPONENTS
+% mck(chk_duplicates,unique_all).
+
+chk_duplicates_cs_one ::=
+	unique_environments_cs_one
+	; unique_components_cs_one
+	; unique_events_cs_one
+	; unique_advertisements_cs_one
+	; unique_subscriptions_cs_one
+	; unique_context_variables_cs_one
+	; unique_environment_component_relation_cs_one
+	.
+
+unique_environments_cs_one ::=
+	all_environemtns([],All_env_list)
+	; if (no_duplicates(All_env_list))
+	then
+	{
+		action(noDuplicateEnv)
+	}
+	.
+
+unique_components_cs_one ::=
+	all_components([],All_component_list)
+	; if (no_duplicates(All_component_list))
+	then
+	{
+		action(noDuplicateComponent)
+	}
+	.
+
+unique_events_cs_one ::=
+	all_event_names([],All_event_list)
+	; if (no_duplicates(All_event_list))
+	then
+	{
+		action(noDuplicateEvent)
+	}
+	.
+
+unique_advertisements_cs_one ::=
+	all_advertisements([],All_advertisement_list)
+	; if (no_duplicates(All_advertisement_list))
+	then
+	{
+		action(noDuplicateAdvertisement)
+	}
+	.
+
+unique_subscriptions_cs_one ::=
+	all_subscriptions([],All_subscription_list)
+	; if (no_duplicates(All_subscription_list))
+	then
+	{
+		action(noDuplicateSubscription)
+	}
+	.
+
+unique_context_variables_cs_one ::=
+	all_context_variables([],All_context_variable_list)
+	; if (no_duplicates(All_context_variable_list))
+	then
+	{
+		action(noDuplicateContextVariable)
+	}
+	.
+
+unique_environment_component_relation_cs_one ::=
+	all_environment_component_relation([],All_environment_component_relation_list)
+	; if (no_duplicates(All_environment_component_relation_list))
+	then
+	{
+		action(noDuplicateEnvironmentComponentRelation)
+	}
+	.
+
+unique_all_cs_one += uniqueEnv_cs_one /\ uniqueComponent_cs_one /\ uniqueEvent_cs_one /\ uniqueAdvertisement_cs_one /\ uniqueSubscription_cs_one /\ uniqueContextVariable_cs_one /\ uniqueEnvironmentComponentRelation_cs_one.
+
+uniqueEnv_cs_one += [-noDuplicateEnv]uniqueEnv_cs_one /\ <->tt.
+uniqueComponent_cs_one += [-noDuplicateComponent]uniqueComponent_cs_one /\ <->tt.
+uniqueEvent_cs_one += [-noDuplicateEvent]uniqueEvent_cs_one /\ <->tt.
+uniqueAdvertisement_cs_one += [-noDuplicateAdvertisement]uniqueAdvertisement_cs_one /\ <->tt.
+uniqueSubscription_cs_one += [-noDuplicateSubscription]uniqueSubscription_cs_one /\ <->tt.
+uniqueContextVariable_cs_one += [-noDuplicateContextVariable]uniqueContextVariable_cs_one /\ <->tt.
+uniqueEnvironmentComponentRelation_cs_one += [-noDuplicateEnvironmentComponentRelation]uniqueEnvironmentComponentRelation_cs_one /\ <->tt.
+
+% UNIQUE COMPONENTS
+
+% VALIDATE RELATIONS
+
+chk_all_relations_cs_one ::=
+	chk_env_component_relation_cs_one
+	; chk_advertisement_relation_cs_one
+	; chk_subscription_relation_cs_one
+	; chk_context_variable_relation_cs_one
+	; chk_for_dual_role_cs_one
+	.
+
+chk_env_component_relation_cs_one ::=
+	all_environment_component_relation_as_nested_lists([],All_environment_component_relation_list)
+	; if (validate_env_component_relation_list(All_environment_component_relation_list))
+	then
+	{
+		action(allValidEnvComponentRelation)
+	}
+	.
+
+chk_advertisement_relation_cs_one ::=
+	all_advertisements_relation_as_nested_lists([],Advertisement_component_event_relation_list)
+	; if(validate_advertisement_relation_list(Advertisement_component_event_relation_list))
+	then
+	{
+		action(allValidAdvertisements)
+	}
+	.
+
+chk_subscription_relation_cs_one ::=
+	all_subscription_relation_as_nested_lists([],Subscription_component_event_relation_list)
+	; if(validate_subscription_relation_list(Subscription_component_event_relation_list))
+	then
+	{
+		action(allValidSubscriptions)
+	}
+	.
+
+chk_context_variable_relation_cs_one ::=
+	all_context_variable_relation_as_nested_lists([],Context_variable_relation_list)
+	; if(validate_context_variable_relation_list(Context_variable_relation_list))
+	then
+	{
+		action(allValidContextVariable)
+	}
+	.
+
+chk_for_dual_role_cs_one ::=
+	all_subscription_relation_as_nested_lists([],Subscription_component_event_relation_list)
+	; if(validate_no_dual_membership_list(Subscription_component_event_relation_list))
+	then
+	{
+		action(allValidNoDualMembership)
+	}
+	.
+
+all_valid_relations_cs_one += valid_env_component_relations_cs_one /\ valid_adv_relations_cs_one /\ valid_subs_relations_cs_one /\ valid_context_variable_relations_cs_one /\ valid_no_dual_membership_cs_one.
+
+valid_env_component_relations_cs_one += [-allValidEnvComponentRelation]valid_env_component_relations_cs_one /\ <->tt.
+valid_adv_relations_cs_one += [-allValidAdvertisements]valid_adv_relations_cs_one /\ <->tt.
+valid_subs_relations_cs_one += [-allValidSubscriptions]valid_subs_relations_cs_one /\ <->tt.
+valid_context_variable_relations_cs_one += [-allValidContextVariable]valid_context_variable_relations_cs_one /\ <->tt.
+valid_no_dual_membership_cs_one += [-allValidNoDualMembership]valid_no_dual_membership_cs_one /\ <->tt.
+
+% CAUSALITY
+% mck(send_before_receive_after,causality).
+
+send_before_receive_after_cs_one ::=
+	chk_send_event
+	; chk_receive_event
+	.
+
+causality_cs_one += [recvnew]tt \/ ([-]causality /\ [sendnew]tt).
+
+% CAUSALITY
+
+% SPONTANEOUS EVENT
+% mck(chk_spontaneous_event, never_receive_spontaneous_event)
+
+chk_spontaneous_event_cs_one ::=
+	cleanupComponentTriggPredicates(calendar_application)
+	; hasComponentReceivedResult(calendar_application,locationEvent,Result)
+	; if(Result == 1)
+	then
+	{
+		action(spontaneousEventReceived)
+	}
+	.
+
+never_receive_spontaneous_event_cs_one -= [spontaneousEventReceived]ff /\ [-]never_receive_spontaneous_event.
+
+% SPONTANEOUS EVENT
+
+% EVENT WITHOUT ADVERTISEMENT
+% mck(chk_event_without_advertisement, never_send_event_without_advertisement)
+
+chk_event_without_advertisement_cs_one ::=
+	if (not(simulate_event_environment(users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]])))
+	then
+	{
+		action(unableToSendEventWithoutAdvertisement)
+	}
+	.
+	
+never_send_event_without_advertisement_cs_one += [-unableToSendEventWithoutAdvertisement]never_send_event_without_advertisement /\ <->tt.
+
+% EVENT WITHOUT ADVERTISEMENT
+
+% EVENT WITH INVALID SCHEMA
+
+chk_invalid_event_schema_cs_one ::=
+	if (not(simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,xx]]])))
+	then
+	{
+		action(unableToSendEventWithInvalidSchema)
+	}
+	.
+	
+never_able_to_send_event_with_invalid_schema_cs_one += [-unableToSendEventWithInvalidSchema]never_able_to_send_event_with_invalid_schema /\ <-> tt.
+
+% EVENT WITH INVALID SCHEMA
+
+% NON EXISTANT COMPONENT CANNOT SEND EVENT
+
+chk_cannot_send_non_exist_component_cs_one ::=
+	if(not(simulate_event_component(non_existent_component,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]])))
+	then
+	{
+		action(nonExistentComponentUnableToSendEvent)
+	}
+	.
+
+never_send_event_non_existent_component_cs_one += [-nonExistentComponentUnableToSendEvent]never_send_event_non_existent_component /\ <->tt.
+
+% NON EXISTANT COMPONENT CANNOT SEND EVENT
+
+% COMPONENT CANNOT SEND EVENT THAT IS NOT DEFINED
+
+chk_cannot_send_non_exist_event_cs_one ::=
+	if (not(simulate_event_environment(calendar_application,nonExistentEvent,[nonExistentEvent,[[action,99],[value,23]]])))
+	then
+	{
+		action(unableToSendUndefinedEvent)
+	}
+	.
+	
+never_send_undefined_event_cs_one += [-unableToSendUndefinedEvent]never_send_undefined_event /\ <->tt.

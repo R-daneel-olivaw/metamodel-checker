@@ -173,6 +173,9 @@ simulate_event_environment(Environment_name,Event_id,Event_data_list):-
 	event_schema(Event_id,Event_schema),
 	% VALIDATE IT FURTHER BY A DATA TYPE CHECK OS OF THE VALUES OF THE KV PAIRS
 	!,unify_event(Event_data_list,Event_schema),
+	
+		% THE BELOW IS USED TO THE ACTIONS THAT ARE TAKEN BY THE COMPONENT ON THE ARRIVAL OF THIS TYPE OF EVENT
+	!,trigger_component_event_response(Component_name,Event_type,Event_data_list),
 
 	% WE NOW MOVE TO THE ENVIRONMRNT THAT CONTAINS THE ENVIRONMENT
 	get_reachable_environments(Event_id,Event_data_list,[Environment_name],Environment_name,[],Reachable_environment_list),

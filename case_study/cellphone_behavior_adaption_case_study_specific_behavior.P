@@ -58,4 +58,9 @@ trigger_component_event_response(users_phone,incomingCallEvent,Event_data):-
 	assertTriggPredicate(users_phone,incomingCallEvent,Event_data).
 % INCOMING CALL EVENT END
 	
+trigger_component_event_response(Component_name,Event_id,Event_data):-
+	component_instance(Component_name),
+	event_schema(Event_id,_),
+	assertTriggPredicate(Component_name,Event_id,Event_data).
+	
 trigger_component_event_response(Component_name,Event_id,Event_data).
