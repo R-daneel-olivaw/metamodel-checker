@@ -221,3 +221,21 @@ send_before_receive_after_cs_one ::=
 	.
 
 causality_cs_one += [recvnew]tt \/ ([-]causality /\ [sendnew]tt).
+
+% CAUSALITY
+
+% SPONTANEOUS EVENT
+% mck(chk_spontaneous_event, never_receive_spontaneous_event)
+
+chk_spontaneous_event_cs_one ::=
+	cleanupComponentTriggPredicates(calendar_application)
+	; hasComponentReceivedResult(calendar_application,locationEvent,Result)
+	; if(Result == 1)
+	then
+	{
+		action(spontaneousEventReceived)
+	}
+	.
+
+never_receive_spontaneous_event_cs_one -= [spontaneousEventReceived]ff /\ [-]never_receive_spontaneous_event.
+
