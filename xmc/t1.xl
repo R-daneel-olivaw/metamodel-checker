@@ -61,6 +61,94 @@ possibly_receive_unblocked_event += <receivedLocationEventUnblocked>tt \/ <->pos
 
 % RECEIVER CONTEXT FILTER 
 
+% UNIQUE COMPONENTS
+% mck(chk_duplicates,unique_all).
+
+chk_duplicates_cs_one ::=
+	unique_environments_cs_one
+	; unique_components_cs_one
+	; unique_events_cs_one
+	; unique_advertisements_cs_one
+	; unique_subscriptions_cs_one
+	; unique_context_variables_cs_one
+	; unique_environment_component_relation_cs_one
+	.
+
+unique_environments_cs_one ::=
+	all_environemtns([],All_env_list)
+	; if (no_duplicates(All_env_list))
+	then
+	{
+		action(noDuplicateEnv)
+	}
+	.
+
+unique_components_cs_one ::=
+	all_components([],All_component_list)
+	; if (no_duplicates(All_component_list))
+	then
+	{
+		action(noDuplicateComponent)
+	}
+	.
+
+unique_events_cs_one ::=
+	all_event_names([],All_event_list)
+	; if (no_duplicates(All_event_list))
+	then
+	{
+		action(noDuplicateEvent)
+	}
+	.
+
+unique_advertisements_cs_one ::=
+	all_advertisements([],All_advertisement_list)
+	; if (no_duplicates(All_advertisement_list))
+	then
+	{
+		action(noDuplicateAdvertisement)
+	}
+	.
+
+unique_subscriptions_cs_one ::=
+	all_subscriptions([],All_subscription_list)
+	; if (no_duplicates(All_subscription_list))
+	then
+	{
+		action(noDuplicateSubscription)
+	}
+	.
+
+unique_context_variables_cs_one ::=
+	all_context_variables([],All_context_variable_list)
+	; if (no_duplicates(All_context_variable_list))
+	then
+	{
+		action(noDuplicateContextVariable)
+	}
+	.
+
+unique_environment_component_relation_cs_one ::=
+	all_environment_component_relation([],All_environment_component_relation_list)
+	; if (no_duplicates(All_environment_component_relation_list))
+	then
+	{
+		action(noDuplicateEnvironmentComponentRelation)
+	}
+	.
+
+unique_all_cs_one += uniqueEnv_cs_one /\ uniqueComponent_cs_one /\ uniqueEvent_cs_one /\ uniqueAdvertisement_cs_one /\ uniqueSubscription_cs_one /\ uniqueContextVariable_cs_one /\ uniqueEnvironmentComponentRelation_cs_one.
+
+uniqueEnv_cs_one += [-noDuplicateEnv]uniqueEnv_cs_one /\ <->tt.
+uniqueComponent_cs_one += [-noDuplicateComponent]uniqueComponent_cs_one /\ <->tt.
+uniqueEvent_cs_one += [-noDuplicateEvent]uniqueEvent_cs_one /\ <->tt.
+uniqueAdvertisement_cs_one += [-noDuplicateAdvertisement]uniqueAdvertisement_cs_one /\ <->tt.
+uniqueSubscription_cs_one += [-noDuplicateSubscription]uniqueSubscription_cs_one /\ <->tt.
+uniqueContextVariable_cs_one += [-noDuplicateContextVariable]uniqueContextVariable_cs_one /\ <->tt.
+uniqueEnvironmentComponentRelation_cs_one += [-noDuplicateEnvironmentComponentRelation]uniqueEnvironmentComponentRelation_cs_one /\ <->tt.
+
+% UNIQUE COMPONENTS
+
 % VALIDATE RELATIONS
 
 chk_all_relations_cs_one ::=
