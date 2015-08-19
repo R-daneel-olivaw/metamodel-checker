@@ -368,7 +368,7 @@ never_receive_event_without_subscription -= [receivedEventWithoutSubscription]ff
 
 % EVENT WITHOUT SUBSCRIPTION
 
-% NON EXISTANT COMPONENT CANNOT RECEIVE
+% NON EXISTANT COMPONENT CANNOT SEND EVENT
 
 chk_cannot_send_non_exist_component ::=
 	if(not(simulate_event_component(non_existent_component,user_cellphone,alarmGoesOffEvent,[alarmGoesOffEvent,[[dateTime,othertime]]])))
@@ -380,7 +380,7 @@ chk_cannot_send_non_exist_component ::=
 
 never_send_event_non_existent_component += [-nonExistentComponentUnableToSendEvent]never_send_event_non_existent_component /\ <->tt.
 
-% NON EXISTANT COMPONENT CANNOT RECEIVE
+% NON EXISTANT COMPONENT CANNOT SEND EVENT
 
 % COMPONENT CANNOT SEND EVENT THAT IS NOT DEFINED
 
