@@ -450,3 +450,19 @@ chk_undefined_component_cannot_receive_event_cs_one ::=
 	.
 	
 never_receive_event_undefined_component_cs_one -= [undefinedComponentReceivedEvent]ff /\ [-]never_receive_event_undefined_component_cs_one.
+
+% UNDEFINED COMPONENT CANNOT RECEIVE EVENT
+
+% COMPONENT CANNOT RECEIVE AN EVENT FOR WHICH A SCHEMA IS NOT DEFINED
+
+chk_cannot_receive_undefined_event_cs_one ::=
+	cleanupComponentTriggPredicates(users_phone)
+	; hasComponentReceivedResult(users_phone,undefined_event_type,Result)
+	; if(Result == 1)
+	then
+	{
+		action(undefinedEventReceived)
+	}
+	.
+
+never_receive_undefined_event_cs_one -= [undefinedEventReceived]ff /\ [-]never_receive_undefined_event_cs_one.
