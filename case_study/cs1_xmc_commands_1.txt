@@ -15,5 +15,5 @@ create_event_schema(incomingCallEvent,[incomingCallEvent,[[callerName,string],[c
 create_advertisement(calendar_application,users_phone,meetingStartedEvent,[]).
 create_advertisement(users_phone,locationEvent,[]).
 create_advertisement(users_phone,incomingCallEvent,[]).
-create_subscription(calendar_application,users_phone,locationEvent,[],[name,=,phone]).
+create_subscription(calendar_application,users_phone,locationEvent,[latitude,=\=,5],[name,=,phone]).
 xlc('/root/XSB_code/metamodel-checker/xmc/t1').
