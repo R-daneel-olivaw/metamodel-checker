@@ -433,3 +433,20 @@ chk_disconnected_component_send_cs_one ::=
 	.
 	
 never_event_received_when_disconnected_cs_one -= [eventByComponentWhileDisconnected]ff /\ [-]never_event_received_when_disconnected_cs_one.
+
+% DISCONNECTED COMPONENT
+
+% UNDEFINED COMPONENT CANNOT RECEIVE EVENT
+
+chk_undefined_component_cannot_receive_event_cs_one ::=
+	cleanupComponentTriggPredicates(undefined_component)
+	; simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,1],[longitude,1]]])
+	; hasComponentReceivedResult(undefined_component,locationEvent,Result)
+	; if(Result == 1)
+	then
+	{
+		action(undefinedComponentReceivedEvent)
+	}
+	.
+	
+never_receive_event_undefined_component_cs_one -= [undefinedComponentReceivedEvent]ff /\ [-]never_receive_event_undefined_component_cs_one.
