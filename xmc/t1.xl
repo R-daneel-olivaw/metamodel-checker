@@ -295,3 +295,41 @@ chk_cannot_send_non_exist_event_cs_one ::=
 	.
 	
 never_send_undefined_event_cs_one += [-unableToSendUndefinedEvent]never_send_undefined_event /\ <->tt.
+
+% COMPONENT CANNOT SEND EVENT THAT IS NOT DEFINED
+
+% FIDELITY
+% mck(fidelity_chk,fidelity).
+send_event_for_fidelity_cs_one ::=
+	simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]])
+	; assert(event_fidelity_chk(users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]]))
+	.
+	
+receive_event_for_fidelity_cs_one ::=
+	hasComponentReceivedResult(users_phone,meetingStartedEvent,Result)
+	; if (Result==1)
+	then
+	{
+		triggered(users_phone,meetingStartedEvent, Event_data)
+		; event_fidelity_chk(users_phone,meetingStartedEvent,Event_data_stored)
+		
+		; if (Event_data_stored == Event_data)
+		then
+		{
+			action(fidelityTestPassed)
+		}
+		else
+		{
+			action(fidelityTestFailed)
+		}
+	}
+	.
+	
+fidelity_chk_cs_one ::=
+	send_event_for_fidelity_cs_one
+	; receive_event_for_fidelity_cs_one
+	.
+
+fidelity_cs_one += never_fidelity_fail.
+possible_fidelity_pass_cs_one += <fidelityTestPassed>tt \/ <->possible_fidelity_pass.
+never_fidelity_fail_cs_one -= [fidelityTestFailed]ff /\ [-]never_fidelity_fail.
