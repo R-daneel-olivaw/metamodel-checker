@@ -333,3 +333,48 @@ fidelity_chk_cs_one ::=
 fidelity_cs_one += never_fidelity_fail.
 possible_fidelity_pass_cs_one += <fidelityTestPassed>tt \/ <->possible_fidelity_pass.
 never_fidelity_fail_cs_one -= [fidelityTestFailed]ff /\ [-]never_fidelity_fail.
+
+% FIDELITY
+
+% VALID STATE WHILE EVENT IS TRAVERSED
+% mck(runtime_validity,runtime_validity_property).
+
+runtime_duplicates_cs_one ::=
+	chk_send_event 
+	| chk_duplicates_cs_one
+	.
+	
+runtime_relations_cs_one ::=
+	chk_send_event 
+	| chk_all_relations_cs_one
+	.
+
+runtime_validity_cs_one ::=
+	chk_send_event
+	| chk_relations_duplicates_cs_one
+	.
+	
+chk_relations_duplicates_cs_one ::=
+	chk_all_relations_cs_one
+	; chk_duplicates_cs_one
+	.
+
+runtime_duplicates_property_cs_one += unique_all_cs_one.
+runtime_relations_property_cs_one += all_valid_relations_cs_one.
+runtime_validity_property_cs_one += unique_all_cs_one /\ all_valid_relations_cs_one.
+
+% VALID STATE WHILE EVENT IS TRAVERSED
+
+% EVENT WITHOUT SUBSCRIPTION
+
+chk_event_without_subscription_cs_one ::=
+	simulate_event_environment(users_phone,incomingCallEvent,[incomingCallEvent,[[callerName,akshat],[callingNumber,a99]]])
+	; hasComponentReceivedResult(calendar_application,incomingCallEvent,Result)
+	; if (Result == 1)
+	then
+	{
+		action(receivedEventWithoutSubscription)
+	}
+	.
+	
+never_receive_event_without_subscription_cs_one -= [receivedEventWithoutSubscription]ff /\ [-]never_receive_event_without_subscription_cs_one.
