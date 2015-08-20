@@ -378,3 +378,58 @@ chk_event_without_subscription_cs_one ::=
 	.
 	
 never_receive_event_without_subscription_cs_one -= [receivedEventWithoutSubscription]ff /\ [-]never_receive_event_without_subscription_cs_one.
+
+% EVENT WITHOUT SUBSCRIPTION
+
+% CONTENT FILTER CHECK
+
+chk_content_filter_blocking_cs_one ::=
+	chk_content_filter_send_blocked_event_cs_one
+	; chk_content_filter_receive_blocked_event_cs_one
+	.
+
+chk_content_filter_send_blocked_event_cs_one ::=
+	simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,5],[longitude,1]]])
+	.
+
+chk_content_filter_receive_blocked_event_cs_one ::=
+	hasComponentReceivedResult(calendar_application,locationEvent,Result)
+	; if (Result==1)
+	then
+	{
+		action(receivedBlockedEvent)
+	}
+	.
+
+chk_receiver_content_filter_blocking_cs_one -= [receivedBlockedEvent]ff /\ [-]chk_receiver_content_filter_blocking.
+
+% CONTENT FILTER CHECK
+
+% DISCONNECTED COMPONENT
+
+chk_disconnected_component_cs_one ::=
+	disconnect_component_cs_one
+	; chk_disconnected_component_send_cs_one
+	; reconnect_component_cs_one
+	.
+	
+disconnect_component_cs_one ::=
+	retract(environment_component(users_phone,calendar_application))
+	.
+
+reconnect_component_cs_one ::=
+	assert(environment_component(users_phone,calendar_application))
+	.
+	
+chk_disconnected_component_send_cs_one ::=
+	cleanupComponentTriggPredicates(calendar_application)
+	; simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,1],[longitude,1]]])
+	; hasComponentReceivedResult(calendar_application,locationEvent,Result)
+	; if(Result == 1)
+	then
+	{
+		action(eventByComponentWhileDisconnected)
+	}
+	.
+	
+never_event_received_when_disconnected_cs_one -= [eventByComponentWhileDisconnected]ff /\ [-]never_event_received_when_disconnected_cs_one.
