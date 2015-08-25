@@ -295,3 +295,174 @@ chk_cannot_send_non_exist_event_cs_one ::=
 	.
 	
 never_send_undefined_event_cs_one += [-unableToSendUndefinedEvent]never_send_undefined_event /\ <->tt.
+
+% COMPONENT CANNOT SEND EVENT THAT IS NOT DEFINED
+
+% FIDELITY
+% mck(fidelity_chk,fidelity).
+send_event_for_fidelity_cs_one ::=
+	simulate_event_component(calendar_application,users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]])
+	; assert(event_fidelity_chk(users_phone,meetingStartedEvent,[meetingStartedEvent,[[meetingName,board_meeting],[date,sfsdfs],[startTime,sdfsdf],[duration,1]]]))
+	.
+	
+receive_event_for_fidelity_cs_one ::=
+	hasComponentReceivedResult(users_phone,meetingStartedEvent,Result)
+	; if (Result==1)
+	then
+	{
+		triggered(users_phone,meetingStartedEvent, Event_data)
+		; event_fidelity_chk(users_phone,meetingStartedEvent,Event_data_stored)
+		
+		; if (Event_data_stored == Event_data)
+		then
+		{
+			action(fidelityTestPassed)
+		}
+		else
+		{
+			action(fidelityTestFailed)
+		}
+	}
+	.
+	
+fidelity_chk_cs_one ::=
+	send_event_for_fidelity_cs_one
+	; receive_event_for_fidelity_cs_one
+	.
+
+fidelity_cs_one += never_fidelity_fail.
+possible_fidelity_pass_cs_one += <fidelityTestPassed>tt \/ <->possible_fidelity_pass.
+never_fidelity_fail_cs_one -= [fidelityTestFailed]ff /\ [-]never_fidelity_fail.
+
+% FIDELITY
+
+% VALID STATE WHILE EVENT IS TRAVERSED
+% mck(runtime_validity,runtime_validity_property).
+
+runtime_duplicates_cs_one ::=
+	chk_send_event 
+	| chk_duplicates_cs_one
+	.
+	
+runtime_relations_cs_one ::=
+	chk_send_event 
+	| chk_all_relations_cs_one
+	.
+
+runtime_validity_cs_one ::=
+	chk_send_event
+	| chk_relations_duplicates_cs_one
+	.
+	
+chk_relations_duplicates_cs_one ::=
+	chk_all_relations_cs_one
+	; chk_duplicates_cs_one
+	.
+
+runtime_duplicates_property_cs_one += unique_all_cs_one.
+runtime_relations_property_cs_one += all_valid_relations_cs_one.
+runtime_validity_property_cs_one += unique_all_cs_one /\ all_valid_relations_cs_one.
+
+% VALID STATE WHILE EVENT IS TRAVERSED
+
+% EVENT WITHOUT SUBSCRIPTION
+
+chk_event_without_subscription_cs_one ::=
+	simulate_event_environment(users_phone,incomingCallEvent,[incomingCallEvent,[[callerName,akshat],[callingNumber,a99]]])
+	; hasComponentReceivedResult(calendar_application,incomingCallEvent,Result)
+	; if (Result == 1)
+	then
+	{
+		action(receivedEventWithoutSubscription)
+	}
+	.
+	
+never_receive_event_without_subscription_cs_one -= [receivedEventWithoutSubscription]ff /\ [-]never_receive_event_without_subscription_cs_one.
+
+% EVENT WITHOUT SUBSCRIPTION
+
+% CONTENT FILTER CHECK
+
+chk_content_filter_blocking_cs_one ::=
+	chk_content_filter_send_blocked_event_cs_one
+	; chk_content_filter_receive_blocked_event_cs_one
+	.
+
+chk_content_filter_send_blocked_event_cs_one ::=
+	simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,5],[longitude,1]]])
+	.
+
+chk_content_filter_receive_blocked_event_cs_one ::=
+	hasComponentReceivedResult(calendar_application,locationEvent,Result)
+	; if (Result==1)
+	then
+	{
+		action(receivedBlockedEvent)
+	}
+	.
+
+chk_receiver_content_filter_blocking_cs_one -= [receivedBlockedEvent]ff /\ [-]chk_receiver_content_filter_blocking.
+
+% CONTENT FILTER CHECK
+
+% DISCONNECTED COMPONENT
+
+chk_disconnected_component_cs_one ::=
+	disconnect_component_cs_one
+	; chk_disconnected_component_send_cs_one
+	; reconnect_component_cs_one
+	.
+	
+disconnect_component_cs_one ::=
+	retract(environment_component(users_phone,calendar_application))
+	.
+
+reconnect_component_cs_one ::=
+	assert(environment_component(users_phone,calendar_application))
+	.
+	
+chk_disconnected_component_send_cs_one ::=
+	cleanupComponentTriggPredicates(calendar_application)
+	; simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,1],[longitude,1]]])
+	; hasComponentReceivedResult(calendar_application,locationEvent,Result)
+	; if(Result == 1)
+	then
+	{
+		action(eventByComponentWhileDisconnected)
+	}
+	.
+	
+never_event_received_when_disconnected_cs_one -= [eventByComponentWhileDisconnected]ff /\ [-]never_event_received_when_disconnected_cs_one.
+
+% DISCONNECTED COMPONENT
+
+% UNDEFINED COMPONENT CANNOT RECEIVE EVENT
+
+chk_undefined_component_cannot_receive_event_cs_one ::=
+	cleanupComponentTriggPredicates(undefined_component)
+	; simulate_event_environment(users_phone,locationEvent,[locationEvent,[[latitude,1],[longitude,1]]])
+	; hasComponentReceivedResult(undefined_component,locationEvent,Result)
+	; if(Result == 1)
+	then
+	{
+		action(undefinedComponentReceivedEvent)
+	}
+	.
+	
+never_receive_event_undefined_component_cs_one -= [undefinedComponentReceivedEvent]ff /\ [-]never_receive_event_undefined_component_cs_one.
+
+% UNDEFINED COMPONENT CANNOT RECEIVE EVENT
+
+% COMPONENT CANNOT RECEIVE AN EVENT FOR WHICH A SCHEMA IS NOT DEFINED
+
+chk_cannot_receive_undefined_event_cs_one ::=
+	cleanupComponentTriggPredicates(users_phone)
+	; hasComponentReceivedResult(users_phone,undefined_event_type,Result)
+	; if(Result == 1)
+	then
+	{
+		action(undefinedEventReceived)
+	}
+	.
+
+never_receive_undefined_event_cs_one -= [undefinedEventReceived]ff /\ [-]never_receive_undefined_event_cs_one.
